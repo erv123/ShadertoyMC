@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "shadertoymc",
+  "version": "${version}",
+
+  "name": "ShadertoyMC",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "erv123"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "MIT Licence",
+  "icon": "assets/modid/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.erv123.shadertoymc.ShadertoyMC"
+    ],
+    "client": [
+      "net.erv123.shadertoymc.ShadertoyMCClient"
+    ]
+  },
+  "mixins": [
+    "shadertoymc.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.11",
+    "fabric": "*",
+    "minecraft": "1.19.3",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
