@@ -1,9 +1,3 @@
-# Fabric Example Mod
+# ShadertoyMC
 
-## Setup
-
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This will (hopefully) be a mod that allows writing shadertoy like scripts and placing the end result in mc
