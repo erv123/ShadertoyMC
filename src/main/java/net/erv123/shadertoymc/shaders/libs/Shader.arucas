@@ -1,0 +1,12 @@
+
+class Shader{
+    EXPORT_LAYER
+
+
+
+
+    fun export(layer){
+        //make a json file that can be read by java
+        //only
+    }
+}
