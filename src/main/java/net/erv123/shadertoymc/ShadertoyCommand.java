@@ -2,10 +2,20 @@ package net.erv123.shadertoymc;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import me.senseiwells.arucas.api.ArucasAPI;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.*;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+
+
+import java.io.IOException;
+import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -27,6 +37,8 @@ public class ShadertoyCommand {
  */
     public ShadertoyCommand() {
     }
+
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(literal("shadertoy").requires(source -> source.hasPermissionLevel(2))
                 .then(literal("area").executes(context ->{
@@ -35,7 +47,7 @@ public class ShadertoyCommand {
                         })
                         .then(literal("clear").executes(context ->{
                             context.getSource().sendMessage(Text.literal("Area cleared"));
-                            ShaderArea.read().clear(context.getSource());
+                            Objects.requireNonNull(ShaderArea.read()).clear(context.getSource());
                             return 1;
                         }))
                         .then(literal("display").executes(context ->{
@@ -53,6 +65,7 @@ public class ShadertoyCommand {
                             context.getSource().sendMessage(Text.literal("Area size changed"));
                             BlockPos size = BlockPosArgumentType.getBlockPos(context,"size");
                             ShaderArea area = ShaderArea.read();
+                            assert area != null;
                             area.setSize(size);
                             return 1;
                         })))
@@ -60,18 +73,28 @@ public class ShadertoyCommand {
                             context.getSource().sendMessage(Text.literal("Area origin moved"));
                             BlockPos origin = BlockPosArgumentType.getBlockPos(context,"origin");
                             ShaderArea area = ShaderArea.read();
+                            assert area != null;
                             area.setOrigin(origin);
                             return 1;
                         }))))
-                .then(literal("shader")
-                        .then(literal("calculate").then(argument("shaderID", StringArgumentType.string())).executes(context ->{
-                            context.getSource().sendMessage(Text.literal("shader caclulations in proceess"));
-                            return 1;
-                        }))
-                        .then(literal("paste").then(argument("shaderID", StringArgumentType.string()).executes(context ->{
+                .then(literal("run")
+                        .then(argument("shaderID", StringArgumentType.string()).suggests((context, builder) -> {
+                            Stream<Path> files;
+                            try {
+                                files = Files.list(ShaderUtils.SHADERTOY_PATH);
+                            } catch (IOException e) {
+                                ShadertoyMC.LOGGER.error("I have no idea what tends to cause this error", e);
+                                throw new RuntimeException(e);
+                            }
+                            Stream<String> suggestions = files.filter(Predicate.not(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("area.json")).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("libs"))))).map(Path::toString).map(s->s.substring(ShaderUtils.SHADERTOY_PATH.toString().length()+1));
+                            return CommandSource.suggestMatching(suggestions,builder);
+                        }).executes(context ->{
                             context.getSource().sendMessage(Text.literal("<shaderID> shader pasted"));
+                            String shaderID = StringArgumentType.getString(context,"shaderID");
+                            ShaderUtils.executeScript(shaderID,context.getSource());
+
                             return 1;
-                        }))))
+                        })))
         );
 
     }

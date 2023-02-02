@@ -2,20 +2,18 @@ package net.erv123.shadertoymc;
 
 import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockState;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
-import org.apache.logging.log4j.Level;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.EnumSet;
+import java.util.ArrayList;
+import java.util.List;
 
 
 interface IterableFunction{
@@ -23,14 +21,14 @@ interface IterableFunction{
 }
 public class ShaderArea {
     private static final Gson GSON = new Gson();
-    private static final Path SHADERTOY_PATH = FabricLoader.getInstance().getConfigDir().resolve("ShaderToy");
+
 
 
     Vec3i size;
     Vec3i origin;
 
     public static ShaderArea read(){
-        Path areaPath = SHADERTOY_PATH.resolve("area.json");
+        Path areaPath = ShaderUtils.SHADERTOY_PATH.resolve("area.json");
         Gson gson = new Gson();
         if(Files.exists(areaPath)) {
             try (BufferedReader reader = Files.newBufferedReader(areaPath)) {
@@ -55,12 +53,12 @@ public class ShaderArea {
         String json = GSON.toJson(this);
         ShadertoyMC.LOGGER.info("File creation");
         try{
-            Files.createDirectory(SHADERTOY_PATH);
+            Files.createDirectory(ShaderUtils.SHADERTOY_PATH);
         }
         catch(IOException e){
             ShadertoyMC.LOGGER.error("Directory already exists", e);
         }
-        Path areaPath = SHADERTOY_PATH.resolve("area.json");
+        Path areaPath = ShaderUtils.SHADERTOY_PATH.resolve("area.json");
         try (BufferedWriter writer = Files.newBufferedWriter(areaPath)) {
             ShadertoyMC.LOGGER.info(json);
             writer.write(json);
@@ -91,5 +89,15 @@ public class ShaderArea {
             ServerWorld world = source.getWorld();
             world.breakBlock(new BlockPos(x,y,z),false);
         });
+    }
+    public List<Integer> getParams(){
+        List<Integer> list = new ArrayList<>(6);
+        list.add(this.origin.getX());
+        list.add(this.origin.getY());
+        list.add(this.origin.getZ());
+        list.add(this.size.getX());
+        list.add(this.size.getY());
+        list.add(this.size.getZ());
+        return list;
     }
 }
