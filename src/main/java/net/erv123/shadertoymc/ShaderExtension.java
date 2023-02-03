@@ -4,7 +4,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.senseiwells.arucas.api.ArucasExtension;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.builtin.StringDef;
-import me.senseiwells.arucas.classes.instance.ClassInstance;
 import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.utils.Arguments;
 import me.senseiwells.arucas.utils.BuiltInFunction;
@@ -15,7 +14,6 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -84,9 +82,6 @@ public class ShaderExtension implements ArucasExtension {
             RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
             BlockArgumentParser.BlockResult blockResult = BlockArgumentParser.block(registryWrapper, block, true);
             ShadertoyMC.LOGGER.info("Should be block place success");
-
-            //World world = manager.get(RegistryKeys.WORLD).get(new Identifier(worldString));
-
             world.setBlockState(pos,blockResult.blockState());
             ShadertoyMC.LOGGER.info("Should be block place success");
         }
@@ -99,9 +94,7 @@ public class ShaderExtension implements ArucasExtension {
         Interpreter interpreter = arguments.getInterpreter();
         List<Integer> area = ShaderArea.read().getParams();
         ArucasList list = new ArucasList();
-        area.forEach(e ->{
-            list.add(interpreter.convertValue(e));
-        });
+        area.forEach(e -> list.add(interpreter.convertValue(e)));
         return list;
     }
 }

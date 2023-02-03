@@ -1,6 +1,9 @@
 package net.erv123.shadertoymc;
 
 import me.senseiwells.arucas.api.ArucasAPI;
+import me.senseiwells.arucas.api.impl.GitHubArucasLibrary;
+import me.senseiwells.arucas.api.impl.MultiArucasLibrary;
+import me.senseiwells.arucas.api.impl.ResourceArucasLibrary;
 import me.senseiwells.arucas.core.Interpreter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.command.ServerCommandSource;
@@ -16,8 +19,13 @@ import java.util.UUID;
 public class ShaderUtils {
     public static final Path SHADERTOY_PATH = FabricLoader.getInstance().getConfigDir().resolve("Shadertoy");
     private static final Map<UUID, ServerPlayerEntity> SCRIPT_PLAYERS = new HashMap<>();
+    private static final GitHubArucasLibrary gitLibrary = new GitHubArucasLibrary(SHADERTOY_PATH.resolve("libs"),"https://github.com/erv123/ShadertoyMC_Libraries/contetnts/libs");
+    private static final ResourceArucasLibrary resourceLibrary = new ResourceArucasLibrary("assets/libraries");
     private static final ArucasAPI ARUCAS_API = new ArucasAPI.Builder()
+            .setLibraryManager(new MultiArucasLibrary())
             .addDefault()
+            .addArucasLibrary("ShaderGithub", gitLibrary)
+            .addArucasLibrary("ResourceLibrary",resourceLibrary)
             .addBuiltInExtension(new ShaderExtension())
             .build();
     private ShaderUtils(){

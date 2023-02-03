@@ -2,18 +2,17 @@ package net.erv123.shadertoymc;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import me.senseiwells.arucas.api.ArucasAPI;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.*;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
-
 import java.io.IOException;
-import java.util.Objects;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -92,7 +91,6 @@ public class ShadertoyCommand {
                             context.getSource().sendMessage(Text.literal("<shaderID> shader pasted"));
                             String shaderID = StringArgumentType.getString(context,"shaderID");
                             ShaderUtils.executeScript(shaderID,context.getSource());
-
                             return 1;
                         })))
         );
