@@ -28,10 +28,10 @@ public class ShaderExtension implements ArucasExtension {
     @Override
     public List<BuiltInFunction> getBuiltInFunctions() {
         return List.of(
-                BuiltInFunction.of("getWorld",this::getWorld),
-                BuiltInFunction.of("place",5, this::place),
-                BuiltInFunction.of("place",4, this::placeNoWorldArg),
-                BuiltInFunction.of("getArea",this::getArea)
+                BuiltInFunction.of("getWorld", this::getWorld),
+                BuiltInFunction.of("place", 5, this::place),
+                BuiltInFunction.of("place", 4, this::placeNoWorldArg),
+                BuiltInFunction.of("getArea", this::getArea)
         );
     }
 
@@ -40,12 +40,13 @@ public class ShaderExtension implements ArucasExtension {
     public String getName() {
         return "shaderExtension";
     }
-    public String getWorld(Arguments arguments){
+
+    public String getWorld(Arguments arguments) {
         ServerPlayerEntity serverPlayerEntity = ShaderUtils.getPlayerForInterpreter(arguments.getInterpreter());
         return serverPlayerEntity.getWorld().getRegistryKey().getValue().getPath();
     }
 
-    public Void place(Arguments arguments){
+    public Void place(Arguments arguments) {
         ServerPlayerEntity entity = ShaderUtils.getPlayerForInterpreter(arguments.getInterpreter());
         String block = arguments.nextPrimitive(StringDef.class);
         int x = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -59,15 +60,15 @@ public class ShaderExtension implements ArucasExtension {
             BlockArgumentParser.BlockResult blockResult = BlockArgumentParser.block(registryWrapper, block, true);
             RegistryKey<World> worldRegistry = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString));
             World world = entity.server.getWorld(worldRegistry);
-            world.setBlockState(pos,blockResult.blockState());
-            ShadertoyMC.LOGGER.info("Should be block place success");
-        }
-        catch(CommandSyntaxException e) {
+            world.setBlockState(pos, blockResult.blockState());
+            ShadertoyMC.LOGGER.info("Block place success");
+        } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block", e);
         }
         return null;
     }
-    public Void placeNoWorldArg(Arguments arguments){
+
+    public Void placeNoWorldArg(Arguments arguments) {
         ServerPlayerEntity entity = ShaderUtils.getPlayerForInterpreter(arguments.getInterpreter());
         String block = arguments.nextPrimitive(StringDef.class);
         int x = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -82,15 +83,15 @@ public class ShaderExtension implements ArucasExtension {
             RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
             BlockArgumentParser.BlockResult blockResult = BlockArgumentParser.block(registryWrapper, block, true);
             ShadertoyMC.LOGGER.info("Should be block place success");
-            world.setBlockState(pos,blockResult.blockState());
+            world.setBlockState(pos, blockResult.blockState());
             ShadertoyMC.LOGGER.info("Should be block place success");
-        }
-        catch(CommandSyntaxException e) {
+        } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block", e);
         }
         return null;
     }
-    public ArucasList getArea(Arguments arguments){
+
+    public ArucasList getArea(Arguments arguments) {
         Interpreter interpreter = arguments.getInterpreter();
         List<Integer> area = ShaderArea.read().getParams();
         ArucasList list = new ArucasList();

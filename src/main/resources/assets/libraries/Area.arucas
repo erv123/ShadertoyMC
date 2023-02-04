@@ -1,0 +1,27 @@
+import * from util.Vectors;
+class Area{
+    var origin: Vec3d;
+    var size: Vec3d;
+    Area(list: List){
+        this.origin = new Vec3d(list[0],list[1],list[2]);
+        this.size = new Vec3d(list[3],list[4],list[5]);
+    }
+    fun absoluteFromLocal(vec: Vec3d): Vec3d{
+        return vec+this.origin;
+    }
+    fun localFromAbsolute(vec: Vec3d): Vec3d{
+        return vec-this.origin;
+    }
+    fun normFromLocal(vec: Vec3d): Vec3d{
+        return new Vec3d(Math.lerp(-1, 1, vec.x/this.size.x),Math.lerp(-1, 1, vec.y/this.size.y),Math.lerp(-1, 1, vec.z/this.size.z));
+    }
+    fun localFromNorm(vec: Vec3d): Vec3d{
+        return new Vec3d(Math.lerp(0,this.size.x,vec.x),Math.lerp(0,this.size.y,vec.y),Math.lerp(0,this.size.z,vec.z));
+    }
+    fun normFromAbs(vec: Vec3d): Vec3d{
+        return this.normFromLocal(this.localFromAbsolute(vec));
+    }
+    fun absFromNorm(vec: Vec3d): Vec3d{
+        return this.absoluteFromLocal(this.localFromNorm(vec));
+    }
+}
