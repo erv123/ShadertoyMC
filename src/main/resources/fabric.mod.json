@@ -17,9 +17,6 @@
   "entrypoints": {
     "main": [
       "net.erv123.shadertoymc.ShadertoyMC"
-    ],
-    "client": [
-      "net.erv123.shadertoymc.ShadertoyMCClient"
     ]
   },
   "mixins": [

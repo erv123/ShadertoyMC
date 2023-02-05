@@ -1,6 +1,7 @@
 package net.erv123.shadertoymc;
 
 import me.senseiwells.arucas.api.ArucasErrorHandler;
+import me.senseiwells.arucas.core.Arucas;
 import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.ArucasError;
 import me.senseiwells.arucas.exceptions.FatalError;
@@ -28,16 +29,17 @@ public enum ShaderErrorHandler implements ArucasErrorHandler {
 
     @Override
     public void handleFatalError(@NotNull Throwable throwable, @NotNull Interpreter interpreter) {
-        Text error = Text.literal("\n").formatted(Formatting.RED).append("An error has occurred while running '%s'" + interpreter.getName());
+        Text error = Text.literal("\n").formatted(Formatting.RED).append("An error has occurred while running '§s'" + interpreter.getName());
         ShaderUtils.sendMessage(error);
-
         String path = this.writeCrashReport(interpreter, throwable).toAbsolutePath().toString();
+        Text crashReport = Text.literal("A crash report has been saved to: §s")
+                .formatted(Formatting.RED);
+        ShaderUtils.sendMessage(crashReport);
         Text pathText = Text.literal("\n" + path + "\n")
                 .formatted(Formatting.UNDERLINE)
                 .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, path)));
-        Text crashReport = Text.literal("A crash report has been saved to: %s" + pathText)
-                .formatted(Formatting.RED);
-        ShaderUtils.sendMessage(crashReport);
+        ShaderUtils.sendMessage(pathText);
+
     }
 
     @Override
@@ -62,19 +64,22 @@ public enum ShaderErrorHandler implements ArucasErrorHandler {
                     """.formatted(error.format(interpreter));
         }
         String report = """
-                ### Minecraft Version: `%s`
-                ### Essential Client Version: `%s`
-                ### Arucas Version: `%s`
-                ### Script:
-                ```kt
-                // %s
-                %s
-                ```
-                %s### Crash:
-                ```
-                %s
-                ```
-                """.formatted(
+			### Minecraft Version: `%s`
+			### Essential Client Version: `%s`
+			### Arucas Version: `%s`
+			### Script:
+			```kt
+			// %s
+			%s
+			```
+			%s### Crash:
+			```
+			%s
+			```
+			""".formatted(
+                ShaderUtils.getMinecraftVersion(),
+                ShadertoyMC.VERSION,
+                Arucas.getVERSION(),
                 interpreter.getName(),
                 interpreter.getContent(),
                 scriptTrace,

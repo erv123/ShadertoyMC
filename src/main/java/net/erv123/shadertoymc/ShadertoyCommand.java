@@ -85,7 +85,7 @@ public class ShadertoyCommand {
                                 ShadertoyMC.LOGGER.error("I have no idea what tends to cause this error", e);
                                 throw new RuntimeException(e);
                             }
-                            Stream<String> suggestions = files.filter(Predicate.not(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("area.json")).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("libs"))))).map(Path::toString).map(s -> s.substring(ShaderUtils.SHADERTOY_PATH.toString().length() + 1));
+                            Stream<String> suggestions = files.filter(Predicate.not(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("area.json")).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("libs"))).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("crashes"))))).map(Path::toString).map(s -> s.substring(ShaderUtils.SHADERTOY_PATH.toString().length() + 1));
                             return CommandSource.suggestMatching(suggestions, builder);
                         }).executes(context -> {
                             context.getSource().sendMessage(Text.literal("<shaderID> shader pasted"));

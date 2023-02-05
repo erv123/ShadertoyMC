@@ -6,6 +6,7 @@ import me.senseiwells.arucas.api.impl.MultiArucasLibrary;
 import me.senseiwells.arucas.api.impl.ResourceArucasLibrary;
 import me.senseiwells.arucas.core.Interpreter;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.MinecraftVersion;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -71,6 +72,8 @@ public class ShaderUtils {
         if (client.player != null) {
             client.execute(() -> client.player.sendMessage(text, false));
         }
-
+    }
+    public static String getMinecraftVersion() {
+        return MinecraftVersion.CURRENT.getName();
     }
 }
