@@ -88,13 +88,22 @@ public class ShadertoyCommand {
                             Stream<String> suggestions = files.filter(Predicate.not(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("area.json")).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("libs"))).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("crashes"))))).map(Path::toString).map(s -> s.substring(ShaderUtils.SHADERTOY_PATH.toString().length() + 1));
                             return CommandSource.suggestMatching(suggestions, builder);
                         }).executes(context -> {
-                            context.getSource().sendMessage(Text.literal("<shaderID> shader pasted"));
                             String shaderID = StringArgumentType.getString(context, "shaderID");
+                            context.getSource().sendMessage(Text.literal("Running shader: " + shaderID));
                             ShaderUtils.executeScript(shaderID, context.getSource());
                             return 1;
                         })))
+                .then(literal("new")
+                        .then(argument("shaderID", StringArgumentType.string()).executes(context -> {
+                            String shaderID = StringArgumentType.getString(context, "shaderID");
+                            context.getSource().sendMessage(Text.literal("New shader " + shaderID + " created"));
+                            //TODO
+                            return 1;
+                        })))
+                .then(literal("stop").executes(context -> {
+                    ShaderUtils.interpreter.stop();
+                    return 1;
+                }))
         );
-
     }
-
 }

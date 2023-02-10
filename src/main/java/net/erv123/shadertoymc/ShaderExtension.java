@@ -60,8 +60,9 @@ public class ShaderExtension implements ArucasExtension {
             BlockArgumentParser.BlockResult blockResult = BlockArgumentParser.block(registryWrapper, block, true);
             RegistryKey<World> worldRegistry = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString));
             World world = entity.server.getWorld(worldRegistry);
-            world.setBlockState(pos, blockResult.blockState());
-            ShadertoyMC.LOGGER.info("Block place success");
+            SharedConstants.canBlocksFall = false;
+            world.setBlockState(pos, blockResult.blockState(), Block.NOTIFY_LISTENERS, 0);
+            SharedConstants.canBlocksFall = true;
         } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block", e);
         }
@@ -76,17 +77,16 @@ public class ShaderExtension implements ArucasExtension {
         int z = arguments.nextPrimitive(NumberDef.class).intValue();
         ServerPlayerEntity serverPlayerEntity = ShaderUtils.getPlayerForInterpreter(arguments.getInterpreter());
         World world = serverPlayerEntity.getWorld();
-        ShadertoyMC.LOGGER.info("Should be block place success");
         BlockPos pos = new BlockPos(x, y, z);
         try {
             DynamicRegistryManager manager = entity.server.getRegistryManager();
             RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
             BlockArgumentParser.BlockResult blockResult = BlockArgumentParser.block(registryWrapper, block, true);
-            ShadertoyMC.LOGGER.info("Should be block place success");
-            world.setBlockState(pos, blockResult.blockState());
-            ShadertoyMC.LOGGER.info("Should be block place success");
+            SharedConstants.canBlocksFall = false;
+            world.setBlockState(pos, blockResult.blockState(),Block.NOTIFY_LISTENERS, 0);
+            SharedConstants.canBlocksFall = true;
         } catch (CommandSyntaxException e) {
-            ShadertoyMC.LOGGER.error("Failed to place block", e);
+            ShadertoyMC.LOGGER.error("Failed to place block");
         }
         return null;
     }

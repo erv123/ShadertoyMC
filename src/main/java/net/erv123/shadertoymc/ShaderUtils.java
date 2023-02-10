@@ -24,6 +24,8 @@ public class ShaderUtils {
     private static final Map<UUID, ServerPlayerEntity> SCRIPT_PLAYERS = new HashMap<>();
     private static final GitHubArucasLibrary gitLibrary = new GitHubArucasLibrary(SHADERTOY_PATH.resolve("libs"), "https://github.com/erv123/ShadertoyMC_Libraries/contetnts/libs");
     private static final ResourceArucasLibrary resourceLibrary = new ResourceArucasLibrary("assets/libraries");
+
+    public static Interpreter interpreter;
     private static final ArucasAPI ARUCAS_API = new ArucasAPI.Builder()
             .setLibraryManager(new MultiArucasLibrary())
             .addDefault()
@@ -47,6 +49,9 @@ public class ShaderUtils {
     }
 
     public static void executeScript(String fileName, ServerCommandSource source) {
+        //if (interpreter.isRunning()) {
+            //interpreter.stop();
+        //}
         String fileContent;
         Path scriptPath = ShaderUtils.SHADERTOY_PATH.resolve(fileName);
         try {
@@ -58,9 +63,9 @@ public class ShaderUtils {
             e.printStackTrace();
             return;
         }
-        Interpreter interpreter = Interpreter.of(fileContent, fileName, ShaderUtils.ARUCAS_API);
+        interpreter = Interpreter.of(fileContent, "Shader", ShaderUtils.ARUCAS_API);
         ShaderUtils.setPlayerForInterpreter(source.getPlayer(), interpreter);
-        interpreter.executeAsync();
+         interpreter.executeAsync();
     }
 
     public static MinecraftClient getClient() {
@@ -76,4 +81,5 @@ public class ShaderUtils {
     public static String getMinecraftVersion() {
         return MinecraftVersion.CURRENT.getName();
     }
+
 }
