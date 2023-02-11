@@ -7,8 +7,6 @@
     "FallingBlockMixin",
     "MinecraftServerMixin"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }
