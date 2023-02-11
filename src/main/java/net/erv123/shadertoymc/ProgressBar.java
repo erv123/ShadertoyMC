@@ -16,6 +16,11 @@ public class ProgressBar {
             manager.remove(bar);
         }
     }
+    public static void hideBossBar() {
+        if (bossBar != null) {
+            bossBar.clearPlayers();
+        }
+    }
     public static void generateBossBar() {
         if (bossBar == null) {
             BossBarManager manager = ShaderUtils.SERVER.getBossBarManager();

@@ -23,7 +23,7 @@ import java.util.UUID;
 public class ShaderUtils {
     public static final Path SHADERTOY_PATH = FabricLoader.getInstance().getConfigDir().resolve("Shadertoy");
     private static final Map<UUID, ServerPlayerEntity> SCRIPT_PLAYERS = new HashMap<>();
-    private static final GitHubArucasLibrary gitLibrary = new GitHubArucasLibrary(SHADERTOY_PATH.resolve("libs"), "https://github.com/erv123/ShadertoyMC_Libraries/contetnts/libs");
+    private static final GitHubArucasLibrary gitLibrary = new GitHubArucasLibrary(SHADERTOY_PATH.resolve("libs"), "https://api.github.com/repos/erv123/ShadertoyMC_Libraries/contents/libs");
     private static final ResourceArucasLibrary resourceLibrary = new ResourceArucasLibrary("assets/libraries");
 
     public static MinecraftServer SERVER;
@@ -73,6 +73,7 @@ public class ShaderUtils {
         interpreter.addStopEvent(()->{
             sendMessage(Text.of("Done!"));
             ProgressBar.deleteAllBossBars();
+            ProgressBar.hideBossBar();
         });
         ShaderUtils.setPlayerForInterpreter(source.getPlayer(), interpreter);
         interpreter.executeAsync();
