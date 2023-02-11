@@ -54,7 +54,7 @@ for(lx = 0; lx < area.size.x; lx=lx+dx){
             else{
                 place("air", absC.x, absC.y, absC.z);
             }
-            //updates the boss bar, do not touch
+            //updates the boss bossBar, do not touch
             blocksPlaced++;
             display(area.getPercentageProgress(blocksPlaced));
         }

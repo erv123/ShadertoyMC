@@ -1,11 +1,9 @@
 package net.erv123.shadertoymc;
 
-
 import net.erv123.shadertoymc.commands.ShadertoyCommand;
-import net.erv123.shadertoymc.util.ShaderArea;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,16 +13,12 @@ import org.apache.logging.log4j.Logger;
  * Make Area in Java
  */
 public class ShadertoyMC implements ModInitializer {
-	public static final String MOD_ID = "shadertoymc";
-	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+	public static final Logger LOGGER = LogManager.getLogger("Shaydertoy");
 	public static final String VERSION = "1.0.0";
+	public static MinecraftServer SERVER;
 
 	@Override
 	public void onInitialize() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> ShadertoyCommand.register(dispatcher));
-		if (ShaderArea.read() == null) {
-			ShadertoyMC.LOGGER.info("Time to initialize an area file");
-			new ShaderArea(Vec3i.ZERO, Vec3i.ZERO);
-		}
 	}
 }

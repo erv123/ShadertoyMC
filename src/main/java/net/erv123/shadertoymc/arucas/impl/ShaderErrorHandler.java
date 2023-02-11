@@ -7,8 +7,10 @@ import me.senseiwells.arucas.exceptions.ArucasError;
 import me.senseiwells.arucas.exceptions.FatalError;
 import me.senseiwells.arucas.exceptions.Propagator;
 import me.senseiwells.arucas.utils.Util;
+import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.erv123.shadertoymc.ShadertoyMC;
+import net.minecraft.MinecraftVersion;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -26,21 +28,20 @@ public enum ShaderErrorHandler implements ArucasErrorHandler {
 
 	@Override
 	public void handleArucasError(@NotNull ArucasError arucasError, @NotNull Interpreter interpreter) {
-		ShaderUtils.sendMessageToPlayer(interpreter, Text.literal(arucasError.format(interpreter)).styled(s -> s.withColor(Formatting.RED)));
+		ScriptUtils.sendMessageToHolder(interpreter, Text.literal(arucasError.format(interpreter)).styled(s -> s.withColor(Formatting.RED)));
 	}
 
 	@Override
 	public void handleFatalError(@NotNull Throwable throwable, @NotNull Interpreter interpreter) {
 		Text error = Text.literal("\n").formatted(Formatting.RED).append("An error has occurred while running '§s'" + interpreter.getName());
-		ShaderUtils.sendMessageToPlayer(interpreter, error);
+		ScriptUtils.sendMessageToHolder(interpreter, error);
 		String path = this.writeCrashReport(interpreter, throwable).toAbsolutePath().toString();
 		Text crashReport = Text.literal("A crash report has been saved to: §s")
 			.formatted(Formatting.RED);
-		ShaderUtils.sendMessageToPlayer(interpreter, crashReport);
+		ScriptUtils.sendMessageToHolder(interpreter, crashReport);
 		Text pathText = Text.literal("\n" + path + "\n")
-			.formatted(Formatting.UNDERLINE)
-			.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, path)));
-		ShaderUtils.sendMessageToPlayer(interpreter, pathText);
+			.formatted(Formatting.UNDERLINE);
+		ScriptUtils.sendMessageToHolder(interpreter, pathText);
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public enum ShaderErrorHandler implements ArucasErrorHandler {
 			%s
 			```
 			""".formatted(
-			ShaderUtils.getMinecraftVersion(),
+			MinecraftVersion.CURRENT.getName(),
 			ShadertoyMC.VERSION,
 			Arucas.getVERSION(),
 			interpreter.getName(),

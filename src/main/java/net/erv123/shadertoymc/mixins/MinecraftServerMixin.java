@@ -1,7 +1,7 @@
 package net.erv123.shadertoymc.mixins;
 
+import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.util.MinecraftServerTicker;
-import net.erv123.shadertoymc.util.ShaderUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +27,7 @@ public abstract class MinecraftServerMixin implements MinecraftServerTicker {
 
 	@Inject(method = "loadWorld", at = @At("HEAD"))
 	private void serverLoaded(CallbackInfo ci) {
-		ShaderUtils.SERVER = (MinecraftServer) (Object) this;
+		ShadertoyMC.SERVER = (MinecraftServer) (Object) this;
 	}
 
 	@Override

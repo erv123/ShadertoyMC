@@ -4,6 +4,8 @@ import me.senseiwells.arucas.api.ArucasOutput;
 import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.utils.LocatableTrace;
 import net.erv123.shadertoymc.ShadertoyMC;
+import net.erv123.shadertoymc.util.ShaderUtils;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +52,7 @@ public enum ShaderOutput implements ArucasOutput {
 
 	@Override
 	public void print(@Nullable Object o) {
-		// ShaderUtils.sendMessage(Text.literal(String.valueOf(o)));
+		ShaderUtils.sendMessageToOps(Text.literal(String.valueOf(o)));
 	}
 
 	@Override
