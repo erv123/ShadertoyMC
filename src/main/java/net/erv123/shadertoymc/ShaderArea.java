@@ -54,7 +54,9 @@ public class ShaderArea {
         ShadertoyMC.LOGGER.info("File creation");
 
         try {
-            Files.createDirectory(ShaderUtils.SHADERTOY_PATH);
+            if (!Files.exists(ShaderUtils.SHADERTOY_PATH)) {
+                Files.createDirectory(ShaderUtils.SHADERTOY_PATH);
+            }
         } catch (IOException e) {
             ShadertoyMC.LOGGER.error("Directory already exists", e);
         }
