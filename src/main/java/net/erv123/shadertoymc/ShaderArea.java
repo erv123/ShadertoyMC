@@ -52,6 +52,7 @@ public class ShaderArea {
         ShadertoyMC.LOGGER.info("Staring save");
         String json = GSON.toJson(this);
         ShadertoyMC.LOGGER.info("File creation");
+
         try {
             Files.createDirectory(ShaderUtils.SHADERTOY_PATH);
         } catch (IOException e) {

@@ -15,6 +15,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -31,7 +32,8 @@ public class ShaderExtension implements ArucasExtension {
                 BuiltInFunction.of("getWorld", this::getWorld),
                 BuiltInFunction.of("place", 5, this::place),
                 BuiltInFunction.of("place", 4, this::placeNoWorldArg),
-                BuiltInFunction.of("getArea", this::getArea)
+                BuiltInFunction.of("getArea", this::getArea),
+                BuiltInFunction.of("display",1, this::updatePercentage)
         );
     }
 
@@ -65,6 +67,8 @@ public class ShaderExtension implements ArucasExtension {
             ShaderUtils.canBlocksFall = true;
         } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block", e);
+            ShaderUtils.sendMessage(Text.of("§cBlock " + block + " not recognised!"));
+            ShaderUtils.interpreter.stop();
         }
         return null;
     }
@@ -87,7 +91,14 @@ public class ShaderExtension implements ArucasExtension {
             ShaderUtils.canBlocksFall = true;
         } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block");
+            ShaderUtils.sendMessage(Text.of("§cBlock " + block + " not recognised!"));
+            ShaderUtils.interpreter.stop();
         }
+        return null;
+    }
+    public Void updatePercentage(Arguments arguments){
+        float p = arguments.nextPrimitive(NumberDef.class).floatValue();
+        ProgressBar.setPercentage(p);
         return null;
     }
 

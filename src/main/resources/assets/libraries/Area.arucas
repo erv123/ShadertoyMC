@@ -2,9 +2,11 @@ import * from util.Vectors;
 class Area{
     var origin: Vec3d;
     var size: Vec3d;
+    var noBlocks: Number;
     Area(list: List){
         this.origin = new Vec3d(list[0],list[1],list[2]);
         this.size = new Vec3d(list[3],list[4],list[5]);
+        this.noBlocks = this.size.x * this.size.y * this.size.z;
     }
     fun absoluteFromLocal(vec: Vec3d): Vec3d{
         return vec+this.origin;
@@ -23,5 +25,8 @@ class Area{
     }
     fun absFromNorm(vec: Vec3d): Vec3d{
         return this.absoluteFromLocal(this.localFromNorm(vec));
+    }
+    fun getPercentageProgress(n: Number){
+        return n / this.noBlocks;
     }
 }

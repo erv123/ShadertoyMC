@@ -6,10 +6,11 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -82,7 +83,7 @@ public class ShadertoyCommand {
                             try {
                                 files = Files.list(ShaderUtils.SHADERTOY_PATH);
                             } catch (IOException e) {
-                                ShadertoyMC.LOGGER.error("I have no idea what tends to cause this error", e);
+                                ShadertoyMC.LOGGER.error("File error go brrrrrrrrrrr", e);
                                 throw new RuntimeException(e);
                             }
                             Stream<String> suggestions = files.filter(Predicate.not(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("area.json")).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("libs"))).or(Predicate.isEqual(ShaderUtils.SHADERTOY_PATH.resolve("crashes"))))).map(Path::toString).map(s -> s.substring(ShaderUtils.SHADERTOY_PATH.toString().length() + 1));
@@ -96,8 +97,30 @@ public class ShadertoyCommand {
                 .then(literal("new")
                         .then(argument("shaderID", StringArgumentType.string()).executes(context -> {
                             String shaderID = StringArgumentType.getString(context, "shaderID");
-                            context.getSource().sendMessage(Text.literal("New shader " + shaderID + " created"));
-                            //TODO
+                            if(!shaderID.endsWith(".arucas")){
+                                shaderID += ".arucas";
+                            }
+                            Path pastePath = ShaderUtils.SHADERTOY_PATH.resolve(shaderID);
+                            try {
+                                InputStream inputStream = ShadertoyMC.class.getResourceAsStream("/assets/exampleShader.arucas");
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                                StringBuilder builder = new StringBuilder();
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    builder.append(line).append("\n");
+                                }
+                                File file = new File(pastePath.toUri());
+                                FileWriter writer = new FileWriter(file);
+                                writer.write(builder.toString());
+                                writer.close();
+                            }
+                            catch (IOException e){
+                                ShadertoyMC.LOGGER.error("File error go brrr", e);
+                                throw new RuntimeException(e);
+                            }
+                            Text pathText = Text.literal("\nNew shader file §n" + shaderID + "§r created!\n")
+                                    .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, pastePath.toString())));
+                            ShaderUtils.sendMessage(pathText);
                             return 1;
                         })))
                 .then(literal("stop").executes(context -> {

@@ -1,0 +1,62 @@
+//Essential libraries, do not remove
+import * from util.Vectors;
+import * from Area;
+import * from util.Noise;
+import * from BlockPalette;
+//Additional libraries, add/remove them as needed
+
+
+//Essential setup variables, only edit if you know what you're doing
+area = new Area(getArea());
+dx = 1;
+dy = 1;
+dz = 1;
+
+//Setup your global variables here
+voronoi = new Voronoi(Vec3d.fromScalar(10));
+multi = new RidgedMulti(15);
+
+fun map(n, aMax, aMin, bMin, bMax){
+        return bMin + (n - aMin) * (bMax - bMin) / (aMax - aMin);
+}
+
+//Loop setup, only edit if you know what you're doing
+for(lx = 0; lx < area.size.x; lx=lx+dx){
+    for(ly = 0; ly < area.size.y; ly=ly+dy){
+        for(lz = 0; lz < area.size.z; lz=lz+dz){
+            /*Coordinate variables
+            locC: local coordinates in the area with are origin being coordinate 0 0 0 and all coordinates within the area positive
+            absC: absolute coordinates in minecraft world
+            normC: all 3 axes normalized so that min value = -1 and max value = 1
+            the area class has methods to convert from any of the 3 coordinate types to any other coordinate type
+            */
+            locC = new Vec3d(lx, ly, lz);
+            absC = area.absoluteFromLocal(locC);
+            normC = area.normFromLocal(locC);
+            /*
+            Your code goes here
+            use the function place(block,x,y,z); to place a block in your current dimension at the coordiates x,y,z
+            block input variable will be parsed the same as the block input when doing /setblock or /fill commands
+            x, y, z should be the ablsolute coordinates, otherwise the blocks will be placed outside the defined area
+            */
+            palette = BlockPalette.COLOUR_WOOL;
+            voronoiValue = voronoi.getValue(locC);
+            multiValue = multi.getValue(locC.x, 0, locC.z);
+
+            //index = Math.clamp(voronoiValue.x.floor(), 0, 15);
+            index = Math.mod(voronoiValue.y,15);
+            r = normC.distanceTo(Vec3d.zero());
+
+            if(r<0.98 && normC.y<multiValue){
+                place(palette[index], absC.x, absC.y, absC.z);
+            }
+            else if(r<0.98){
+                place(BlockPalette.COLOUR[index] + "_stained_glass", absC.x, absC.y, absC.z);
+            }
+            else{
+                place("air", absC.x, absC.y, absC.z);
+            }
+
+        }
+    }
+}

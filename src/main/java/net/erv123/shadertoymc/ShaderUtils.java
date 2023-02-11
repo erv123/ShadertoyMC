@@ -5,7 +5,6 @@ import me.senseiwells.arucas.api.impl.GitHubArucasLibrary;
 import me.senseiwells.arucas.api.impl.MultiArucasLibrary;
 import me.senseiwells.arucas.api.impl.ResourceArucasLibrary;
 import me.senseiwells.arucas.core.Interpreter;
-import me.senseiwells.arucas.utils.ArucasExecutor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.client.MinecraftClient;
@@ -26,9 +25,8 @@ public class ShaderUtils {
     private static final Map<UUID, ServerPlayerEntity> SCRIPT_PLAYERS = new HashMap<>();
     private static final GitHubArucasLibrary gitLibrary = new GitHubArucasLibrary(SHADERTOY_PATH.resolve("libs"), "https://github.com/erv123/ShadertoyMC_Libraries/contetnts/libs");
     private static final ResourceArucasLibrary resourceLibrary = new ResourceArucasLibrary("assets/libraries");
-    private static final ArucasExecutor MinecraftExecutor = new MinecraftExecutor();
 
-    public static MinecraftServer server;
+    public static MinecraftServer SERVER;
     public static boolean canBlocksFall = true;
     public static Interpreter interpreter;
     private static final ArucasAPI ARUCAS_API = new ArucasAPI.Builder()
@@ -37,7 +35,8 @@ public class ShaderUtils {
             .addArucasLibrary("ShaderGithub", gitLibrary)
             .addArucasLibrary("ResourceLibrary", resourceLibrary)
             .setErrorHandler(ShaderErrorHandler.INSTANCE)
-            .setMainExecutor(MinecraftExecutor)
+            .setMainExecutor(MinecraftExecutor.INSTANCE)
+            .addPoller(MinecraftServerPoller.INSTANCE)
             .setOutput(ShaderOutput.INSTANCE)
             .addBuiltInExtension(new ShaderExtension())
             .build();
@@ -55,9 +54,10 @@ public class ShaderUtils {
     }
 
     public static void executeScript(String fileName, ServerCommandSource source) {
-        //if (interpreter.isRunning()) {
-            //interpreter.stop();
-        //}
+        if (interpreter!=null && interpreter.isRunning()) {
+            interpreter.stop();
+        }
+
         String fileContent;
         Path scriptPath = ShaderUtils.SHADERTOY_PATH.resolve(fileName);
         try {
@@ -70,8 +70,13 @@ public class ShaderUtils {
             return;
         }
         interpreter = Interpreter.of(fileContent, "Shader", ShaderUtils.ARUCAS_API);
+        interpreter.addStopEvent(()->{
+            sendMessage(Text.of("Done!"));
+            ProgressBar.deleteAllBossBars();
+        });
         ShaderUtils.setPlayerForInterpreter(source.getPlayer(), interpreter);
-         interpreter.executeAsync();
+        interpreter.executeAsync();
+        ProgressBar.generateBossBar();
     }
 
     public static MinecraftClient getClient() {
