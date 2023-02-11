@@ -1,7 +1,9 @@
 ### ShadertoyMC
 
-This minecraft mod allows writing scripts in Arucas (https://github.com/senseiwells/Arucas) with the goal of placing blocks based on math
+This minecraft mod allows writing scripts in Arucas (https://github.com/senseiwells/Arucas) with the goal of placing blocks based on math.
+
 The working logic is similar to how https://www.shadertoy.com/ works: an expression is calculated for each block with block coordinates as inputs and as a result of this expression a block is placed at the coordinates
+
 FabricAPI required
 
 ## Easy start
