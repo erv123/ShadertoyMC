@@ -17,6 +17,8 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 	maven { url 'https://jitpack.io' }
+
+	maven { url "https://repo.spongepowered.org/repository/maven-public/" }
 }
 
 dependencies {
@@ -29,6 +31,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	include implementation("com.github.senseiwells:Arucas:${project.arucas_version}")
 	include implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
+	include implementation("com.github.Sleaker:jlibnoise:v1.0")
 	implementation 'com.google.code.gson:gson:2.10.1'
 
 	// Uncomment the following line to enable the deprecated Fabric API modules. 

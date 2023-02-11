@@ -7,12 +7,14 @@ import me.senseiwells.arucas.api.impl.GitHubArucasLibrary;
 import me.senseiwells.arucas.api.impl.MultiArucasLibrary;
 import me.senseiwells.arucas.api.impl.ResourceArucasLibrary;
 import me.senseiwells.arucas.core.Interpreter;
+import me.senseiwells.arucas.exceptions.RuntimeError;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.arucas.extension.ShaderExtension;
 import net.erv123.shadertoymc.arucas.impl.MinecraftExecutor;
 import net.erv123.shadertoymc.arucas.impl.MinecraftServerPoller;
 import net.erv123.shadertoymc.arucas.impl.ShaderErrorHandler;
 import net.erv123.shadertoymc.arucas.impl.ShaderOutput;
+import net.jlibnoise.NoiseQuality;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.server.command.ServerCommandSource;
@@ -87,6 +89,15 @@ public class ScriptUtils {
 
 	public static ScriptData getScriptData(Interpreter interpreter) {
 		return SCRIPT_DATA.get(interpreter.getProperties().getId());
+	}
+
+	public static NoiseQuality stringToNoiseQuality(String string) {
+		return switch (string.toLowerCase(Locale.ROOT)) {
+			case "fast", "f" -> NoiseQuality.FAST;
+			case "standard", "s" -> NoiseQuality.STANDARD;
+			case "best", "b" -> NoiseQuality.BEST;
+			default -> throw new RuntimeError("Unknown noise quality: " + string);
+		};
 	}
 
 	public static void executeScript(String scriptName, ServerCommandSource source) throws CommandSyntaxException {

@@ -13,7 +13,8 @@ import java.util.concurrent.Future;
 public enum MinecraftExecutor implements ArucasExecutor {
 	INSTANCE;
 
-	public <T> @NotNull Future<T> submit(@NotNull Callable<T> callable) {
+	@NotNull
+	public <T> Future<T> submit(@NotNull Callable<T> callable) {
 		MinecraftServer server = ShadertoyMC.SERVER;
 		return server.submit(() -> {
 			try {
