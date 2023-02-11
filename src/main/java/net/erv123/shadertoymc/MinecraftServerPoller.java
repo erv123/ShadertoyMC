@@ -13,10 +13,14 @@ public enum MinecraftServerPoller implements ArucasPoller {
 
     @Override
     public boolean poll(@NotNull Interpreter interpreter) {
-        if(this.lastPoll + TICK_TIME < System.nanoTime()) {
-            ((MinecraftServerTicker) ShaderUtils.SERVER).forceTick(() -> System.nanoTime() - lastPoll < 50000000L);
-            this.lastPoll = System.nanoTime();
+        if(ShaderUtils.running) {
+            if (this.lastPoll + TICK_TIME < System.nanoTime()) {
+                ((MinecraftServerTicker) ShaderUtils.SERVER).forceTick(() -> System.nanoTime() - lastPoll < 50000000L);
+                this.lastPoll = System.nanoTime();
+            }
+            return true;
         }
-        return true;
+        else
+            return false;
     }
 }

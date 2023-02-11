@@ -29,4 +29,17 @@ class Area{
     fun getPercentageProgress(n: Number){
         return n / this.noBlocks;
     }
+    fun forEach(function){
+        vec = Vec3d.zero();
+        for(lx = 0; lx < this.size.x; lx=lx+dx){
+            for(ly = 0; ly < this.size.y; ly=ly+dy){
+                for(lz = 0; lz < this.size.z; lz=lz+dz){
+                    vec.x = lx;
+                    vec.y = ly;
+                    vec.z = lz;
+                    function(vec);
+                }
+            }
+        }
+    }
 }

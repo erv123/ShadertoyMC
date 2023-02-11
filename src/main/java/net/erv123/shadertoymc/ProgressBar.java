@@ -1,5 +1,6 @@
 package net.erv123.shadertoymc;
 
+import me.senseiwells.arucas.core.Interpreter;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.entity.boss.CommandBossBar;
@@ -21,7 +22,7 @@ public class ProgressBar {
             bossBar.clearPlayers();
         }
     }
-    public static void generateBossBar() {
+    public static void generateBossBar(Interpreter interpreter) {
         if (bossBar == null) {
             BossBarManager manager = ShaderUtils.SERVER.getBossBarManager();
             Identifier id = Identifier.of("Shadertoy", "bar");
@@ -34,11 +35,10 @@ public class ProgressBar {
         }
         bossBar.setPercent(0);
         bossBar.setColor(BossBar.Color.GREEN);
-        bossBar.addPlayer(ShaderUtils.getPlayerForInterpreter(ShaderUtils.interpreter));
+        bossBar.addPlayer(ShaderUtils.getPlayerForInterpreter(interpreter));
     }
 
     public static void setPercentage(float p){
-        ShadertoyMC.LOGGER.info(p);
         bossBar.setPercent(p);
     }
 }

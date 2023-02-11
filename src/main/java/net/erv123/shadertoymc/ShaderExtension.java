@@ -68,7 +68,7 @@ public class ShaderExtension implements ArucasExtension {
         } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block", e);
             ShaderUtils.sendMessage(Text.of("§cBlock " + block + " not recognised!"));
-            ShaderUtils.interpreter.stop();
+            ShaderUtils.running = false;
         }
         return null;
     }
@@ -92,7 +92,7 @@ public class ShaderExtension implements ArucasExtension {
         } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block");
             ShaderUtils.sendMessage(Text.of("§cBlock " + block + " not recognised!"));
-            ShaderUtils.interpreter.stop();
+            ShaderUtils.running = false;
         }
         return null;
     }

@@ -28,7 +28,7 @@ public class ShaderUtils {
 
     public static MinecraftServer SERVER;
     public static boolean canBlocksFall = true;
-    public static Interpreter interpreter;
+    public static boolean running = false;
     private static final ArucasAPI ARUCAS_API = new ArucasAPI.Builder()
             .setLibraryManager(new MultiArucasLibrary())
             .addDefault()
@@ -54,10 +54,7 @@ public class ShaderUtils {
     }
 
     public static void executeScript(String fileName, ServerCommandSource source) {
-        if (interpreter!=null && interpreter.isRunning()) {
-            interpreter.stop();
-        }
-
+        running = false;
         String fileContent;
         Path scriptPath = ShaderUtils.SHADERTOY_PATH.resolve(fileName);
         try {
@@ -69,15 +66,17 @@ public class ShaderUtils {
             e.printStackTrace();
             return;
         }
-        interpreter = Interpreter.of(fileContent, "Shader", ShaderUtils.ARUCAS_API);
+        Interpreter interpreter = Interpreter.of(fileContent, "Shader", ShaderUtils.ARUCAS_API);
         interpreter.addStopEvent(()->{
             sendMessage(Text.of("Done!"));
+            running = false;
             ProgressBar.deleteAllBossBars();
             ProgressBar.hideBossBar();
         });
         ShaderUtils.setPlayerForInterpreter(source.getPlayer(), interpreter);
         interpreter.executeAsync();
-        ProgressBar.generateBossBar();
+        running = true;
+        ProgressBar.generateBossBar(interpreter);
     }
 
     public static MinecraftClient getClient() {

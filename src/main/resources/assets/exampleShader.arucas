@@ -8,16 +8,14 @@ import * from BlockPalette;
 
 //Essential setup variables, only edit if you know what you're doing
 area = new Area(getArea());
-dx = 1;
-dy = 1;
-dz = 1;
+blocksPlaced = 0;
 
 //Setup your global variables here
 voronoi = new Voronoi(Vec3d.fromScalar(10));
 multi = new RidgedMulti(15);
 
 fun map(n, aMax, aMin, bMin, bMax){
-        return bMin + (n - aMin) * (bMax - bMin) / (aMax - aMin);
+    return bMin + (n - aMin) * (bMax - bMin) / (aMax - aMin);
 }
 
 //Loop setup, only edit if you know what you're doing
@@ -56,7 +54,9 @@ for(lx = 0; lx < area.size.x; lx=lx+dx){
             else{
                 place("air", absC.x, absC.y, absC.z);
             }
-
+            //updates the boss bar, do not touch
+            blocksPlaced++;
+            display(area.getPercentageProgress(blocksPlaced));
         }
     }
 }

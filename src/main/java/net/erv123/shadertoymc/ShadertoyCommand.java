@@ -124,7 +124,7 @@ public class ShadertoyCommand {
                             return 1;
                         })))
                 .then(literal("stop").executes(context -> {
-                    ShaderUtils.interpreter.stop();
+                    ShaderUtils.running = false;
                     return 1;
                 }))
         );
