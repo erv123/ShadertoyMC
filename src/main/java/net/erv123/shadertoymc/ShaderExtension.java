@@ -60,9 +60,9 @@ public class ShaderExtension implements ArucasExtension {
             BlockArgumentParser.BlockResult blockResult = BlockArgumentParser.block(registryWrapper, block, true);
             RegistryKey<World> worldRegistry = RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString));
             World world = entity.server.getWorld(worldRegistry);
-            SharedConstants.canBlocksFall = false;
+            ShaderUtils.canBlocksFall = false;
             world.setBlockState(pos, blockResult.blockState(), Block.NOTIFY_LISTENERS, 0);
-            SharedConstants.canBlocksFall = true;
+            ShaderUtils.canBlocksFall = true;
         } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block", e);
         }
@@ -82,9 +82,9 @@ public class ShaderExtension implements ArucasExtension {
             DynamicRegistryManager manager = entity.server.getRegistryManager();
             RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
             BlockArgumentParser.BlockResult blockResult = BlockArgumentParser.block(registryWrapper, block, true);
-            SharedConstants.canBlocksFall = false;
+            ShaderUtils.canBlocksFall = false;
             world.setBlockState(pos, blockResult.blockState(),Block.NOTIFY_LISTENERS, 0);
-            SharedConstants.canBlocksFall = true;
+            ShaderUtils.canBlocksFall = true;
         } catch (CommandSyntaxException e) {
             ShadertoyMC.LOGGER.error("Failed to place block");
         }

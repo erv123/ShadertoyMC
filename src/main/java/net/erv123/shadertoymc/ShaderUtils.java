@@ -5,9 +5,11 @@ import me.senseiwells.arucas.api.impl.GitHubArucasLibrary;
 import me.senseiwells.arucas.api.impl.MultiArucasLibrary;
 import me.senseiwells.arucas.api.impl.ResourceArucasLibrary;
 import me.senseiwells.arucas.core.Interpreter;
+import me.senseiwells.arucas.utils.ArucasExecutor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -24,7 +26,10 @@ public class ShaderUtils {
     private static final Map<UUID, ServerPlayerEntity> SCRIPT_PLAYERS = new HashMap<>();
     private static final GitHubArucasLibrary gitLibrary = new GitHubArucasLibrary(SHADERTOY_PATH.resolve("libs"), "https://github.com/erv123/ShadertoyMC_Libraries/contetnts/libs");
     private static final ResourceArucasLibrary resourceLibrary = new ResourceArucasLibrary("assets/libraries");
+    private static final ArucasExecutor MinecraftExecutor = new MinecraftExecutor();
 
+    public static MinecraftServer server;
+    public static boolean canBlocksFall = true;
     public static Interpreter interpreter;
     private static final ArucasAPI ARUCAS_API = new ArucasAPI.Builder()
             .setLibraryManager(new MultiArucasLibrary())
@@ -32,6 +37,7 @@ public class ShaderUtils {
             .addArucasLibrary("ShaderGithub", gitLibrary)
             .addArucasLibrary("ResourceLibrary", resourceLibrary)
             .setErrorHandler(ShaderErrorHandler.INSTANCE)
+            .setMainExecutor(MinecraftExecutor)
             .setOutput(ShaderOutput.INSTANCE)
             .addBuiltInExtension(new ShaderExtension())
             .build();
