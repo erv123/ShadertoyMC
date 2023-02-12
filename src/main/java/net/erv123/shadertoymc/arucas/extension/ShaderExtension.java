@@ -122,14 +122,6 @@ public class ShaderExtension implements ArucasExtension {
 		return null;
 	}
 
-	private Void updateProgress(Arguments arguments) {
-		float progress = arguments.nextPrimitive(NumberDef.class).floatValue();
-		ScriptUtils.showProgressBar(arguments.getInterpreter());
-		CommandBossBar bar = ScriptUtils.getBossBar(arguments.getInterpreter());
-		bar.setPercent(progress);
-		return null;
-	}
-
 	private void place(Interpreter interpreter, ServerWorld world, String block, int x, int y, int z) {
 		ServerCommandSource source = ScriptUtils.getScriptHolder(interpreter);
 		DynamicRegistryManager manager = source.getRegistryManager();
