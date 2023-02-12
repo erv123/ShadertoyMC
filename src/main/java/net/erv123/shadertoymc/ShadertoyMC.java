@@ -11,6 +11,9 @@ import org.apache.logging.log4j.Logger;
 TODO:
 Make noise in Java
 Make Area in Java
+Make area selection compatible with world edit
+auto initialize the world edit area to match the shadertoy area
+make it a setting
  */
 public class ShadertoyMC implements ModInitializer {
     public static final String MOD_ID = "shadertoymc";
