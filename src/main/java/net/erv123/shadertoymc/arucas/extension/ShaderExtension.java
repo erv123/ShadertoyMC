@@ -3,6 +3,7 @@ package net.erv123.shadertoymc.arucas.extension;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.senseiwells.arucas.api.ArucasExtension;
 import me.senseiwells.arucas.api.docs.annotations.ExtensionDoc;
+import me.senseiwells.arucas.builtin.FunctionDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.builtin.StringDef;
 import me.senseiwells.arucas.classes.instance.ClassInstance;
@@ -17,7 +18,6 @@ import net.erv123.shadertoymc.util.ShaderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.argument.BlockArgumentParser;
-import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -26,10 +26,15 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 @ExtensionDoc(
 	name = "ShaderExtension",
@@ -87,37 +92,59 @@ public class ShaderExtension implements ArucasExtension {
 	}
 
 	private Void area(Arguments arguments) {
-		int ax = arguments.nextPrimitive(NumberDef.class).intValue();
-		int ay = arguments.nextPrimitive(NumberDef.class).intValue();
-		int az = arguments.nextPrimitive(NumberDef.class).intValue();
-		int bx = arguments.nextPrimitive(NumberDef.class).intValue();
-		int by = arguments.nextPrimitive(NumberDef.class).intValue();
-		int bz = arguments.nextPrimitive(NumberDef.class).intValue();
+		int originX = arguments.nextPrimitive(NumberDef.class).intValue();
+		int originY = arguments.nextPrimitive(NumberDef.class).intValue();
+		int originZ = arguments.nextPrimitive(NumberDef.class).intValue();
+		int sizeX = arguments.nextPrimitive(NumberDef.class).intValue();
+		int sizeY = arguments.nextPrimitive(NumberDef.class).intValue();
+		int sizeZ = arguments.nextPrimitive(NumberDef.class).intValue();
+
+		if (sizeX < 1 || sizeY < 1 || sizeZ < 1) {
+			throw new RuntimeError("Size cannot be less than 1");
+		}
+
 		ClassInstance callback = arguments.nextFunction();
 		Interpreter interpreter = arguments.getInterpreter();
-		int startX = Math.min(ax, bx);
-		int endX = Math.max(ax, bx);
-		int startY = Math.min(ay, by);
-		int endY = Math.max(ay, by);
-		int startZ = Math.min(az, bz);
-		int endZ = Math.max(az, bz);
 
-		int volume = (endX - startX) * (endY - startY) * (endZ - startZ);
+		int volume = sizeX * sizeY * sizeZ;
 		int completed = 0;
 
+		int parameters = callback.asPrimitive(FunctionDef.class).getCount();
+		Function<Vec3i, List<Object>> generator = switch (parameters) {
+			case 1 -> List::of;
+			case 2 -> (position) -> {
+				Vec3d normal = new Vec3d(
+					MathHelper.lerp(-1, 1, position.getX() / (double) sizeX),
+					MathHelper.lerp(-1, 1, position.getY() / (double) sizeY),
+					MathHelper.lerp(-1, 1, position.getZ() / (double) sizeZ)
+				);
+				return List.of(position, normal);
+			};
+			case 3 -> (position) -> {
+				Vec3d normal = new Vec3d(
+					MathHelper.lerp(-1, 1, position.getX() / (double) sizeX),
+					MathHelper.lerp(-1, 1, position.getY() / (double) sizeY),
+					MathHelper.lerp(-1, 1, position.getZ() / (double) sizeZ)
+				);
+				Vec3i absolute = position.add(originX, originY, originX);
+				return List.of(position, normal, absolute);
+			};
+			default -> throw new RuntimeError("Callback function needs to have 1, 2, or 3 parameters");
+		};
+
 		ScriptUtils.showProgressBar(interpreter);
-		for (int x = startX; x <= endX; x++) {
-			ClassInstance xInstance = interpreter.create(NumberDef.class, (double) x);
-			for (int y = startY; y <= endY; y++) {
-				ClassInstance yInstance = interpreter.create(NumberDef.class, (double) y);
-				for (int z = startZ; z <= endZ; z++, completed++) {
-					ClassInstance zInstance = interpreter.create(NumberDef.class, (double) z);
-					interpreter.call(callback, List.of(xInstance, yInstance, zInstance), Trace.getINTERNAL());
+		for (int x = originX; x <= originX + sizeX; x++) {
+			for (int y = originY; y <= originY + sizeY; y++) {
+				for (int z = originZ; z <= originZ + sizeZ; z++, completed++) {
+					List<ClassInstance> args = new ArrayList<>();
+					for (Object vec : generator.apply(new Vec3i(x, y, z))) {
+						args.add(interpreter.convertValue(vec));
+					}
+					interpreter.call(callback, args, Trace.getINTERNAL());
 				}
 			}
 			ScriptUtils.getBossBar(interpreter).setPercent(completed / (float) volume);
 		}
-
 		ScriptUtils.hideProgressBar(interpreter);
 		return null;
 	}

@@ -22,20 +22,6 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class ShadertoyCommand {
-	/*
-			/shadertoy
-				area
-					pos size
-					clear
-					display
-					pos1
-					pos2
-					size
-
-				shader
-					calculate
-					paste
-	 */
 	private ShadertoyCommand() {
 
 	}
