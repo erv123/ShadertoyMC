@@ -17,7 +17,7 @@ public enum MinecraftServerPoller implements ArucasPoller {
 	@Override
 	public void poll(@NotNull Interpreter interpreter) {
 		if (ShadertoyMC.SERVER.isOnThread() && this.lastPoll + TICK_TIME_NS < System.nanoTime()) {
-			((MinecraftServerTicker) ShadertoyMC.SERVER).forceTick(() -> System.nanoTime() - this.lastPoll < 50000000L);
+			((MinecraftServerTicker) ShadertoyMC.SERVER).forceTick(() -> false);
 			this.lastPoll = System.nanoTime();
 		}
 	}

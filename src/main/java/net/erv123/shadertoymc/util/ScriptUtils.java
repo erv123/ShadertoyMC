@@ -9,6 +9,8 @@ import me.senseiwells.arucas.api.impl.ResourceArucasLibrary;
 import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.RuntimeError;
 import net.erv123.shadertoymc.ShadertoyMC;
+import net.erv123.shadertoymc.arucas.definitions.PerlinNoiseDef;
+import net.erv123.shadertoymc.arucas.definitions.VoronoiNoiseDef;
 import net.erv123.shadertoymc.arucas.extension.ShaderExtension;
 import net.erv123.shadertoymc.arucas.impl.MinecraftExecutor;
 import net.erv123.shadertoymc.arucas.impl.MinecraftServerPoller;
@@ -46,18 +48,8 @@ public class ScriptUtils {
 			"https://api.github.com/repos/erv123/ShadertoyMC_Libraries/contents/libs"
 		);
 		RESOURCE_LIBRARY = new ResourceArucasLibrary("assets/libraries");
-		ARUCAS_API = new ArucasAPI.Builder()
-			.setLibraryManager(new MultiArucasLibrary())
-			.addDefault()
-			.addArucasLibrary("ShaderGithub", GIT_LIBRARY)
-			.addArucasLibrary("ResourceLibrary", RESOURCE_LIBRARY)
-			.setErrorHandler(ShaderErrorHandler.INSTANCE)
-			.setMainExecutor(MinecraftExecutor.INSTANCE)
-			.addPoller(MinecraftServerPoller.INSTANCE)
-			.setOutput(ShaderOutput.INSTANCE)
-			.addBuiltInExtension(new ShaderExtension())
-			.build();
-		EXAMPLE_SCRIPT = Objects.requireNonNull(ShaderUtils.readResourceAsString("/assets/ExampleShader.arucas"));
+		ARUCAS_API = generateApi();
+		EXAMPLE_SCRIPT = Objects.requireNonNull(ShaderUtils.readResourceAsString("assets/ExampleShader.arucas"));
 		SCRIPTS = new ArrayList<>();
 
 		reloadScripts();
@@ -87,6 +79,10 @@ public class ScriptUtils {
 		}
 	}
 
+	public static void hideProgressBar(Interpreter interpreter) {
+		getBossBar(interpreter).clearPlayers();
+	}
+
 	public static ScriptData getScriptData(Interpreter interpreter) {
 		return SCRIPT_DATA.get(interpreter.getProperties().getId());
 	}
@@ -110,7 +106,7 @@ public class ScriptUtils {
 		}
 		Interpreter interpreter = Interpreter.of(fileContent, scriptName, ARUCAS_API);
 
-		Identifier identifier = new Identifier("shadertoy", scriptName);
+		Identifier identifier = new Identifier("shadertoy", scriptName.substring(0, scriptName.lastIndexOf('.')).toLowerCase(Locale.ROOT));
 		Text text = Text.literal("Progress: " + scriptName);
 
 		BossBarManager manager = ShadertoyMC.SERVER.getBossBarManager();
@@ -141,5 +137,21 @@ public class ScriptUtils {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static ArucasAPI generateApi() {
+		return new ArucasAPI.Builder()
+			.setLibraryManager(new MultiArucasLibrary())
+			.addDefault()
+			.addArucasLibrary("ShaderGithub", GIT_LIBRARY)
+			.addArucasLibrary("ResourceLibrary", RESOURCE_LIBRARY)
+			.setErrorHandler(ShaderErrorHandler.INSTANCE)
+			.setMainExecutor(MinecraftExecutor.INSTANCE)
+			.addPoller(MinecraftServerPoller.INSTANCE)
+			.setOutput(ShaderOutput.INSTANCE)
+			.addBuiltInExtension(new ShaderExtension())
+			.addClassDefinitions("util.Noise", PerlinNoiseDef::new, VoronoiNoiseDef::new)
+			.build();
 	}
 }

@@ -5,10 +5,12 @@ import me.senseiwells.arucas.api.ArucasExtension;
 import me.senseiwells.arucas.api.docs.annotations.ExtensionDoc;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.builtin.StringDef;
+import me.senseiwells.arucas.classes.instance.ClassInstance;
 import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.RuntimeError;
 import me.senseiwells.arucas.utils.Arguments;
 import me.senseiwells.arucas.utils.BuiltInFunction;
+import me.senseiwells.arucas.utils.Trace;
 import me.senseiwells.arucas.utils.Util;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
@@ -42,7 +44,7 @@ public class ShaderExtension implements ArucasExtension {
 			BuiltInFunction.of("getWorld", this::getWorld),
 			BuiltInFunction.of("place", 4, this::placeDefault),
 			BuiltInFunction.of("place", 5, this::placeWithWorld),
-			BuiltInFunction.of("progress", 1, this::updateProgress)
+			BuiltInFunction.of("area", 7, this::area)
 		);
 	}
 
@@ -81,6 +83,42 @@ public class ShaderExtension implements ArucasExtension {
 			throw new RuntimeError("Failed to get world for: " + worldString);
 		}
 		this.place(arguments.getInterpreter(), world, block, x, y, z);
+		return null;
+	}
+
+	private Void area(Arguments arguments) {
+		int ax = arguments.nextPrimitive(NumberDef.class).intValue();
+		int ay = arguments.nextPrimitive(NumberDef.class).intValue();
+		int az = arguments.nextPrimitive(NumberDef.class).intValue();
+		int bx = arguments.nextPrimitive(NumberDef.class).intValue();
+		int by = arguments.nextPrimitive(NumberDef.class).intValue();
+		int bz = arguments.nextPrimitive(NumberDef.class).intValue();
+		ClassInstance callback = arguments.nextFunction();
+		Interpreter interpreter = arguments.getInterpreter();
+		int startX = Math.min(ax, bx);
+		int endX = Math.max(ax, bx);
+		int startY = Math.min(ay, by);
+		int endY = Math.max(ay, by);
+		int startZ = Math.min(az, bz);
+		int endZ = Math.max(az, bz);
+
+		int volume = (endX - startX) * (endY - startY) * (endZ - startZ);
+		int completed = 0;
+
+		ScriptUtils.showProgressBar(interpreter);
+		for (int x = startX; x <= endX; x++) {
+			ClassInstance xInstance = interpreter.create(NumberDef.class, (double) x);
+			for (int y = startY; y <= endY; y++) {
+				ClassInstance yInstance = interpreter.create(NumberDef.class, (double) y);
+				for (int z = startZ; z <= endZ; z++, completed++) {
+					ClassInstance zInstance = interpreter.create(NumberDef.class, (double) z);
+					interpreter.call(callback, List.of(xInstance, yInstance, zInstance), Trace.getINTERNAL());
+				}
+			}
+			ScriptUtils.getBossBar(interpreter).setPercent(completed / (float) volume);
+		}
+
+		ScriptUtils.hideProgressBar(interpreter);
 		return null;
 	}
 

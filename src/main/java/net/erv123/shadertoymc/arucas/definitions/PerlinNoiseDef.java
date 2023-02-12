@@ -1,4 +1,4 @@
-package net.erv123.shadertoymc.arucas.extension;
+package net.erv123.shadertoymc.arucas.definitions;
 
 import kotlin.Unit;
 import me.senseiwells.arucas.builtin.NumberDef;
@@ -102,9 +102,10 @@ public class PerlinNoiseDef extends PrimitiveDefinition<Unit> {
 		return this.noise.getSeed();
 	}
 
-	private Void getValue(Arguments arguments) {
-		double frequency = arguments.nextPrimitive(NumberDef.class);
-		this.noise.setFrequency(frequency);
-		return null;
+	private double getValue(Arguments arguments) {
+		double x = arguments.nextPrimitive(NumberDef.class);
+		double y = arguments.nextPrimitive(NumberDef.class);
+		double z = arguments.nextPrimitive(NumberDef.class);
+		return this.noise.getValue(x, y, z);
 	}
 }

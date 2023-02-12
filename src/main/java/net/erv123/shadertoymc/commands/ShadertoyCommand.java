@@ -2,6 +2,7 @@ package net.erv123.shadertoymc.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import me.senseiwells.arucas.utils.Util;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.erv123.shadertoymc.ShadertoyMC;
@@ -13,6 +14,7 @@ import net.minecraft.text.Text;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -62,6 +64,7 @@ public class ShadertoyCommand {
 
 						Path shaderPath = ShaderUtils.SHADERTOY_PATH.resolve(shaderFile);
 						try {
+							Util.File.INSTANCE.ensureParentExists(shaderPath);
 							Files.writeString(shaderPath, ScriptUtils.EXAMPLE_SCRIPT);
 						} catch (IOException exception) {
 							context.getSource().sendFeedback(Text.literal("Failed to write to: " + shaderPath), true);
