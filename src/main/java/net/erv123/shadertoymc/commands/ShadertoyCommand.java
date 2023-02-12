@@ -5,18 +5,13 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import me.senseiwells.arucas.utils.Util;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
-import net.erv123.shadertoymc.ShadertoyMC;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
