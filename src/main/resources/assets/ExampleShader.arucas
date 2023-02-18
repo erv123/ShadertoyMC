@@ -1,4 +1,5 @@
 import PerlinNoise, VoronoiNoise from util.Noise;
+import Vec3 from util.Vector;
 import BlockPalette from BlockPalette;
 
 // Set noise parameters
@@ -7,9 +8,9 @@ PerlinNoise.setSeed(16);
 
 // Area iteration, from x1, y1, z1 to x2, y2, z2
 // Each position gets passed into the lambda with x, y, z
-area(16, -52, 36, -14, -26, 61, fun(x, y, z) {
+area(32, 100, 100, 25, 25, 25, fun(lPos, nPos, aPos) {
     // Do whatever for this position
     value = PerlinNoise.getValue(x, y, z);
     index = Math.mod(Math.round(Math.abs(value) * 100), 15);
-    place(BlockPalette.COLOUR_WOOL[index], x, y, z);
+    place(BlockPalette.COLOUR_WOOL[index], aPos.getX(), aPos.getY(),aPos.getZ());
 });

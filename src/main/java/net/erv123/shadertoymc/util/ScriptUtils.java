@@ -10,6 +10,7 @@ import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.RuntimeError;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.arucas.definitions.PerlinNoiseDef;
+import net.erv123.shadertoymc.arucas.definitions.Vec3Def;
 import net.erv123.shadertoymc.arucas.definitions.VoronoiNoiseDef;
 import net.erv123.shadertoymc.arucas.extension.ShaderExtension;
 import net.erv123.shadertoymc.arucas.impl.MinecraftExecutor;
@@ -152,6 +153,7 @@ public class ScriptUtils {
 			.setOutput(ShaderOutput.INSTANCE)
 			.addBuiltInExtension(new ShaderExtension())
 			.addClassDefinitions("util.Noise", PerlinNoiseDef::new, VoronoiNoiseDef::new)
+			.addClassDefinitions("util.Vector", Vec3Def::new)
 			.build();
 	}
 }

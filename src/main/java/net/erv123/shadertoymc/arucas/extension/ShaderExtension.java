@@ -127,7 +127,7 @@ public class ShaderExtension implements ArucasExtension {
 					MathHelper.lerp(-1, 1, position.getZ() / (double) sizeZ)
 				);
 				Vec3i absolute = position.add(originX, originY, originX);
-				return List.of(position, normal, absolute);
+				return List.of(interpreter.convertValue(position), interpreter.convertValue(normal), interpreter.convertValue(absolute));
 			};
 			default -> throw new RuntimeError("Callback function needs to have 1, 2, or 3 parameters");
 		};
