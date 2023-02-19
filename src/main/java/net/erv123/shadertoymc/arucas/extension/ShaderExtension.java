@@ -111,14 +111,19 @@ public class ShaderExtension implements ArucasExtension {
 
 		int parameters = callback.asPrimitive(FunctionDef.class).getCount();
 		Function<Vec3i, List<Object>> generator = switch (parameters) {
-			case 1 -> List::of;
+			case 1 -> (position) -> {
+				Vec3i absolute = position.add(originX, originY, originX);
+				return List.of(absolute);
+			};
 			case 2 -> (position) -> {
 				Vec3d normal = new Vec3d(
 					MathHelper.lerp(-1, 1, position.getX() / (double) sizeX),
 					MathHelper.lerp(-1, 1, position.getY() / (double) sizeY),
 					MathHelper.lerp(-1, 1, position.getZ() / (double) sizeZ)
 				);
-				return List.of(position, normal);
+				Vec3i absolute = position.add(originX, originY, originX);
+				return List.of(absolute, normal);
+
 			};
 			case 3 -> (position) -> {
 				Vec3d normal = new Vec3d(
@@ -127,7 +132,7 @@ public class ShaderExtension implements ArucasExtension {
 					MathHelper.lerp(-1, 1, position.getZ() / (double) sizeZ)
 				);
 				Vec3i absolute = position.add(originX, originY, originX);
-				return List.of(interpreter.convertValue(position), interpreter.convertValue(normal), interpreter.convertValue(absolute));
+				return List.of(absolute, normal, position);
 			};
 			default -> throw new RuntimeError("Callback function needs to have 1, 2, or 3 parameters");
 		};

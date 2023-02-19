@@ -10,7 +10,7 @@ import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.RuntimeError;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.arucas.definitions.PerlinNoiseDef;
-import net.erv123.shadertoymc.arucas.definitions.Vec3Def;
+import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
 import net.erv123.shadertoymc.arucas.definitions.VoronoiNoiseDef;
 import net.erv123.shadertoymc.arucas.extension.ShaderExtension;
 import net.erv123.shadertoymc.arucas.impl.MinecraftExecutor;
@@ -24,6 +24,8 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -153,7 +155,9 @@ public class ScriptUtils {
 			.setOutput(ShaderOutput.INSTANCE)
 			.addBuiltInExtension(new ShaderExtension())
 			.addClassDefinitions("util.Noise", PerlinNoiseDef::new, VoronoiNoiseDef::new)
-			.addClassDefinitions("util.Vector", Vec3Def::new)
+			.addClassDefinitions("util.Vector", Vector3Def::new)
+			.addConversion(Vec3d.class, (vec, i) -> i.create(Vector3Def.class, vec))
+			.addConversion(Vec3i.class, (vec, i) -> i.create(Vector3Def.class, new Vec3d(vec.getX(), vec.getY(), vec.getZ())))
 			.build();
 	}
 }
