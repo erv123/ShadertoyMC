@@ -1,6 +1,7 @@
 package net.erv123.shadertoymc.arucas.definitions;
 
 import kotlin.Unit;
+import me.senseiwells.arucas.builtin.BooleanDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.classes.CreatableDefinition;
 import me.senseiwells.arucas.classes.instance.ClassInstance;
@@ -24,12 +25,14 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 	@Override
 	public List<MemberFunction> defineMethods() {
 		return List.of(
-			MemberFunction.of("setDisplacement", 1, this::setDisplacement),
-			MemberFunction.of("getDisplacement", this::getDisplacement),
-			MemberFunction.of("setFrequency", 1, this::setFrequency),
-			MemberFunction.of("getFrequency", this::getFrequency),
 			MemberFunction.of("setSeed", 1, this::setSeed),
 			MemberFunction.of("getSeed", this::getSeed),
+			MemberFunction.of("setEnableDistance", 1, this::setEnableDistance),
+			MemberFunction.of("isEnableDistance", this::isEnableDistance),
+			MemberFunction.of("setFrequency", 1, this::setFrequency),
+			MemberFunction.of("getFrequency", this::getFrequency),
+			MemberFunction.of("setDisplacement", 1, this::setDisplacement),
+			MemberFunction.of("getDisplacement", this::getDisplacement),
 			MemberFunction.of("getValue", 3, this::getValue3),
 			MemberFunction.of("getValue", 1, this::getValue1)
 		);
@@ -42,7 +45,8 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 			ConstructorFunction.of(0, this::construct0),
 			ConstructorFunction.of(1, this::construct1),
 			ConstructorFunction.of(2, this::construct2),
-			ConstructorFunction.of(3, this::construct3)
+			ConstructorFunction.of(3, this::construct3),
+			ConstructorFunction.of(4, this::construct4)
 		);
 	}
 
@@ -51,31 +55,52 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		instance.setPrimitive(this, new Voronoi());
 		return null;
 	}
+
 	private Unit construct1(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
-		instance.setPrimitive(this, new Voronoi());
-		instance.asPrimitive(this).setSeed(seed);
+		Voronoi voronoi = new Voronoi();
+		instance.setPrimitive(this, voronoi);
+		voronoi.setSeed(seed);
 		return null;
 	}
+
 	private Unit construct2(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
-		double frequency = arguments.nextPrimitive(NumberDef.class);
-		instance.setPrimitive(this, new Voronoi());
-		instance.asPrimitive(this).setSeed(seed);
-		instance.asPrimitive(this).setFrequency(frequency);
+		boolean enable = arguments.nextPrimitive(BooleanDef.class);
+		Voronoi voronoi = new Voronoi();
+		instance.setPrimitive(this, voronoi);
+		voronoi.setSeed(seed);
+		voronoi.setEnableDistance(enable);
 		return null;
 	}
+
 	private Unit construct3(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
+		boolean enable = arguments.nextPrimitive(BooleanDef.class);
+		double frequency = arguments.nextPrimitive(NumberDef.class);
+		Voronoi voronoi = new Voronoi();
+		instance.setPrimitive(this, voronoi);
+		voronoi.setSeed(seed);
+		voronoi.setEnableDistance(enable);
+		voronoi.setFrequency(frequency);
+		return null;
+	}
+
+	private Unit construct4(Arguments arguments) {
+		ClassInstance instance = arguments.next();
+		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
+		boolean enable = arguments.nextPrimitive(BooleanDef.class);
 		double frequency = arguments.nextPrimitive(NumberDef.class);
 		double displacement = arguments.nextPrimitive(NumberDef.class);
-		instance.setPrimitive(this, new Voronoi());
-		instance.asPrimitive(this).setSeed(seed);
-		instance.asPrimitive(this).setFrequency(frequency);
-		instance.asPrimitive(this).setDisplacement(displacement);
+		Voronoi voronoi = new Voronoi();
+		instance.setPrimitive(this, voronoi);
+		voronoi.setSeed(seed);
+		voronoi.setEnableDistance(enable);
+		voronoi.setFrequency(frequency);
+		voronoi.setDisplacement(displacement);
 		return null;
 	}
 	private Void setDisplacement(Arguments arguments) {
@@ -86,7 +111,7 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 	}
 
 	private double getDisplacement(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getDisplacement();
+		return arguments.nextPrimitive(this).getDisplacement();
 	}
 
 	private Void setFrequency(Arguments arguments) {
@@ -97,7 +122,7 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 	}
 
 	private double getFrequency(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getFrequency();
+		return arguments.nextPrimitive(this).getFrequency();
 	}
 
 	private Void setSeed(Arguments arguments) {
@@ -108,18 +133,31 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 	}
 
 	private int getSeed(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getSeed();
+		return arguments.nextPrimitive(this).getSeed();
+	}
+
+	private Void setEnableDistance(Arguments arguments) {
+		ClassInstance instance = arguments.next();
+		boolean enable = arguments.nextPrimitive(BooleanDef.class);
+		instance.asPrimitive(this).setEnableDistance(enable);
+		return null;
+	}
+
+	private boolean isEnableDistance(Arguments arguments) {
+		return arguments.nextPrimitive(this).isEnableDistance();
 	}
 
 	private double getValue3(Arguments arguments) {
+		Voronoi noise = arguments.nextPrimitive(this);
 		double x = arguments.nextPrimitive(NumberDef.class);
 		double y = arguments.nextPrimitive(NumberDef.class);
 		double z = arguments.nextPrimitive(NumberDef.class);
-		return arguments.next().asPrimitive(this).getValue(x, y, z);
+		return noise.getValue(x, y, z);
 	}
 
 	private double getValue1(Arguments arguments) {
+		Voronoi noise = arguments.nextPrimitive(this);
 		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
-		return arguments.next().asPrimitive(this).getValue(vec.x, vec.y, vec.z);
+		return noise.getValue(vec.x, vec.y, vec.z);
 	}
 }

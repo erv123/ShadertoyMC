@@ -67,8 +67,9 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	private Unit construct1(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
-		instance.setPrimitive(this, new Perlin());
-		instance.asPrimitive(this).setSeed(seed);
+		Perlin perlin = new Perlin();
+		instance.setPrimitive(this, perlin);
+		perlin.setSeed(seed);
 		return null;
 	}
 
@@ -76,9 +77,10 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
 		double frequency = arguments.nextPrimitive(NumberDef.class);
-		instance.setPrimitive(this, new Perlin());
-		instance.asPrimitive(this).setSeed(seed);
-		instance.asPrimitive(this).setFrequency(frequency);
+		Perlin perlin = new Perlin();
+		instance.setPrimitive(this, perlin);
+		perlin.setSeed(seed);
+		perlin.setFrequency(frequency);
 		return null;
 	}
 
@@ -87,10 +89,11 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
 		double frequency = arguments.nextPrimitive(NumberDef.class);
 		int octaves = arguments.nextPrimitive(NumberDef.class).intValue();
-		instance.setPrimitive(this, new Perlin());
-		instance.asPrimitive(this).setSeed(seed);
-		instance.asPrimitive(this).setFrequency(frequency);
-		instance.asPrimitive(this).setOctaveCount(octaves);
+		Perlin perlin = new Perlin();
+		instance.setPrimitive(this, perlin);
+		perlin.setSeed(seed);
+		perlin.setFrequency(frequency);
+		perlin.setOctaveCount(octaves);
 		return null;
 	}
 
@@ -100,11 +103,12 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		double frequency = arguments.nextPrimitive(NumberDef.class);
 		int octaves = arguments.nextPrimitive(NumberDef.class).intValue();
 		double lacunarity = arguments.nextPrimitive(NumberDef.class);
-		instance.setPrimitive(this, new Perlin());
-		instance.asPrimitive(this).setSeed(seed);
-		instance.asPrimitive(this).setFrequency(frequency);
-		instance.asPrimitive(this).setOctaveCount(octaves);
-		instance.asPrimitive(this).setLacunarity(lacunarity);
+		Perlin perlin = new Perlin();
+		instance.setPrimitive(this, perlin);
+		perlin.setSeed(seed);
+		perlin.setFrequency(frequency);
+		perlin.setOctaveCount(octaves);
+		perlin.setLacunarity(lacunarity);
 		return null;
 	}
 
@@ -115,12 +119,13 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		int octaves = arguments.nextPrimitive(NumberDef.class).intValue();
 		double lacunarity = arguments.nextPrimitive(NumberDef.class);
 		double persistence = arguments.nextPrimitive(NumberDef.class);
-		instance.setPrimitive(this, new Perlin());
-		instance.asPrimitive(this).setSeed(seed);
-		instance.asPrimitive(this).setFrequency(frequency);
-		instance.asPrimitive(this).setOctaveCount(octaves);
-		instance.asPrimitive(this).setLacunarity(lacunarity);
-		instance.asPrimitive(this).setPersistence(persistence);
+		Perlin perlin = new Perlin();
+		instance.setPrimitive(this, perlin);
+		perlin.setSeed(seed);
+		perlin.setFrequency(frequency);
+		perlin.setOctaveCount(octaves);
+		perlin.setLacunarity(lacunarity);
+		perlin.setPersistence(persistence);
 		return null;
 	}
 
@@ -132,13 +137,15 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		double lacunarity = arguments.nextPrimitive(NumberDef.class);
 		double persistence = arguments.nextPrimitive(NumberDef.class);
 		String quality = arguments.nextPrimitive(StringDef.class);
-		instance.setPrimitive(this, new Perlin());
-		instance.asPrimitive(this).setSeed(seed);
-		instance.asPrimitive(this).setFrequency(frequency);
-		instance.asPrimitive(this).setOctaveCount(octaves);
-		instance.asPrimitive(this).setLacunarity(lacunarity);
-		instance.asPrimitive(this).setPersistence(persistence);
-		instance.asPrimitive(this).setNoiseQuality(ScriptUtils.stringToNoiseQuality(quality));
+		Perlin perlin = new Perlin();
+		instance.setPrimitive(this, perlin);
+		perlin.setSeed(seed);
+		perlin.setFrequency(frequency);
+		perlin.setOctaveCount(octaves);
+		perlin.setLacunarity(lacunarity);
+		perlin.setPersistence(persistence);
+		perlin.setNoiseQuality(ScriptUtils.stringToNoiseQuality(quality));
+
 		return null;
 	}
 
@@ -150,7 +157,7 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	}
 
 	private double getFrequency(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getFrequency();
+		return arguments.nextPrimitive(this).getFrequency();
 	}
 
 	private Void setLacunarity(Arguments arguments) {
@@ -161,7 +168,7 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	}
 
 	private double getLacunarity(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getLacunarity();
+		return arguments.nextPrimitive(this).getLacunarity();
 	}
 
 	private Void setNoiseQuality(Arguments arguments) {
@@ -172,7 +179,7 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	}
 
 	private String getNoiseQuality(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getNoiseQuality().name().toLowerCase(Locale.ROOT);
+		return arguments.nextPrimitive(this).getNoiseQuality().name().toLowerCase(Locale.ROOT);
 	}
 
 	private Void setOctaveCount(Arguments arguments) {
@@ -183,7 +190,7 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	}
 
 	private int getOctaveCount(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getOctaveCount();
+		return arguments.nextPrimitive(this).getOctaveCount();
 	}
 
 	private Void setPersistence(Arguments arguments) {
@@ -194,7 +201,7 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	}
 
 	private double getPersistence(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getPersistence();
+		return arguments.nextPrimitive(this).getPersistence();
 	}
 
 	private Void setSeed(Arguments arguments) {
@@ -205,18 +212,20 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	}
 
 	private int getSeed(Arguments arguments) {
-		return arguments.next().asPrimitive(this).getSeed();
+		return arguments.nextPrimitive(this).getSeed();
 	}
 
 	private double getValue3(Arguments arguments) {
+		Perlin noise = arguments.nextPrimitive(this);
 		double x = arguments.nextPrimitive(NumberDef.class);
 		double y = arguments.nextPrimitive(NumberDef.class);
 		double z = arguments.nextPrimitive(NumberDef.class);
-		return arguments.next().asPrimitive(this).getValue(x, y, z);
+		return noise.getValue(x, y, z);
 	}
 
 	private double getValue1(Arguments arguments) {
+		Perlin noise = arguments.nextPrimitive(this);
 		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
-		return arguments.next().asPrimitive(this).getValue(vec.x, vec.y, vec.z);
+		return noise.getValue(vec.x, vec.y, vec.z);
 	}
 }

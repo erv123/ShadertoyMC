@@ -13,6 +13,7 @@ import me.senseiwells.arucas.utils.Arguments;
 import me.senseiwells.arucas.utils.BuiltInFunction;
 import me.senseiwells.arucas.utils.Trace;
 import me.senseiwells.arucas.utils.Util;
+import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.minecraft.block.Block;
@@ -47,6 +48,8 @@ public class ShaderExtension implements ArucasExtension {
 	public List<BuiltInFunction> getBuiltInFunctions() {
 		return List.of(
 			BuiltInFunction.of("getWorld", this::getWorld),
+			BuiltInFunction.of("place", 2, this::placeVector),
+			BuiltInFunction.of("place", 3, this::placeVectorWithWorld),
 			BuiltInFunction.of("place", 4, this::placeDefault),
 			BuiltInFunction.of("place", 5, this::placeWithWorld),
 			BuiltInFunction.of("area", 7, this::area)
@@ -91,6 +94,36 @@ public class ShaderExtension implements ArucasExtension {
 		return null;
 	}
 
+	private Void placeVector(Arguments arguments) {
+		String block = arguments.nextPrimitive(StringDef.class);
+		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
+		int x = (int) vec.getX();
+		int y = (int) vec.getY();
+		int z = (int) vec.getZ();
+		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		this.place(arguments.getInterpreter(), source.getWorld(), block, x, y, z);
+		return null;
+	}
+
+	private Void placeVectorWithWorld(Arguments arguments) {
+		String block = arguments.nextPrimitive(StringDef.class);
+		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
+		int x = (int) vec.getX();
+		int y = (int) vec.getY();
+		int z = (int) vec.getZ();
+		String worldString = arguments.nextPrimitive(StringDef.class);
+
+		RegistryKey<World> registry = RuntimeError.wrap(() -> RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString)));
+		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		ServerWorld world = source.getServer().getWorld(registry);
+
+		if (world == null) {
+			throw new RuntimeError("Failed to get world for: " + worldString);
+		}
+		this.place(arguments.getInterpreter(), world, block, x, y, z);
+		return null;
+	}
+
 	private Void area(Arguments arguments) {
 		int originX = arguments.nextPrimitive(NumberDef.class).intValue();
 		int originY = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -111,28 +144,25 @@ public class ShaderExtension implements ArucasExtension {
 
 		int parameters = callback.asPrimitive(FunctionDef.class).getCount();
 		Function<Vec3i, List<Object>> generator = switch (parameters) {
-			case 1 -> (position) -> {
-				Vec3i absolute = position.add(originX, originY, originX);
-				return List.of(absolute);
-			};
-			case 2 -> (position) -> {
+			case 1 -> List::of;
+			case 2 -> (absolute) -> {
+				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originX));
 				Vec3d normal = new Vec3d(
-					MathHelper.lerp(-1, 1, position.getX() / (double) sizeX),
-					MathHelper.lerp(-1, 1, position.getY() / (double) sizeY),
-					MathHelper.lerp(-1, 1, position.getZ() / (double) sizeZ)
+					MathHelper.lerp(local.getX() / (double) sizeX, -1, 1),
+					MathHelper.lerp(local.getY() / (double) sizeY, -1, 1),
+					MathHelper.lerp(local.getZ() / (double) sizeZ, -1, 1)
 				);
-				Vec3i absolute = position.add(originX, originY, originX);
 				return List.of(absolute, normal);
 
 			};
-			case 3 -> (position) -> {
+			case 3 -> (absolute) -> {
+				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originX));
 				Vec3d normal = new Vec3d(
-					MathHelper.lerp(-1, 1, position.getX() / (double) sizeX),
-					MathHelper.lerp(-1, 1, position.getY() / (double) sizeY),
-					MathHelper.lerp(-1, 1, position.getZ() / (double) sizeZ)
+					MathHelper.lerp(local.getX() / (double) sizeX, -1, 1),
+					MathHelper.lerp(local.getY() / (double) sizeY, -1, 1),
+					MathHelper.lerp(local.getZ() / (double) sizeZ, -1, 1)
 				);
-				Vec3i absolute = position.add(originX, originY, originX);
-				return List.of(absolute, normal, position);
+				return List.of(absolute, normal, local);
 			};
 			default -> throw new RuntimeError("Callback function needs to have 1, 2, or 3 parameters");
 		};

@@ -44,13 +44,13 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
     @Override
     public List<MemberFunction> defineMethods() {
         return List.of(
-                MemberFunction.of("sub",1, this::subtract1),
-                MemberFunction.of("sub",3, this::subtract3),
-                MemberFunction.of("subScalar",1, this::subtractScalar),
-                MemberFunction.of("add",1, this::add1),
-                MemberFunction.of("add",3, this::add3),
-                MemberFunction.of("addScalar",1, this::addScalar),
-                MemberFunction.of("multiply",1, this::multiply1),
+            MemberFunction.of("sub", 1, this::subtract1),
+            MemberFunction.of("sub", 3, this::subtract3),
+            MemberFunction.of("subScalar", 1, this::subtractScalar),
+            MemberFunction.of("add", 1, this::add1),
+            MemberFunction.of("add", 3, this::add3),
+            MemberFunction.of("addScalar", 1, this::addScalar),
+            MemberFunction.of("multiply", 1, this::multiply1),
             MemberFunction.of("multiply", 3, this::multiply3),
             MemberFunction.of("multiplyScalar", 1, this::multiplyScalar),
             MemberFunction.of("divide", 1, this::divide1),
