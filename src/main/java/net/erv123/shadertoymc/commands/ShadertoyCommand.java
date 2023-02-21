@@ -7,6 +7,7 @@ import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 
 import java.io.IOException;
@@ -16,6 +17,10 @@ import java.nio.file.Path;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
+/*
+TODO:
+open file command
+ */
 public class ShadertoyCommand {
 	private ShadertoyCommand() {
 
@@ -52,7 +57,8 @@ public class ShadertoyCommand {
 							return 0;
 						}
 
-						context.getSource().sendMessage(Text.literal("New shader file §n" + shaderFile + "§r created"));
+						context.getSource().sendMessage(Text.literal("New shader file §n" + shaderFile + "§r created")
+							.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, shaderPath.toString()))));
 						return 1;
 					})
 				)
