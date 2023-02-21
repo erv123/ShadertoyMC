@@ -11,6 +11,7 @@ import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.minecraft.MinecraftVersion;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -39,7 +40,8 @@ public enum ShaderErrorHandler implements ArucasErrorHandler {
 			.formatted(Formatting.RED);
 		ScriptUtils.sendMessageToHolder(interpreter, crashReport);
 		Text pathText = Text.literal("\n" + path + "\n")
-			.formatted(Formatting.UNDERLINE);
+			.formatted(Formatting.UNDERLINE)
+			.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, path)));
 		ScriptUtils.sendMessageToHolder(interpreter, pathText);
 	}
 

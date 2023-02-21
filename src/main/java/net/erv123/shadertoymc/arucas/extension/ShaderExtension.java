@@ -3,6 +3,9 @@ package net.erv123.shadertoymc.arucas.extension;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.senseiwells.arucas.api.ArucasExtension;
 import me.senseiwells.arucas.api.docs.annotations.ExtensionDoc;
+import me.senseiwells.arucas.api.docs.annotations.FunctionDoc;
+import me.senseiwells.arucas.api.docs.annotations.ParameterDoc;
+import me.senseiwells.arucas.api.docs.annotations.ReturnDoc;
 import me.senseiwells.arucas.builtin.FunctionDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.builtin.StringDef;
@@ -48,6 +51,8 @@ public class ShaderExtension implements ArucasExtension {
 	public List<BuiltInFunction> getBuiltInFunctions() {
 		return List.of(
 			BuiltInFunction.of("getWorld", this::getWorld),
+			BuiltInFunction.of("getBlock", 1, this::getBlockVector),
+			BuiltInFunction.of("getBlock", 3, this::getBlock),
 			BuiltInFunction.of("place", 2, this::placeVector),
 			BuiltInFunction.of("place", 3, this::placeVectorWithWorld),
 			BuiltInFunction.of("place", 4, this::placeDefault),
@@ -62,8 +67,42 @@ public class ShaderExtension implements ArucasExtension {
 		return "ShaderExtension";
 	}
 
+	@FunctionDoc(
+		name = "getWorld",
+		desc = {"Returns string for your current dimension"},
+		examples = {"getWorld();"},
+		returns = @ReturnDoc(type = StringDef.class, desc = {"String representing your current dimension"})
+	)
 	private String getWorld(Arguments arguments) {
 		return ScriptUtils.getScriptHolder(arguments.getInterpreter()).getWorld().getRegistryKey().getValue().getPath();
+	}
+
+	@FunctionDoc(
+		name = "getBlock",
+		desc = {"This gets a string for a block"},
+		params = {
+			@ParameterDoc(type = NumberDef.class, name = "x", desc = {"The x coordinate"}),
+			@ParameterDoc(type = NumberDef.class, name = "y", desc = {"The y coordinate"}),
+			@ParameterDoc(type = NumberDef.class, name = "z", desc = {"The z coordinate"})
+		},
+		returns = @ReturnDoc(type = StringDef.class, desc = {"A string representing the block state"}),
+		examples = {"getBlock(0,0,0);"}
+	)
+	private String getBlock(Arguments arguments) {
+		int x = arguments.nextPrimitive(NumberDef.class).intValue();
+		int y = arguments.nextPrimitive(NumberDef.class).intValue();
+		int z = arguments.nextPrimitive(NumberDef.class).intValue();
+		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		return source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
+	}
+
+	private String getBlockVector(Arguments arguments) {
+		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
+		int x = (int) vec.getX();
+		int y = (int) vec.getY();
+		int z = (int) vec.getZ();
+		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		return source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
 	}
 
 	private Void placeDefault(Arguments arguments) {
@@ -146,7 +185,7 @@ public class ShaderExtension implements ArucasExtension {
 		Function<Vec3i, List<Object>> generator = switch (parameters) {
 			case 1 -> List::of;
 			case 2 -> (absolute) -> {
-				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originX));
+				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originZ));
 				Vec3d normal = new Vec3d(
 					MathHelper.lerp(local.getX() / (double) sizeX, -1, 1),
 					MathHelper.lerp(local.getY() / (double) sizeY, -1, 1),
@@ -156,7 +195,7 @@ public class ShaderExtension implements ArucasExtension {
 
 			};
 			case 3 -> (absolute) -> {
-				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originX));
+				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originZ));
 				Vec3d normal = new Vec3d(
 					MathHelper.lerp(local.getX() / (double) sizeX, -1, 1),
 					MathHelper.lerp(local.getY() / (double) sizeY, -1, 1),
@@ -168,9 +207,9 @@ public class ShaderExtension implements ArucasExtension {
 		};
 
 		ScriptUtils.showProgressBar(interpreter);
-		for (int x = originX; x <= originX + sizeX; x++) {
-			for (int y = originY; y <= originY + sizeY; y++) {
-				for (int z = originZ; z <= originZ + sizeZ; z++, completed++) {
+		for (int x = originX; x < originX + sizeX; x++) {
+			for (int y = originY; y < originY + sizeY; y++) {
+				for (int z = originZ; z < originZ + sizeZ; z++, completed++) {
 					List<ClassInstance> args = new ArrayList<>();
 					for (Object vec : generator.apply(new Vec3i(x, y, z))) {
 						args.add(interpreter.convertValue(vec));
@@ -197,4 +236,5 @@ public class ShaderExtension implements ArucasExtension {
 			throw new RuntimeError("Invalid block: " + block, e);
 		}
 	}
+
 }
