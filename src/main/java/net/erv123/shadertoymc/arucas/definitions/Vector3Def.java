@@ -1,6 +1,7 @@
 package net.erv123.shadertoymc.arucas.definitions;
 
 import kotlin.Unit;
+import me.senseiwells.arucas.api.docs.annotations.ClassDoc;
 import me.senseiwells.arucas.builtin.ListDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.classes.CreatableDefinition;
@@ -16,13 +17,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@ClassDoc(
+    name = "Vector3",
+    desc = "A 3 dimensional vector class",
+    language = Util.Language.Java
+)
 public class Vector3Def extends CreatableDefinition<Vec3d> {
-
-
     public Vector3Def(@NotNull Interpreter interpreter) {
         super("Vector3", interpreter);
     }
-
     @Nullable
     @Override
     public List<BuiltInFunction> defineStaticMethods() {

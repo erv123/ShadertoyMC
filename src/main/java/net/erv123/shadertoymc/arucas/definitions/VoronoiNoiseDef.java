@@ -1,6 +1,10 @@
 package net.erv123.shadertoymc.arucas.definitions;
 
 import kotlin.Unit;
+import me.senseiwells.arucas.api.docs.annotations.ClassDoc;
+import me.senseiwells.arucas.api.docs.annotations.ConstructorDoc;
+import me.senseiwells.arucas.api.docs.annotations.FunctionDoc;
+import me.senseiwells.arucas.api.docs.annotations.ParameterDoc;
 import me.senseiwells.arucas.builtin.BooleanDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.classes.CreatableDefinition;
@@ -9,6 +13,7 @@ import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.utils.Arguments;
 import me.senseiwells.arucas.utils.ConstructorFunction;
 import me.senseiwells.arucas.utils.MemberFunction;
+import me.senseiwells.arucas.utils.Util;
 import net.jlibnoise.filter.Voronoi;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +21,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@ClassDoc(
+	name = "VoronoiNoise",
+	desc = "Class that is used to generate voronoi noise",
+	language = Util.Language.Java
+)
 public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 	public VoronoiNoiseDef(@NotNull Interpreter interpreter) {
 		super("VoronoiNoise", interpreter);
@@ -50,12 +60,23 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		);
 	}
 
+	@ConstructorDoc(
+		desc = "Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise",
+		examples = "voronoi = new VoronoiNoise();"
+	)
 	private Unit construct0(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		instance.setPrimitive(this, new Voronoi());
 		return null;
 	}
 
+	@ConstructorDoc(
+		desc = "Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise",
+		params = {
+			@ParameterDoc(type = NumberDef.class, name = "Seed", desc = "A number that is used as a seed for calculating the noise")
+		},
+		examples = "voronoi = new VoronoiNoise(1);"
+	)
 	private Unit construct1(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -65,6 +86,14 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		return null;
 	}
 
+	@ConstructorDoc(
+		desc = "Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise",
+		params = {
+			@ParameterDoc(type = NumberDef.class, name = "Seed", desc = "A number that is used as a seed for calculating the noise"),
+			@ParameterDoc(type = BooleanDef.class, name = "Enable distance", desc = "Used to control if the output includes the distance to the point")
+		},
+		examples = "voronoi = new VoronoiNoise(1,false);"
+	)
 	private Unit construct2(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -76,6 +105,16 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		return null;
 	}
 
+	@ConstructorDoc(
+		desc = "Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise",
+		params = {
+			@ParameterDoc(type = NumberDef.class, name = "Seed", desc = "A number that is used as a seed for calculating the noise"),
+			@ParameterDoc(type = BooleanDef.class, name = "Enable distance", desc = "Used to control if the output includes the distance to the point"),
+			@ParameterDoc(type = NumberDef.class, name = "Frequency", desc = {"A number that represents how close vornoi points will are located to each other",
+				"Recommended value 0.05-0.3 when using raw absolute coordinates"})
+		},
+		examples = "voronoi = new VoronoiNoise(1,false,0.1);"
+	)
 	private Unit construct3(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -89,6 +128,18 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		return null;
 	}
 
+	@ConstructorDoc(
+		desc = "Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise",
+		params = {
+			@ParameterDoc(type = NumberDef.class, name = "Seed", desc = "A number that is used as a seed for calculating the noise"),
+			@ParameterDoc(type = BooleanDef.class, name = "Enable distance", desc = "Used to control if the output includes the distance to the point"),
+			@ParameterDoc(type = NumberDef.class, name = "Frequency", desc = {"A number that represents how close vornoi points will are located to each other",
+				"Recommended value 0.05-0.3 when using raw absolute coordinates"}),
+			@ParameterDoc(type = NumberDef.class, name = "Displacement", desc = {"The displacement value controls the range of random values to assign to each cell.",
+				"The range of random values is +/- the displacement value"})
+		},
+		examples = "voronoi = new VoronoiNoise(1,false,0.1,1);"
+	)
 	private Unit construct4(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -103,6 +154,13 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		voronoi.setDisplacement(displacement);
 		return null;
 	}
+
+	@FunctionDoc(name = "setDisplacement",
+		desc = "Used to change the displacement value for a VoronoiNoise object",
+		params = @ParameterDoc(type = NumberDef.class, name = "Displacement", desc = {"The displacement value controls the range of random values to assign to each cell.",
+			"The range of random values is +/- the displacement value"}),
+		examples = "voronoi.setDisplacement(0.1);"
+	)
 	private Void setDisplacement(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		double displacement = arguments.nextPrimitive(NumberDef.class);
@@ -114,6 +172,12 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		return arguments.nextPrimitive(this).getDisplacement();
 	}
 
+	@FunctionDoc(name = "setFrequency",
+		desc = "Used to change the frequency value for a VoronoiNoise object",
+		params = @ParameterDoc(type = NumberDef.class, name = "Frequency", desc = {"A number that represents how close vornoi points will are located to each other",
+			"Recommended value 0.05-0.3 when using raw absolute coordinates"}),
+		examples = "voronoi.setFrequency(0.3);"
+	)
 	private Void setFrequency(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		double frequency = arguments.nextPrimitive(NumberDef.class);
@@ -125,6 +189,11 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		return arguments.nextPrimitive(this).getFrequency();
 	}
 
+	@FunctionDoc(name = "setSeed",
+		desc = "Used to change the seed value for a VoronoiNoise object",
+		params = @ParameterDoc(type = NumberDef.class, name = "Seed", desc = "A number that is used as a seed for calculating the noise"),
+		examples = "voronoi.setSeed(12345);"
+	)
 	private Void setSeed(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -136,6 +205,12 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		return arguments.nextPrimitive(this).getSeed();
 	}
 
+	@FunctionDoc(name = "setEnableDistance",
+		desc = "Used to change the if including the distance in the value calculation is enabled",
+		params = @ParameterDoc(type = NumberDef.class, name = "Displacement", desc = {"The displacement value controls the range of random values to assign to each cell.",
+			"The range of random values is +/- the displacement value"}),
+		examples = "voronoi.setDisplacement(0.1);"
+	)
 	private Void setEnableDistance(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		boolean enable = arguments.nextPrimitive(BooleanDef.class);

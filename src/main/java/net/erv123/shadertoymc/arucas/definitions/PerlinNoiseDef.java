@@ -1,6 +1,7 @@
 package net.erv123.shadertoymc.arucas.definitions;
 
 import kotlin.Unit;
+import me.senseiwells.arucas.api.docs.annotations.ClassDoc;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.builtin.StringDef;
 import me.senseiwells.arucas.classes.CreatableDefinition;
@@ -9,6 +10,7 @@ import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.utils.Arguments;
 import me.senseiwells.arucas.utils.ConstructorFunction;
 import me.senseiwells.arucas.utils.MemberFunction;
+import me.senseiwells.arucas.utils.Util;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.jlibnoise.generator.Perlin;
 import net.minecraft.util.math.Vec3d;
@@ -18,6 +20,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Locale;
 
+@ClassDoc(
+	name = "PerlinNoise",
+	desc = "Class that is used to generate perlin noise",
+	language = Util.Language.Java
+)
 public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 	public PerlinNoiseDef(@NotNull Interpreter interpreter) {
 		super("PerlinNoise", interpreter);
