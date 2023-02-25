@@ -1,7 +1,7 @@
 package net.erv123.shadertoymc.arucas.definitions;
 
 import kotlin.Unit;
-import me.senseiwells.arucas.api.docs.annotations.ClassDoc;
+import me.senseiwells.arucas.api.docs.annotations.*;
 import me.senseiwells.arucas.builtin.ListDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.classes.CreatableDefinition;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @ClassDoc(
     name = "Vector3",
-    desc = "A 3 dimensional vector class",
+    desc = "A 3 dimensional vector class, overrides +, -, *, /, ^, and [] operators, no bracket assign tho, only bracket access",
     language = Util.Language.Java
 )
 public class Vector3Def extends CreatableDefinition<Vec3d> {
@@ -73,6 +73,8 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
             MemberFunction.of("rotateY", 1, this::rotateY),
             MemberFunction.of("rotateZ", 1, this::rotateZ),
             MemberFunction.of("floor", this::floor),
+            MemberFunction.of("ceil", this::ceil),
+            MemberFunction.of("round", this::round),
             MemberFunction.of("getX", this::getX),
             MemberFunction.of("getY", this::getY),
             MemberFunction.of("getZ", this::getZ)
@@ -82,6 +84,14 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
     /**
      * Constructors
      */
+    @ConstructorDoc(desc = "Used to construct a Vector3 object from 3 coordinates",
+        params = {
+            @ParameterDoc(type = NumberDef.class, name = "x", desc = "The x coordinate"),
+            @ParameterDoc(type = NumberDef.class, name = "y", desc = "The y coordinate"),
+            @ParameterDoc(type = NumberDef.class, name = "z", desc = "The z coordinate")
+        },
+        examples = "vec = new Vector3(1,2,3);"
+    )
     private Unit construct3(Arguments arguments) {
         ClassInstance instance = arguments.next();
         double x = arguments.nextPrimitive(NumberDef.class);
@@ -91,6 +101,12 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return null;
     }
 
+    @ConstructorDoc(desc = "Used to construct a Vector3 object from a list of 3 number values",
+        params = {
+            @ParameterDoc(type = ListDef.class, name = "coordinatesList", desc = "A list containing 3 number values")
+        },
+        examples = "vec = new Vector3([1,2,3]);"
+    )
     private Unit construct1(Arguments arguments) {
         ClassInstance instance = arguments.next();
         ArucasList list = arguments.nextPrimitive(ListDef.class);
@@ -192,103 +208,206 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
     }
 
     /**
-     Arithmetic functions
+     * Arithmetic functions
      */
+    @FunctionDoc(name = "sub",
+        desc = "Used to subtract another Vector3",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A Vector3 object to subtract"),
+        examples = "vec.sub(new Vector3(1,2,3));"
+    )
     public Vec3d subtract1(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         Vec3d vec2 = arguments.nextPrimitive(this);
         return vec1.subtract(vec2);
     }
 
+    @FunctionDoc(name = "sub",
+        desc = "Used to subtract 3 separate number values",
+        params = {
+            @ParameterDoc(type = NumberDef.class, name = "x", desc = "The value to subtract from vector x"),
+            @ParameterDoc(type = NumberDef.class, name = "y", desc = "The value to subtract from vector y"),
+            @ParameterDoc(type = NumberDef.class, name = "z", desc = "The value to subtract from vector z")
+        },
+        examples = "vec.sub(1,2,3);"
+    )
     public Vec3d subtract3(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double x = arguments.nextPrimitive(NumberDef.class);
         double y = arguments.nextPrimitive(NumberDef.class);
         double z = arguments.nextPrimitive(NumberDef.class);
-        return vec1.subtract(x,y,z);
+        return vec1.subtract(x, y, z);
     }
+
+    @FunctionDoc(name = "sub",
+        desc = "Used to subtract a number from each of the vector coordinates",
+        params = {
+            @ParameterDoc(type = NumberDef.class, name = "scalar", desc = "The value to subtract from vector x, y, and z"),
+        },
+        examples = "vec.sub(1);"
+    )
     public Vec3d subtractScalar(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double num = arguments.nextPrimitive(NumberDef.class);
-        return vec1.subtract(num,num,num);
+        return vec1.subtract(num, num, num);
     }
 
+    @FunctionDoc(name = "add",
+        desc = "Used to add another Vector3",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A Vector3 object to add"),
+        examples = "vec.add(new Vector3(1,2,3));"
+    )
     public Vec3d add1(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         Vec3d vec2 = arguments.nextPrimitive(this);
         return vec1.add(vec2);
     }
 
+    @FunctionDoc(name = "add",
+        desc = "Used to add 3 separate number values",
+        params = {
+            @ParameterDoc(type = NumberDef.class, name = "x", desc = "The value to add to vector x"),
+            @ParameterDoc(type = NumberDef.class, name = "y", desc = "The value to add to vector y"),
+            @ParameterDoc(type = NumberDef.class, name = "z", desc = "The value to add to vector z")
+        },
+        examples = "vec.add(1,2,3);"
+    )
     public Vec3d add3(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double x = arguments.nextPrimitive(NumberDef.class);
         double y = arguments.nextPrimitive(NumberDef.class);
         double z = arguments.nextPrimitive(NumberDef.class);
-        return vec1.add(x,y,z);
+        return vec1.add(x, y, z);
     }
+
+    @FunctionDoc(name = "addScalar",
+        desc = "Used to add a number to each of the vector coordinates",
+        params = @ParameterDoc(type = NumberDef.class, name = "scalar", desc = "The value to add to vector x, y, and z"),
+        examples = "vec.add(1);"
+    )
     public Vec3d addScalar(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double num = arguments.nextPrimitive(NumberDef.class);
-        return vec1.add(num,num,num);
+        return vec1.add(num, num, num);
     }
+
+    @FunctionDoc(name = "multiply",
+        desc = "Used to multiply with another Vector3",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A Vector3 object to multiply with"),
+        examples = "vec.multiply(new Vector3(1,2,3));"
+    )
     public Vec3d multiply1(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         Vec3d vec2 = arguments.nextPrimitive(this);
         return vec1.multiply(vec2);
     }
 
+    @FunctionDoc(name = "multiply",
+        desc = "Used to multiply each of the vector coordinates with a separate number value",
+        params = {
+            @ParameterDoc(type = NumberDef.class, name = "x", desc = "The value to multiply vector x with"),
+            @ParameterDoc(type = NumberDef.class, name = "y", desc = "The value to multiply vector y with"),
+            @ParameterDoc(type = NumberDef.class, name = "z", desc = "The value to multiply vector z with")
+        },
+        examples = "vec.multiply(1,2,3);"
+    )
     public Vec3d multiply3(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double x = arguments.nextPrimitive(NumberDef.class);
         double y = arguments.nextPrimitive(NumberDef.class);
         double z = arguments.nextPrimitive(NumberDef.class);
-        return vec1.multiply(x,y,z);
+        return vec1.multiply(x, y, z);
     }
+
+    @FunctionDoc(name = "multiplyScalar",
+        desc = "Used to multiply to each of the vector coordinates with a single number",
+        params = @ParameterDoc(type = NumberDef.class, name = "scalar", desc = "The value to multiply vector x, y, and z with"),
+        examples = "vec.multiply(1);"
+    )
     public Vec3d multiplyScalar(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double num = arguments.nextPrimitive(NumberDef.class);
-        return vec1.multiply(num,num,num);
+        return vec1.multiply(num, num, num);
     }
+
+    @FunctionDoc(name = "divide",
+        desc = "Used to divide by another Vector3",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A Vector3 object to divide by"),
+        examples = "vec.divide(new Vector3(1,2,3));"
+    )
     public Vec3d divide1(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         Vec3d vec2 = arguments.nextPrimitive(this);
-        return vec1.multiply(1/vec2.x,1/vec2.y,1/vec2.z);
+        return vec1.multiply(1 / vec2.x, 1 / vec2.y, 1 / vec2.z);
     }
 
+    @FunctionDoc(name = "divide",
+        desc = "Used to divide each of the vector coordinates by a separate number value",
+        params = {
+            @ParameterDoc(type = NumberDef.class, name = "x", desc = "The value to divide vector x by"),
+            @ParameterDoc(type = NumberDef.class, name = "y", desc = "The value to divide vector y by"),
+            @ParameterDoc(type = NumberDef.class, name = "z", desc = "The value to divide vector z by")
+        },
+        examples = "vec.divide(1,2,3);"
+    )
     public Vec3d divide3(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double x = arguments.nextPrimitive(NumberDef.class);
         double y = arguments.nextPrimitive(NumberDef.class);
         double z = arguments.nextPrimitive(NumberDef.class);
-        return vec1.multiply(1/x,1/y,1/z);
+        return vec1.multiply(1 / x, 1 / y, 1 / z);
     }
+
+    @FunctionDoc(name = "divideScalar",
+        desc = "Used to divide each of the vector coordinates by a single number",
+        params = @ParameterDoc(type = NumberDef.class, name = "scalar", desc = "The value to divide vector x, y, and z by"),
+        examples = "vec.multiply(1);"
+    )
     public Vec3d divideScalar(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         double num = arguments.nextPrimitive(NumberDef.class);
-        return vec1.multiply(1/num,1/num,1/num);
+        return vec1.multiply(1 / num, 1 / num, 1 / num);
     }
 
 
-
     /**
-     *Vector functions
+     * Vector functions
      */
+    @FunctionDoc(name = "normalize",
+        desc = "Returns a new vector in the same direction but with a length of 1",
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The normalized vector of this vector"),
+        examples = "vec = vec.normalize();"
+    )
     private Vec3d normalize(Arguments arguments) {
         return arguments.nextPrimitive(this).normalize();
     }
 
-
+    @FunctionDoc(name = "dot",
+        desc = "Returns the dot product of this vector and the given vector.",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "The other Vector3"),
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The dot product"),
+        examples = "dot = vec.dot(new Vector3(1,1,1));"
+    )
     public double dotProduct(Arguments arguments) {
         return arguments.nextPrimitive(this).dotProduct(arguments.nextPrimitive(this));
     }
 
-
+    @FunctionDoc(name = "cross",
+        desc = "Returns the cross product of this vector and the given vector.",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "The other Vector3"),
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The cross product"),
+        examples = "cross = vec.cross(new Vector3(1,1,1));"
+    )
     public Vec3d crossProduct(Arguments arguments) {
         return arguments.nextPrimitive(this).crossProduct(arguments.nextPrimitive(this));
     }
 
 
-
+    @FunctionDoc(name = "distanceTo",
+        desc = "Returns the distance between this vector and the given vector.",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "The other Vector3"),
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The distance"),
+        examples = "distance = vec.distanceTo(new Vector3(1,1,1));"
+    )
     public double distanceTo(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         Vec3d vec2 = arguments.nextPrimitive(this);
@@ -298,7 +417,12 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return Math.sqrt(d * d + e * e + f * f);
     }
 
-
+    @FunctionDoc(name = "squaredDistanceTo",
+        desc = "Returns the squared distance between this vector and the given vector.",
+        params = @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "The other Vector3"),
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The squared distance"),
+        examples = "distance = vec.squaredDistanceTo(new Vector3(1,1,1));"
+    )
     public double squaredDistanceTo(Arguments arguments) {
         Vec3d vec1 = arguments.nextPrimitive(this);
         Vec3d vec2 = arguments.nextPrimitive(this);
@@ -308,29 +432,56 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return d * d + e * e + f * f;
     }
 
+    @FunctionDoc(name = "length",
+        desc = "Returns the length of this vector.",
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The length"),
+        examples = "length = vec.length();"
+    )
     public double length(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         return Math.sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
     }
 
+    @FunctionDoc(name = "lengthSquared",
+        desc = "Returns the squared length of this vector.",
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The squared length"),
+        examples = "length = vec.lengthSquared();"
+    )
     public double lengthSquared(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
     }
 
+    @FunctionDoc(name = "horizontalLength",
+        desc = "Returns the horizontal length of this vector.",
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The horizontal length"),
+        examples = "length = vec.horizontalLength();"
+    )
     public double horizontalLength(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         return Math.sqrt(vec.x * vec.x + vec.z * vec.z);
     }
 
+    @FunctionDoc(name = "horizontalLengthSquared",
+        desc = "Returns the squared horizontal length of this vector.",
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The squared horizontal length"),
+        examples = "length = vec.horizontalLengthSquared();"
+    )
     public double horizontalLengthSquared(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         return vec.x * vec.x + vec.z * vec.z;
     }
 
 
-
-
+    @FunctionDoc(name = "lerp",
+        desc = "Performs linear interpolation from this vector to the given vector",
+        params = {
+            @ParameterDoc(type = Vector3Def.class, name = "vector", desc = "The other vector to interpolate to"),
+            @ParameterDoc(type = NumberDef.class, name = "delta", desc = "the interpolation coefficient in the range between 0 and 1")
+        },
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The interpolated vector"),
+        examples = "vec = vec.lerp(new Vector3(1,1,1),0.5);"
+    )
     public Vec3d lerp(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         Vec3d to = arguments.nextPrimitive(this);
@@ -338,7 +489,12 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return new Vec3d(MathHelper.lerp(delta, vec.x, to.x), MathHelper.lerp(delta, vec.y, to.y), MathHelper.lerp(delta, vec.z, to.z));
     }
 
-
+    @FunctionDoc(name = "rotateX",
+        desc = "Rotates this vector by the given angle counterclockwise around the X axis.",
+        params = @ParameterDoc(type = NumberDef.class, name = "angle", desc = "The angle in radians"),
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The rotated vector"),
+        examples = "vec = vec.rotateX(1);"
+    )
     public Vec3d rotateX(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         double angle = arguments.nextPrimitive(NumberDef.class);
@@ -350,6 +506,12 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return new Vec3d(d, e, h);
     }
 
+    @FunctionDoc(name = "rotateY",
+        desc = "Rotates this vector by the given angle counterclockwise around the Y axis.",
+        params = @ParameterDoc(type = NumberDef.class, name = "angle", desc = "The angle in radians"),
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The rotated vector"),
+        examples = "vec = vec.rotateY(1);"
+    )
     public Vec3d rotateY(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         double angle = arguments.nextPrimitive(NumberDef.class);
@@ -361,6 +523,12 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return new Vec3d(d, e, h);
     }
 
+    @FunctionDoc(name = "rotateZ",
+        desc = "Rotates this vector by the given angle counterclockwise around the Z axis.",
+        params = @ParameterDoc(type = NumberDef.class, name = "angle", desc = "The angle in radians"),
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The rotated vector"),
+        examples = "vec = vec.rotateZ(1);"
+    )
     public Vec3d rotateZ(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         double angle = arguments.nextPrimitive(NumberDef.class);
@@ -372,6 +540,11 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return new Vec3d(d, e, h);
     }
 
+    @FunctionDoc(name = "floor",
+        desc = "Floors each of the vector components",
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The floored vector"),
+        examples = "vec = vec.floor();"
+    )
     public Vec3d floor(Arguments arguments) {
         Vec3d vec = arguments.nextPrimitive(this);
         double d = Math.floor(vec.x);
@@ -380,14 +553,55 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         return new Vec3d(d, e, f);
     }
 
+    @FunctionDoc(name = "ceil",
+        desc = "Rounds up each of the vector components",
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The rounded up vector"),
+        examples = "vec = ceil.floor();"
+    )
+    public Vec3d ceil(Arguments arguments) {
+        Vec3d vec = arguments.nextPrimitive(this);
+        double d = Math.ceil(vec.x);
+        double e = Math.ceil(vec.y);
+        double f = Math.ceil(vec.z);
+        return new Vec3d(d, e, f);
+    }
+
+    @FunctionDoc(name = "round",
+        desc = "Rounds each of the vector components",
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The rounded vector"),
+        examples = "vec = vec.round();"
+    )
+    public Vec3d round(Arguments arguments) {
+        Vec3d vec = arguments.nextPrimitive(this);
+        double d = Math.round(vec.x);
+        double e = Math.round(vec.y);
+        double f = Math.round(vec.z);
+        return new Vec3d(d, e, f);
+    }
+
+    @FunctionDoc(name = "getX",
+        desc = "Returns the x coordinate of the vector",
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The x coordinate"),
+        examples = "x = vec.getX();"
+    )
     public final double getX(Arguments arguments) {
         return arguments.nextPrimitive(this).x;
     }
 
+    @FunctionDoc(name = "getY",
+        desc = "Returns the y coordinate of the vector",
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The y coordinate"),
+        examples = "y = vec.getY();"
+    )
     public final double getY(Arguments arguments) {
         return arguments.nextPrimitive(this).y;
     }
 
+    @FunctionDoc(name = "getZ",
+        desc = "Returns the z coordinate of the vector",
+        returns = @ReturnDoc(type = NumberDef.class, desc = "The z coordinate"),
+        examples = "z = vec.getZ();"
+    )
     public final double getZ(Arguments arguments) {
         return arguments.nextPrimitive(this).z;
     }
@@ -395,7 +609,16 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
     /**
      * static functions
      */
-
+    @FunctionDoc(name = "fromPolar",
+        isStatic = true,
+        desc = "Returns a new Vector3 from pitch and yaw angles",
+        params = {
+            @ParameterDoc(type = NumberDef.class, name = "pitch", desc = "The pitch angle in radians"),
+            @ParameterDoc(type = NumberDef.class, name = "yaw", desc = "The yaw angle in radians")
+        },
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The return Vector3"),
+        examples = "vec = Vector3.fromPolar(Math.pi, Math.pi/2);"
+    )
     public Vec3d fromPolar(Arguments arguments) {
         double yaw = arguments.nextPrimitive(NumberDef.class);
         double pitch = arguments.nextPrimitive(NumberDef.class);
@@ -405,11 +628,26 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
         double i = Math.sin(-pitch * 0.017453292D);
         return new Vec3d(g * h, i, f * h);
     }
+
+    @FunctionDoc(name = "fromScalar",
+        isStatic = true,
+        desc = "Returns a zero vector",
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The zero vector"),
+        examples = "vec = Vector3.zero();"
+    )
     public Vec3d zero(Arguments arguments) {
-        return new Vec3d(0,0,0);
+        return new Vec3d(0, 0, 0);
     }
+
+    @FunctionDoc(name = "fromScalar",
+        isStatic = true,
+        desc = "Returns a new Vector3 from a single number",
+        params = @ParameterDoc(type = NumberDef.class, name = "scalar", desc = "The number to create the vector with"),
+        returns = @ReturnDoc(type = Vector3Def.class, desc = "The return Vector3"),
+        examples = "vec = Vector3.fromScalar(10);"
+    )
     public Vec3d fromScalar(Arguments arguments) {
         double s = arguments.nextPrimitive(NumberDef.class);
-        return new Vec3d(s,s,s);
+        return new Vec3d(s, s, s);
     }
 }
