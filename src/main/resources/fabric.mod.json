@@ -3,13 +3,12 @@
   "id": "shadertoymc",
   "version": "${version}",
   "name": "ShadertoyMC",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "//g from worldedit but with actual code",
   "authors": [
     "erv123"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/erv123/ShadertoyMC"
   },
   "license": "MIT Licence",
   "icon": "assets/modid/icon.png",
@@ -17,6 +16,9 @@
   "entrypoints": {
     "main": [
       "net.erv123.shadertoymc.ShadertoyMC"
+    ],
+    "server": [
+      "net.erv123.shadertoymc.util.DocCompiler"
     ]
   },
   "mixins": [

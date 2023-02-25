@@ -148,7 +148,7 @@ public class ScriptUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static ArucasAPI generateApi() {
+	public static ArucasAPI generateApi() {
 		return new ArucasAPI.Builder()
 			.setLibraryManager(new MultiArucasLibrary())
 			.addDefault()
