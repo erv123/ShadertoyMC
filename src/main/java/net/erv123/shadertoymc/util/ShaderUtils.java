@@ -19,7 +19,7 @@ public class ShaderUtils {
 
 	public static boolean canBlocksFall = true;
 
-	static  {
+	static {
 		Util.File.INSTANCE.ensureExists(SHADERTOY_PATH);
 	}
 
