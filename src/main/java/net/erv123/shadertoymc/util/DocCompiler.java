@@ -21,7 +21,6 @@ import java.util.Arrays;
 public class DocCompiler implements DedicatedServerModInitializer {
 	@Override
 	public void onInitializeServer() {
-		//#if MC >= 11900
 		String[] args = Arrays.stream(FabricLoader.getInstance().getLaunchArguments(true)).filter(opt -> !opt.equals("--")).toArray(String[]::new);
 
 		// Prepare an OptionParser for our parameters
@@ -39,6 +38,14 @@ public class DocCompiler implements DedicatedServerModInitializer {
 
 		Util.File file = Util.File.INSTANCE;
 		Path path = file.ensureExists(Path.of(options.valueOf(pathSpec)));
+
+		System.out.println(path);
+		try {
+			System.out.println(path.toRealPath());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		ArucasAPI api = ScriptUtils.generateApi();
 		Path libPath = file.ensureExists(path.resolve("libs"));
 		Path docPath = file.ensureExists(path.getParent().resolve("docs"));

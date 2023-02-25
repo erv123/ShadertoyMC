@@ -1,0 +1,244 @@
+/* Native, implemented in Java
+ * A 3 dimensional vector class, overrides +, -, *, /, ^, and [] operators, only bracket access.
+ * Import with 'import Vector3 from util.Vector'
+ */
+class Vector3 {
+    /*
+     * Used to construct a Vector3 object from a list of 3 number values.
+     * Parameter - List (coordinatesList): A list containing 3 number values.
+     */
+    Vector3(coordinatesList: List);
+
+    /*
+     * Used to construct a Vector3 object from 3 coordinates.
+     * Parameter - Number (x): The x coordinate.
+     * Parameter - Number (y): The y coordinate.
+     * Parameter - Number (z): The z coordinate.
+     */
+    Vector3(x: Number, y: Number, z: Number);
+
+    /*
+     * Used to add another Vector3.
+     * Parameter - Vector3 (vector): A Vector3 object to add.
+     */
+    fun add(vector: Vector3): Null;
+
+    /*
+     * Used to add 3 separate number values.
+     * Parameter - Number (x): The value to add to vector x.
+     * Parameter - Number (y): The value to add to vector y.
+     * Parameter - Number (z): The value to add to vector z.
+     */
+    fun add(x: Number, y: Number, z: Number): Null;
+
+    /*
+     * Used to add a number to each of the vector coordinates.
+     * Parameter - Number (scalar): The value to add to vector x, y, and z.
+     */
+    fun addScalar(scalar: Number): Null;
+
+    /*
+     * Creates a new vector with the rounded up vector components.
+     * Returns - Vector3: The rounded up vector.
+     */
+    fun ceil(): Vector3;
+
+    /*
+     * Returns the cross product of this vector and the given vector.
+     * Parameter - Vector3 (vector): The other Vector3.
+     * Returns - Number: The cross product.
+     */
+    fun cross(vector: Vector3): Number;
+
+    /*
+     * Returns the euclidean distance between this vector and the given vector.
+     * Parameter - Vector3 (vector): The other Vector3.
+     * Returns - Number: The euclidean distance.
+     */
+    fun distanceTo(vector: Vector3): Number;
+
+    /*
+     * Used to divide by another Vector3.
+     * Parameter - Vector3 (vector): A Vector3 object to divide by.
+     */
+    fun divide(vector: Vector3): Null;
+
+    /*
+     * Used to divide each of the vector coordinates by a separate number value.
+     * Parameter - Number (x): The value to divide vector x by.
+     * Parameter - Number (y): The value to divide vector y by.
+     * Parameter - Number (z): The value to divide vector z by.
+     */
+    fun divide(x: Number, y: Number, z: Number): Null;
+
+    /*
+     * Used to divide each of the vector coordinates by a single number.
+     * Parameter - Number (scalar): The value to divide vector x, y, and z by.
+     */
+    fun divideScalar(scalar: Number): Null;
+
+    /*
+     * Returns the dot product of this vector and the given vector.
+     * Parameter - Vector3 (vector): The other Vector3.
+     * Returns - Number: The dot product.
+     */
+    fun dot(vector: Vector3): Number;
+
+    /*
+     * Creates a new vector with the floors each of the vector components.
+     * Returns - Vector3: The floored vector.
+     */
+    fun floor(): Vector3;
+
+    /*
+     * Returns the x coordinate of the vector.
+     * Returns - Number: The x coordinate.
+     */
+    fun getX(): Number;
+
+    /*
+     * Returns the y coordinate of the vector.
+     * Returns - Number: The y coordinate.
+     */
+    fun getY(): Number;
+
+    /*
+     * Returns the z coordinate of the vector.
+     * Returns - Number: The z coordinate.
+     */
+    fun getZ(): Number;
+
+    /*
+     * Returns the horizontal length of this vector.
+     * Returns - Number: The horizontal length.
+     */
+    fun horizontalLength(): Number;
+
+    /*
+     * Returns the squared horizontal length of this vector.
+     * Returns - Number: The squared horizontal length.
+     */
+    fun horizontalLengthSquared(): Number;
+
+    /*
+     * Returns the length of this vector.
+     * Returns - Number: The length.
+     */
+    fun length(): Number;
+
+    /*
+     * Returns the squared length of this vector.
+     * Returns - Number: The squared length.
+     */
+    fun lengthSquared(): Number;
+
+    /*
+     * Performs linear interpolation from this vector to the given vector.
+     * Parameter - Vector3 (vector): The other vector to interpolate to.
+     * Parameter - Number (delta): The interpolation coefficient in the range between 0 and 1.
+     * Returns - Vector3: The interpolated vector.
+     */
+    fun lerp(vector: Vector3, delta: Number): Vector3;
+
+    /*
+     * Used to multiply with another Vector3.
+     * Parameter - Vector3 (vector): A Vector3 object to multiply with.
+     */
+    fun multiply(vector: Vector3): Null;
+
+    /*
+     * Used to multiply each of the vector coordinates with a separate number value.
+     * Parameter - Number (x): The value to multiply vector x with.
+     * Parameter - Number (y): The value to multiply vector y with.
+     * Parameter - Number (z): The value to multiply vector z with.
+     */
+    fun multiply(x: Number, y: Number, z: Number): Null;
+
+    /*
+     * Used to multiply to each of the vector coordinates with a single number.
+     * Parameter - Number (scalar): The value to multiply vector x, y, and z with.
+     */
+    fun multiplyScalar(scalar: Number): Null;
+
+    /*
+     * Returns a new vector in the same direction but with a length of 1.
+     * Returns - Vector3: The normalized vector of this vector.
+     */
+    fun normalize(): Vector3;
+
+    /*
+     * Rotates this vector by the given angle counterclockwise around the X axis.
+     * Parameter - Number (angle): The angle in radians.
+     * Returns - Vector3: The rotated vector.
+     */
+    fun rotateX(angle: Number): Vector3;
+
+    /*
+     * Rotates this vector by the given angle counterclockwise around the Y axis.
+     * Parameter - Number (angle): The angle in radians.
+     * Returns - Vector3: The rotated vector.
+     */
+    fun rotateY(angle: Number): Vector3;
+
+    /*
+     * Rotates this vector by the given angle counterclockwise around the Z axis.
+     * Parameter - Number (angle): The angle in radians.
+     * Returns - Vector3: The rotated vector.
+     */
+    fun rotateZ(angle: Number): Vector3;
+
+    /*
+     * Creates a new vector with the rounded vector components.
+     * Returns - Vector3: The rounded vector.
+     */
+    fun round(): Vector3;
+
+    /*
+     * Returns the squared euclidean distance between this vector and the given vector.
+     * Parameter - Vector3 (vector): The other Vector3.
+     * Returns - Number: The squared euclidean distance.
+     */
+    fun squaredDistanceTo(vector: Vector3): Number;
+
+    /*
+     * Used to subtract a number from each of the vector coordinates.
+     * Parameter - Number (scalar): The value to subtract from vector x, y, and z.
+     */
+    fun sub(scalar: Number): Null;
+
+    /*
+     * Used to subtract another Vector3.
+     * Parameter - Vector3 (vector): A Vector3 object to subtract.
+     */
+    fun sub(vector: Vector3): Null;
+
+    /*
+     * Used to subtract 3 separate number values.
+     * Parameter - Number (x): The value to subtract from vector x.
+     * Parameter - Number (y): The value to subtract from vector y.
+     * Parameter - Number (z): The value to subtract from vector z.
+     */
+    fun sub(x: Number, y: Number, z: Number): Null;
+
+    /*
+     * Returns a new Vector3 from pitch and yaw angles.
+     * Parameter - Number (pitch): The pitch angle in radians.
+     * Parameter - Number (yaw): The yaw angle in radians.
+     * Returns - Vector3: The return Vector3.
+     */
+    static fun fromPolar(pitch: Number, yaw: Number): Vector3;
+
+    /*
+     * Returns a zero vector (0, 0, 0).
+     * Returns - Vector3: The zero vector.
+     */
+    static fun fromScalar(): Vector3;
+
+    /*
+     * Creates a new vector with the components having the value of a given scalar.
+     * Parameter - Number (scalar): The number to create the vector with.
+     * Returns - Vector3: The new Vector3.
+     */
+    static fun fromScalar(scalar: Number): Vector3;
+}
+
