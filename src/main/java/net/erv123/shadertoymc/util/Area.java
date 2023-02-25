@@ -2,19 +2,17 @@ package net.erv123.shadertoymc.util;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+import org.jetbrains.annotations.NotNull;
 
-public class Area {
+import java.util.Iterator;
+
+public class Area implements Iterable<BlockPos> {
 	private BlockPos positionA;
 	private BlockPos positionB;
 
 	public Area(BlockPos position) {
 		this.positionA = position;
 		this.positionB = position;
-	}
-
-	public Area(BlockPos positionA, BlockPos positionB) {
-		this.positionA = positionA;
-		this.positionB = positionB;
 	}
 
 	public void setA(BlockPos position) {
@@ -43,6 +41,12 @@ public class Area {
 	public Vec3i getSize() {
 		Vec3i difference = this.getA().subtract(this.getB());
 		return new Vec3i(Math.abs(difference.getX()), Math.abs(difference.getY()), Math.abs(difference.getZ()));
+	}
+
+	@NotNull
+	@Override
+	public Iterator<BlockPos> iterator() {
+		return BlockPos.iterate(this.getA(), this.getB()).iterator();
 	}
 
 	@Override

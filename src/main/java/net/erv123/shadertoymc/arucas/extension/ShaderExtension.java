@@ -189,9 +189,7 @@ public class ShaderExtension implements ArucasExtension {
 		RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
 		try {
 			BlockArgumentParser.BlockResult result = BlockArgumentParser.block(registryWrapper, block, true);
-			ShaderUtils.canBlocksFall = false;
-			world.setBlockState(pos, result.blockState(), Block.NOTIFY_LISTENERS, 0);
-			ShaderUtils.canBlocksFall = true;
+			WorldUtils.setBlockWithNoUpdates(world, pos, result.blockState());
 
 			NbtCompound nbt = result.nbt();
 			if (nbt != null) {

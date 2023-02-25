@@ -88,6 +88,10 @@ public class ScriptUtils {
 		if (player == null) {
 			return null;
 		}
+		return getArea(player);
+	}
+
+	public static Area getArea(ServerPlayerEntity player) {
 		return AREA_DATA.get(player.getUuid());
 	}
 

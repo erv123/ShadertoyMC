@@ -7,6 +7,9 @@ import me.senseiwells.arucas.utils.Util;
 import net.erv123.shadertoymc.util.Area;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
+import net.erv123.shadertoymc.util.WorldUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -38,6 +41,7 @@ public class ShadertoyCommand {
 							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
 							ScriptUtils.getOrCreateArea(player, pos).setA(pos);
+							player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos.toShortString()));
 							return 1;
 						})
 					)
@@ -45,6 +49,7 @@ public class ShadertoyCommand {
 						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 						BlockPos pos = player.getBlockPos();
 						ScriptUtils.getOrCreateArea(player, pos).setA(pos);
+						player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos.toShortString()));
 						return 1;
 					})
 				)
@@ -54,6 +59,7 @@ public class ShadertoyCommand {
 							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
 							ScriptUtils.getOrCreateArea(player, pos).setB(pos);
+							player.sendMessage(Text.literal("Successfully set area position 2 to: " + pos.toShortString()));
 							return 1;
 						})
 					)
@@ -61,6 +67,7 @@ public class ShadertoyCommand {
 						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 						BlockPos pos = player.getBlockPos();
 						ScriptUtils.getOrCreateArea(player, pos).setB(pos);
+						player.sendMessage(Text.literal("Successfully set area position 2 to: " + pos.toShortString()));
 						return 1;
 					})
 				)
@@ -79,6 +86,9 @@ public class ShadertoyCommand {
 											Area area = ScriptUtils.getOrCreateArea(player, origin);
 											area.setA(origin);
 											area.setB(origin.add(sizeX, sizeY, sizeZ));
+											String success = "Successfully set area origin to: " + origin.toShortString() +
+												", with size: " + sizeX + ", " + sizeY + ", " + sizeZ;
+											player.sendMessage(Text.literal(success));
 											return 1;
 										})
 									)
@@ -86,6 +96,17 @@ public class ShadertoyCommand {
 							)
 						)
 					)
+				)
+				.then(literal("clear")
+					.executes(context -> {
+						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+						Area area = ScriptUtils.getArea(player);
+						for (BlockPos pos : area) {
+							WorldUtils.setBlockWithNoUpdates(player.world, pos, Blocks.AIR.getDefaultState());
+						}
+						player.sendMessage(Text.literal("Successfully cleared area!"));
+						return 1;
+					})
 				)
 			)
 			.then(literal("run")
