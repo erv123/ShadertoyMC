@@ -21,7 +21,6 @@ import java.util.Arrays;
 public class DocCompiler implements DedicatedServerModInitializer {
 	@Override
 	public void onInitializeServer() {
-		//#if MC >= 11900
 		String[] args = Arrays.stream(FabricLoader.getInstance().getLaunchArguments(true)).filter(opt -> !opt.equals("--")).toArray(String[]::new);
 
 		// Prepare an OptionParser for our parameters
