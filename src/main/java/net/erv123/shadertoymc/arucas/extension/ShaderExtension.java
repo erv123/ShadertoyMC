@@ -52,7 +52,8 @@ public class ShaderExtension implements ArucasExtension {
 			BuiltInFunction.of("dimension", this::dimension),
 			BuiltInFunction.arb("query", this::query),
 			BuiltInFunction.arb("place", this::place),
-			BuiltInFunction.of("area", 7, this::area)
+			BuiltInFunction.of("area", 1, this::area),
+			BuiltInFunction.of("area", 7, this::customArea)
 		);
 	}
 
@@ -207,6 +208,46 @@ public class ShaderExtension implements ArucasExtension {
 
 	@FunctionDoc(
 		name = "area",
+		desc = {
+			"Used to iterate over an area specified by the player.",
+			"This can be done with `/shadertoy area pos1 (<x> <y> <z>)?` and `/shadertoy area pos2 (<x> <y> <z>)?`,",
+			"or `/shadertoy area origin <x> <y> <z> size <sX> <sY> <sZ>`"
+		},
+		params = @ParameterDoc(
+			type = FunctionDef.class,
+			name = "consumer",
+			desc = {
+				"This is the lambda function that gets iterated over the specified area.",
+				"It takes 1-3 Vector3 parameters:",
+				"1. Absolute coordinates of the block in the world.",
+				"2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).",
+				"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ)."
+			}
+		),
+		examples = {
+			"""
+			area(fun (absolute, normal, local) {
+			    // Do something...
+			});
+			"""
+		}
+	)
+	private Void area(Arguments arguments) {
+		Interpreter interpreter = arguments.getInterpreter();
+		Area area = ScriptUtils.getArea(interpreter);
+		if (area == null) {
+			throw new RuntimeError("User has not defined an area to use!");
+		}
+
+		ClassInstance callback = arguments.nextFunction();
+
+		interpreter.logDebug("Iterating user-defined area: " + area);
+		this.internalArea(area.getOrigin(), area.getSize(), callback, interpreter);
+		return null;
+	}
+
+	@FunctionDoc(
+		name = "area",
 		desc = "Used to iterate over an area specified by an origin and size.",
 		params = {
 			@ParameterDoc(type = NumberDef.class, name = "originX", desc = "The origin x coordinate"),
@@ -230,12 +271,12 @@ public class ShaderExtension implements ArucasExtension {
 		examples = {
 			"""
 			area(100, 100, 100, 200, 1, 200, fun(absolute, normal, local) {
-				// Do something...
+			    // Do something...
 			});
 			"""
 		}
 	)
-	private Void area(Arguments arguments) {
+	private Void customArea(Arguments arguments) {
 		int originX = arguments.nextPrimitive(NumberDef.class).intValue();
 		int originY = arguments.nextPrimitive(NumberDef.class).intValue();
 		int originZ = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -250,14 +291,19 @@ public class ShaderExtension implements ArucasExtension {
 		ClassInstance callback = arguments.nextFunction();
 		Interpreter interpreter = arguments.getInterpreter();
 
-		int volume = sizeX * sizeY * sizeZ;
-		int completed = 0;
+		this.internalArea(new BlockPos(originX, originY, originZ), new Vec3i(sizeX, sizeY, sizeZ), callback, interpreter);
+		return null;
+	}
+
+	private void internalArea(BlockPos origin, Vec3i size, ClassInstance callback, Interpreter interpreter) {
+		int originX = origin.getX(), originY = origin.getY(), originZ = origin.getZ();
+		int sizeX = size.getX(), sizeY = size.getY(), sizeZ = size.getZ();
 
 		int parameters = callback.asPrimitive(FunctionDef.class).getCount();
 		Function<Vec3i, List<Object>> generator = switch (parameters) {
 			case 1 -> List::of;
 			case 2 -> (absolute) -> {
-				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originZ));
+				Vec3i local = absolute.subtract(origin);
 				Vec3d normal = new Vec3d(
 					MathHelper.lerp(local.getX() / (double) sizeX, -1, 1),
 					MathHelper.lerp(local.getY() / (double) sizeY, -1, 1),
@@ -267,7 +313,7 @@ public class ShaderExtension implements ArucasExtension {
 
 			};
 			case 3 -> (absolute) -> {
-				Vec3i local = absolute.subtract(new Vec3i(originX, originY, originZ));
+				Vec3i local = absolute.subtract(origin);
 				Vec3d normal = new Vec3d(
 					MathHelper.lerp(local.getX() / (double) sizeX, -1, 1),
 					MathHelper.lerp(local.getY() / (double) sizeY, -1, 1),
@@ -277,6 +323,9 @@ public class ShaderExtension implements ArucasExtension {
 			};
 			default -> throw new RuntimeError("Callback function needs to have 1, 2, or 3 parameters");
 		};
+
+		int volume = sizeX * sizeY * sizeZ;
+		int completed = 0;
 
 		ScriptUtils.showProgressBar(interpreter);
 		for (int x = originX; x < originX + sizeX; x++) {
@@ -292,6 +341,5 @@ public class ShaderExtension implements ArucasExtension {
 			ScriptUtils.getBossBar(interpreter).setPercent(completed / (float) volume);
 		}
 		ScriptUtils.hideProgressBar(interpreter);
-		return null;
 	}
 }

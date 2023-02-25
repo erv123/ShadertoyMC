@@ -1,14 +1,19 @@
 package net.erv123.shadertoymc.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import me.senseiwells.arucas.utils.Util;
+import net.erv123.shadertoymc.util.Area;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +23,6 @@ import java.nio.file.Path;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-/*
-TODO:
-open file command
- */
 public class ShadertoyCommand {
 	private ShadertoyCommand() {
 
@@ -30,6 +31,63 @@ public class ShadertoyCommand {
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 		dispatcher.register(literal("shadertoy")
 			.requires(source -> source.hasPermissionLevel(2))
+			.then(literal("area")
+				.then(literal("pos1")
+					.then(argument("position", BlockPosArgumentType.blockPos())
+						.executes(context -> {
+							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
+							ScriptUtils.getOrCreateArea(player, pos).setA(pos);
+							return 1;
+						})
+					)
+					.executes(context -> {
+						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+						BlockPos pos = player.getBlockPos();
+						ScriptUtils.getOrCreateArea(player, pos).setA(pos);
+						return 1;
+					})
+				)
+				.then(literal("pos2")
+					.then(argument("position", BlockPosArgumentType.blockPos())
+						.executes(context -> {
+							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
+							ScriptUtils.getOrCreateArea(player, pos).setB(pos);
+							return 1;
+						})
+					)
+					.executes(context -> {
+						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+						BlockPos pos = player.getBlockPos();
+						ScriptUtils.getOrCreateArea(player, pos).setB(pos);
+						return 1;
+					})
+				)
+				.then(literal("origin")
+					.then(argument("position", BlockPosArgumentType.blockPos())
+						.then(literal("size")
+							.then(argument("sizeX", IntegerArgumentType.integer(1))
+								.then(argument("sizeY", IntegerArgumentType.integer(1))
+									.then(argument("sizeZ", IntegerArgumentType.integer(1))
+										.executes(context -> {
+											ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+											BlockPos origin = BlockPosArgumentType.getBlockPos(context, "position");
+											int sizeX = IntegerArgumentType.getInteger(context, "sizeX");
+											int sizeY = IntegerArgumentType.getInteger(context, "sizeY");
+											int sizeZ = IntegerArgumentType.getInteger(context, "sizeZ");
+											Area area = ScriptUtils.getOrCreateArea(player, origin);
+											area.setA(origin);
+											area.setB(origin.add(sizeX, sizeY, sizeZ));
+											return 1;
+										})
+									)
+								)
+							)
+						)
+					)
+				)
+			)
 			.then(literal("run")
 				.then(argument("shader_file", StringArgumentType.string())
 					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder))
