@@ -12,8 +12,8 @@ import me.senseiwells.arucas.builtin.StringDef;
 import me.senseiwells.arucas.classes.instance.ClassInstance;
 import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.RuntimeError;
+import me.senseiwells.arucas.functions.builtin.BuiltInFunction;
 import me.senseiwells.arucas.utils.Arguments;
-import me.senseiwells.arucas.utils.BuiltInFunction;
 import me.senseiwells.arucas.utils.Trace;
 import me.senseiwells.arucas.utils.Util;
 import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
@@ -342,7 +342,7 @@ public class ShaderExtension implements ArucasExtension {
 					for (Object vec : generator.apply(new Vec3i(x, y, z))) {
 						args.add(interpreter.convertValue(vec));
 					}
-					interpreter.call(callback, args, Trace.getINTERNAL());
+					interpreter.call(callback, args, Trace.INTERNAL);
 				}
 			}
 			ScriptUtils.getBossBar(interpreter).setPercent(completed / (float) volume);
