@@ -224,7 +224,7 @@ public class ShaderExtension implements ArucasExtension {
 		),
 		examples = {
 			"""
-			area(fun (absolute, normal, local) {
+			area(fun (aPos, nPos, lPos) {
 			    // Do something...
 			});
 			"""
@@ -268,7 +268,7 @@ public class ShaderExtension implements ArucasExtension {
 		},
 		examples = {
 			"""
-			area(100, 100, 100, 200, 1, 200, fun(absolute, normal, local) {
+			area(100, 100, 100, 200, 1, 200, fun(aPos, nPos, lPos) {
 			    // Do something...
 			});
 			"""
