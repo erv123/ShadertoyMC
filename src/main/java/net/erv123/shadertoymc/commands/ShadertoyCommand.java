@@ -10,6 +10,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,6 +60,17 @@ public class ShadertoyCommand {
 
 						context.getSource().sendMessage(Text.literal("New shader file §n" + shaderFile + "§r created")
 							.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, shaderPath.toString()))));
+						return 1;
+					})
+				)
+			)
+			.then(literal("open")
+				.then(argument("shader_file", StringArgumentType.string())
+					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder))
+					.executes(context -> {
+						String shaderFile = StringArgumentType.getString(context, "shader_file");
+						File shader = new File(ShaderUtils.SHADERTOY_PATH.resolve(shaderFile).toUri());
+						ScriptUtils.getOperatingSystem().open(shader);
 						return 1;
 					})
 				)

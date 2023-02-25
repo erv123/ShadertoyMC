@@ -15,7 +15,7 @@ jobs:
           distribution: temurin
           java-version: 17
       - name: Generate Documentations
-        run: ./gradlew runClient --args="--generate ../../../generated" --stacktrace --no-daemon
+        run: ./gradlew runServer --args="-- -generate ../../../README.md" --stacktrace --no-daemon
       - name: Commit Changes
         continue-on-error: true
         run: |
@@ -25,10 +25,3 @@ jobs:
           git commit -m "Update generated documentation" || exit 0
           git push
 
-      - name: Update Wiki
-        uses: Andrew-Chen-Wang/github-wiki-action@v3
-        env:
-          WIKI_DIR: docs/wiki/
-          GH_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
-          GH_MAIL: erv123@users.noreply.github.com
-          GH_NAME: erv123

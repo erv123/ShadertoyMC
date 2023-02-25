@@ -1,22 +1,29 @@
 # ShadertoyMC
+CURRENTLY THIS IS A SINGLEPLAYER ONLY MOD
 
-This minecraft mod allows writing scripts in Arucas (https://github.com/senseiwells/Arucas) with the goal of placing blocks based on math.
+This minecraft mod allows writing scripts in Arucas (https://github.com/senseiwells/Arucas) with the goal of placing
+blocks based on math.
 
-The working logic is similar to how https://www.shadertoy.com/ works: an expression is calculated for each block with block coordinates as inputs and as a result of this expression a block is placed at the coordinates
+The working logic is similar to how https://www.shadertoy.com/ works: an expression is calculated for each block with
+block coordinates as inputs and as a result of this expression a block is placed at the coordinates
 
 FabricAPI required
 
 ## Easy start
 
 ### Step 1
-Initialize area with `/shadertoy area pos1 pos2`
+
+Create a new script with `/shadertoy new <name>`
+
+This file will contain a working script and can be run immediately, but the area on operation is defined within the file
+and might not match your desired are
 
 ### Step 2
-Create a new script with `/shadertoy new name`
-This file will contain a working script and can be run immediatelly
 
-### Step 3
-Open and edit the file by clicking on the text (VSCode with Arucas extension reccomended)
+Open and edit the file by clicking on the text (VSCode with Arucas extension recommended).
+
+You can also use `/shadertoy open <name>`
 
 ### Step 4
-Run the script with `/shadertoy run name`
+
+Run the script with `/shadertoy run <name>`

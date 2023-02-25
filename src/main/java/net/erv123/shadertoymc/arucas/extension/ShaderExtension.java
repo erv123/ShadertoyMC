@@ -103,7 +103,8 @@ public class ShaderExtension implements ArucasExtension {
 		if (world == null) {
 			throw new RuntimeError("Failed to get world for: " + worldString);
 		}
-		return world.getBlockState(new BlockPos(x, y, z)).toString();
+		String blockString = world.getBlockState(new BlockPos(x, y, z)).toString();
+		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
 	}
 
 	@FunctionDoc(
@@ -129,7 +130,8 @@ public class ShaderExtension implements ArucasExtension {
 		if (world == null) {
 			throw new RuntimeError("Failed to get world for: " + worldString);
 		}
-		return world.getBlockState(new BlockPos(x, y, z)).toString();
+		String blockString = world.getBlockState(new BlockPos(x, y, z)).toString();
+		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
 	}
 
 	@FunctionDoc(
@@ -148,7 +150,8 @@ public class ShaderExtension implements ArucasExtension {
 		int y = arguments.nextPrimitive(NumberDef.class).intValue();
 		int z = arguments.nextPrimitive(NumberDef.class).intValue();
 		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		return source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
+		String blockString = source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
+		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
 	}
 
 	@FunctionDoc(
@@ -166,7 +169,8 @@ public class ShaderExtension implements ArucasExtension {
 		int y = (int) vec.getY();
 		int z = (int) vec.getZ();
 		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		return source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
+		String blockString = source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
+		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
 	}
 
 	@FunctionDoc(

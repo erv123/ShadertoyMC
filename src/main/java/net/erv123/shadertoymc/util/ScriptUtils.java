@@ -24,6 +24,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -64,6 +65,10 @@ public class ScriptUtils {
 
 	public static void sendMessageToHolder(Interpreter interpreter, Text text) {
 		getScriptHolder(interpreter).sendMessage(text);
+	}
+
+	public static Util.OperatingSystem getOperatingSystem() {
+		return Util.getOperatingSystem();
 	}
 
 	public static ServerCommandSource getScriptHolder(Interpreter interpreter) {
