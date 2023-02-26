@@ -38,6 +38,14 @@ public class DocCompiler implements DedicatedServerModInitializer {
 
 		Util.File file = Util.File.INSTANCE;
 		Path path = file.ensureExists(Path.of(options.valueOf(pathSpec)));
+
+		System.out.println(path);
+		try {
+			System.out.println(path.toRealPath());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		ArucasAPI api = ScriptUtils.generateApi();
 		Path libPath = file.ensureExists(path.resolve("libs"));
 		Path docPath = file.ensureExists(path.getParent().resolve("docs"));

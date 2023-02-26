@@ -8,36 +8,35 @@ import me.senseiwells.arucas.api.docs.annotations.ParameterDoc;
 import me.senseiwells.arucas.api.docs.annotations.ReturnDoc;
 import me.senseiwells.arucas.builtin.FunctionDef;
 import me.senseiwells.arucas.builtin.NumberDef;
+import me.senseiwells.arucas.builtin.ObjectDef;
 import me.senseiwells.arucas.builtin.StringDef;
 import me.senseiwells.arucas.classes.instance.ClassInstance;
 import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.RuntimeError;
+import me.senseiwells.arucas.functions.builtin.BuiltInFunction;
 import me.senseiwells.arucas.utils.Arguments;
-import me.senseiwells.arucas.utils.BuiltInFunction;
 import me.senseiwells.arucas.utils.Trace;
 import me.senseiwells.arucas.utils.Util;
-import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
-import net.erv123.shadertoymc.util.ScriptUtils;
-import net.erv123.shadertoymc.util.ShaderUtils;
+import me.senseiwells.arucas.utils.impl.ArucasMap;
+import net.erv123.shadertoymc.util.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.command.argument.BlockArgumentParser;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 @ExtensionDoc(
@@ -50,15 +49,9 @@ public class ShaderExtension implements ArucasExtension {
 	@Override
 	public List<BuiltInFunction> getBuiltInFunctions() {
 		return List.of(
-			BuiltInFunction.of("getWorld", this::getWorld),
-			BuiltInFunction.of("getBlock", 1, this::getBlockVector),
-			BuiltInFunction.of("getBlock", 2, this::getBlockWithWorld),
-			BuiltInFunction.of("getBlock", 3, this::getBlock),
-			BuiltInFunction.of("getBlock", 4, this::getBlockVectorWithWorld),
-			BuiltInFunction.of("place", 2, this::placeVector),
-			BuiltInFunction.of("place", 3, this::placeVectorWithWorld),
-			BuiltInFunction.of("place", 4, this::placeDefault),
-			BuiltInFunction.of("place", 5, this::placeWithWorld),
+			BuiltInFunction.of("dimension", this::dimension),
+			BuiltInFunction.arb("query", this::query),
+			BuiltInFunction.arb("place", this::place),
 			BuiltInFunction.of("area", 7, this::area)
 		);
 	}
@@ -70,212 +63,151 @@ public class ShaderExtension implements ArucasExtension {
 	}
 
 	@FunctionDoc(
-		name = "getWorld",
-		desc = "Returns string for your current dimension",
-		examples = "getWorld();",
-		returns = @ReturnDoc(type = StringDef.class, desc = "String representing your current dimension")
+		name = "dimension",
+		desc = {
+			"Returns string for your current dimension.",
+			"For example 'minecraft:the_nether'"
+		},
+		returns = @ReturnDoc(type = StringDef.class, desc = "String representing your current dimension."),
+		examples = "world = dimension();"
 	)
-	private String getWorld(Arguments arguments) {
-		return ScriptUtils.getScriptHolder(arguments.getInterpreter()).getWorld().getRegistryKey().getValue().getPath();
+	private String dimension(Arguments arguments) {
+		return ScriptUtils.getScriptHolder(arguments.getInterpreter()).getWorld().getRegistryKey().getValue().toString();
 	}
 
 	@FunctionDoc(
-		name = "getBlock",
-		desc = "This gets a string for a block in the specified dimension",
-		params = {
-			@ParameterDoc(type = NumberDef.class, name = "x", desc = "The x coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "y", desc = "The y coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "z", desc = "The z coordinate"),
-			@ParameterDoc(type = StringDef.class, name = "block", desc = "A string representing the target dimension (overworld, the_nether, the_end)")
+		name = "query",
+		desc = {
+			"This queries a the data for a block at a given position in a given dimension.",
+			"The parameters for this function are as follows:",
+			"position - this can either be as 3 numbers (x, y, z) or as a single Vector3,",
+			"type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples,",
+			"dimension - this is an optional argument defining the dimension in which to place the block,",
+			"by default this is the dimension of the player that executed the script."
 		},
-		returns = @ReturnDoc(type = StringDef.class, desc = "A string representing the block state"),
-		examples = "getBlock(0,0,0,\"the_end\");"
-	)
-	private String getBlockWithWorld(Arguments arguments) {
-		int x = arguments.nextPrimitive(NumberDef.class).intValue();
-		int y = arguments.nextPrimitive(NumberDef.class).intValue();
-		int z = arguments.nextPrimitive(NumberDef.class).intValue();
-		String worldString = arguments.nextPrimitive(StringDef.class);
-
-		RegistryKey<World> registry = RuntimeError.wrap(() -> RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString)));
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		ServerWorld world = source.getServer().getWorld(registry);
-		if (world == null) {
-			throw new RuntimeError("Failed to get world for: " + worldString);
+		params = @ParameterDoc(type = ObjectDef.class, name = "args", desc = "The query arguments, see function description.", isVarargs = true),
+		examples = {
+			"query(0, 0, 0); // -> 'minecraft:oak_leaves[distance=7,persistent=true,waterlogged=false]'",
+			"query(10, 0, 10); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'"
 		}
-		String blockString = world.getBlockState(new BlockPos(x, y, z)).toString();
-		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
-	}
-
-	@FunctionDoc(
-		name = "getBlock",
-		desc = "This gets a string for a block",
-		params = {
-			@ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A vector containing the x, y and z coordinates"),
-			@ParameterDoc(type = StringDef.class, name = "block", desc = "A string representing the target dimension (overworld, the_nether, the_end)")
-		},
-		returns = @ReturnDoc(type = StringDef.class, desc = "A string representing the block state"),
-		examples = "getBlock(new Vector3(0,0,0),\"the_end\");"
 	)
-	private String getBlockVectorWithWorld(Arguments arguments) {
-		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
-		int x = (int) vec.getX();
-		int y = (int) vec.getY();
-		int z = (int) vec.getZ();
-		String worldString = arguments.nextPrimitive(StringDef.class);
-
-		RegistryKey<World> registry = RuntimeError.wrap(() -> RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString)));
+	private Object query(Arguments arguments) {
+		BlockPos pos = new BlockPos(ArgumentUtils.getVec3i(arguments));
 		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		ServerWorld world = source.getServer().getWorld(registry);
-		if (world == null) {
-			throw new RuntimeError("Failed to get world for: " + worldString);
+
+		String type = null;
+		ServerWorld world = null;
+		while (arguments.hasNext()) {
+			String next = arguments.nextPrimitive(StringDef.class);
+			String lower = next.toLowerCase(Locale.ROOT);
+			switch (lower) {
+				case "block", "id", "state", "properties", "nbt", "tags", "default" -> {
+					if (type != null) {
+						// Type was already set
+						throw new RuntimeError("Cannot have multiple query types");
+					}
+					type = lower;
+				}
+				default -> {
+					if (world != null) {
+						// World was already set
+						throw new RuntimeError("Invalid argument '" + next + "'");
+					}
+
+					world = WorldUtils.worldFromString(next);
+					if (world == null) {
+						throw new RuntimeError("Invalid world '" + next + "'");
+					}
+ 				}
+			}
 		}
-		String blockString = world.getBlockState(new BlockPos(x, y, z)).toString();
-		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
-	}
 
-	@FunctionDoc(
-		name = "getBlock",
-		desc = "This gets a string for a block",
-		params = {
-			@ParameterDoc(type = NumberDef.class, name = "x", desc = "The x coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "y", desc = "The y coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "z", desc = "The z coordinate")
-		},
-		returns = @ReturnDoc(type = StringDef.class, desc = "A string representing the block state"),
-		examples = "getBlock(0,0,0);"
-	)
-	private String getBlock(Arguments arguments) {
-		int x = arguments.nextPrimitive(NumberDef.class).intValue();
-		int y = arguments.nextPrimitive(NumberDef.class).intValue();
-		int z = arguments.nextPrimitive(NumberDef.class).intValue();
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		String blockString = source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
-		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
-	}
+		if (type == null) {
+			type = "default";
+		}
+		if (world == null) {
+			world = source.getWorld();
+		}
 
-	@FunctionDoc(
-		name = "getBlock",
-		desc = "This gets a string for a block",
-		params = {
-			@ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A vector containing the x, y and z coordinates")
-		},
-		returns = @ReturnDoc(type = StringDef.class, desc = "A string representing the block state"),
-		examples = "getBlock(new Vector3(0,0,0));"
-	)
-	private String getBlockVector(Arguments arguments) {
-		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
-		int x = (int) vec.getX();
-		int y = (int) vec.getY();
-		int z = (int) vec.getZ();
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		String blockString = source.getWorld().getBlockState(new BlockPos(x, y, z)).toString();
-		return blockString.substring(blockString.indexOf("{") + 1, blockString.indexOf("}"));
+		return switch (type) {
+			case "default" -> {
+				yield BlockUtils.blockData(world, pos);
+			}
+			case "block", "id" -> {
+				yield BlockUtils.blockId(world.getBlockState(pos));
+			}
+			case "state", "properties" -> {
+				yield BlockUtils.stateAsMap(world.getBlockState(pos), arguments.getInterpreter());
+			}
+			case "nbt", "tags" -> {
+				BlockEntity entity =  world.getBlockEntity(pos);
+				if (entity == null) {
+					yield new ArucasMap();
+				}
+				yield BlockUtils.nbtAsMap(entity, arguments.getInterpreter());
+			}
+			default -> throw new IllegalStateException();
+ 		};
 	}
 
 	@FunctionDoc(
 		name = "place",
-		desc = "This places a block at the specified coordinates in the players current dimension",
-		params = {
-			@ParameterDoc(type = StringDef.class, name = "block", desc = {"A string representing the block that will be placed", "the syntax is the same as when using /setblock or /fill commands"}),
-			@ParameterDoc(type = NumberDef.class, name = "x", desc = "The x coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "y", desc = "The y coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "z", desc = "The z coordinate")
+		desc = {
+			"This function allows you to place a block in a given world.",
+			"The parameters for this function are as follows:",
+			"position - this can either be as 3 numbers (x, y, z) or as a single Vector3,",
+			"block - this is the same format you would use for a setblock command,",
+			"dimension - this is an optional argument defining the dimension in which to place the block,",
+			"by default this is the dimension of the player that executed the script."
 		},
-		examples = "place(\"air\", 0,0,0);"
-	)
-	private Void placeDefault(Arguments arguments) {
-		String block = arguments.nextPrimitive(StringDef.class);
-		int x = arguments.nextPrimitive(NumberDef.class).intValue();
-		int y = arguments.nextPrimitive(NumberDef.class).intValue();
-		int z = arguments.nextPrimitive(NumberDef.class).intValue();
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		this.place(arguments.getInterpreter(), source.getWorld(), block, x, y, z);
-		return null;
-	}
-
-	@FunctionDoc(
-		name = "place",
-		desc = "This places a block at the specified coordinates in the specified dimension",
-		params = {
-			@ParameterDoc(type = StringDef.class, name = "block", desc = {"A string representing the block that will be placed", "the syntax is the same as when using /setblock or /fill commands"}),
-			@ParameterDoc(type = NumberDef.class, name = "x", desc = "The x coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "y", desc = "The y coordinate"),
-			@ParameterDoc(type = NumberDef.class, name = "z", desc = "The z coordinate"),
-			@ParameterDoc(type = StringDef.class, name = "block", desc = "A string representing the target dimension (overworld, the_nether, the_end)"),
-		},
-		examples = "place(\"air\", 0,0,0, \"overworld\");"
-	)
-	private Void placeWithWorld(Arguments arguments) {
-		String block = arguments.nextPrimitive(StringDef.class);
-		int x = arguments.nextPrimitive(NumberDef.class).intValue();
-		int y = arguments.nextPrimitive(NumberDef.class).intValue();
-		int z = arguments.nextPrimitive(NumberDef.class).intValue();
-		String worldString = arguments.nextPrimitive(StringDef.class);
-
-		RegistryKey<World> registry = RuntimeError.wrap(() -> RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString)));
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		ServerWorld world = source.getServer().getWorld(registry);
-
-		if (world == null) {
-			throw new RuntimeError("Failed to get world for: " + worldString);
+		params = @ParameterDoc(type = ObjectDef.class, name = "args", desc = "The placement arguments, see the function description.", isVarargs = true),
+		examples = {
+			"place(0, 0, 0, 'minecraft:oak_planks');",
+			"place(new Vector3(0, 0, 0), 'oak_planks', 'minecraft:the_nether');",
+			"place(100, 64, 10, 'oak_sign[rotation = 4]{Text1: \"Example\"}', 'overworld');"
 		}
-		this.place(arguments.getInterpreter(), world, block, x, y, z);
-		return null;
-	}
-
-	@FunctionDoc(
-		name = "place",
-		desc = "This places a block at the specified coordinates in the players current dimension ",
-		params = {
-			@ParameterDoc(type = StringDef.class, name = "block", desc = {"A string representing the block that will be placed", "the syntax is the same as when using /setblock or /fill commands"}),
-			@ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A vector containing the x, y and z coordinates")
-		},
-		examples = "place(\"air\", new Vector3(0,0,0));"
 	)
-	private Void placeVector(Arguments arguments) {
-		String block = arguments.nextPrimitive(StringDef.class);
-		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
-		int x = (int) vec.getX();
-		int y = (int) vec.getY();
-		int z = (int) vec.getZ();
+	private Void place(Arguments arguments) {
 		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		this.place(arguments.getInterpreter(), source.getWorld(), block, x, y, z);
-		return null;
-	}
-
-	@FunctionDoc(
-		name = "place",
-		desc = "This places a block at the specified coordinates in the specified dimension",
-		params = {
-			@ParameterDoc(type = StringDef.class, name = "block", desc = {"A string representing the block that will be placed", "the syntax is the same as when using /setblock or /fill commands"}),
-			@ParameterDoc(type = Vector3Def.class, name = "vector", desc = "A vector containing the x, y and z coordinates"),
-			@ParameterDoc(type = StringDef.class, name = "block", desc = "A string representing the target dimension (overworld, the_nether, the_end)"),
-		},
-		examples = "place(\"air\", new Vector3(0,0,0), \"the_nether\");"
-	)
-	private Void placeVectorWithWorld(Arguments arguments) {
+		BlockPos pos = new BlockPos(ArgumentUtils.getVec3i(arguments));
 		String block = arguments.nextPrimitive(StringDef.class);
-		Vec3d vec = arguments.nextPrimitive(Vector3Def.class);
-		int x = (int) vec.getX();
-		int y = (int) vec.getY();
-		int z = (int) vec.getZ();
-		String worldString = arguments.nextPrimitive(StringDef.class);
+		ServerWorld world = source.getWorld();
 
-		RegistryKey<World> registry = RuntimeError.wrap(() -> RegistryKey.of(RegistryKeys.WORLD, Identifier.tryParse(worldString)));
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-		ServerWorld world = source.getServer().getWorld(registry);
-
-		if (world == null) {
-			throw new RuntimeError("Failed to get world for: " + worldString);
+		if (arguments.hasNext()) {
+			String worldString = arguments.nextPrimitive(StringDef.class);
+			world = WorldUtils.worldFromString(worldString);
+			if (world == null) {
+				throw new RuntimeError("Invalid world '" + worldString + "'");
+			}
 		}
-		this.place(arguments.getInterpreter(), world, block, x, y, z);
+		if (arguments.hasNext()) {
+			throw new RuntimeError("Too many arguments");
+		}
+
+		DynamicRegistryManager manager = source.getRegistryManager();
+		RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
+		try {
+			BlockArgumentParser.BlockResult result = BlockArgumentParser.block(registryWrapper, block, true);
+			ShaderUtils.canBlocksFall = false;
+			world.setBlockState(pos, result.blockState(), Block.NOTIFY_LISTENERS, 0);
+			ShaderUtils.canBlocksFall = true;
+
+			NbtCompound nbt = result.nbt();
+			if (nbt != null) {
+				BlockEntity entity = world.getBlockEntity(pos);
+				if (entity != null) {
+					entity.readNbt(nbt);
+				}
+			}
+		} catch (CommandSyntaxException e) {
+			throw new RuntimeError("Invalid block: " + block, e);
+		}
 		return null;
 	}
 
 	@FunctionDoc(
 		name = "area",
-		desc = "Used to iterate a lambda over an area specified by an origin and size",
+		desc = "Used to iterate over an area specified by an origin and size.",
 		params = {
 			@ParameterDoc(type = NumberDef.class, name = "originX", desc = "The origin x coordinate"),
 			@ParameterDoc(type = NumberDef.class, name = "originY", desc = "The origin y coordinate"),
@@ -283,13 +215,25 @@ public class ShaderExtension implements ArucasExtension {
 			@ParameterDoc(type = NumberDef.class, name = "sizeX", desc = "The size in x axis"),
 			@ParameterDoc(type = NumberDef.class, name = "sizeY", desc = "The size in y axis"),
 			@ParameterDoc(type = NumberDef.class, name = "sizeZ", desc = "The size in z axis"),
-			@ParameterDoc(type = FunctionDef.class, name = "lambda", desc = {"This is the lambda function that gets iterated over the specified area",
-				"It takes 1-3 Vector3 parameters",
-				"1. Absolute coordinates of the block in the world",
-				"2. Normalized coordinates within the area (from -1 -1 -1 to 1 1 1 no matter the area size)",
-				"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ"})
+			@ParameterDoc(
+				type = FunctionDef.class,
+				name = "consumer",
+				desc = {
+					"This is the lambda function that gets iterated over the specified area.",
+					"It takes 1-3 Vector3 parameters:",
+					"1. Absolute coordinates of the block in the world.",
+					"2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).",
+					"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ)."
+				}
+			)
 		},
-		examples = "area(100, 100, 100, 200, 1, 200, fun(aPos, nPos, lPos) {/*your code goes here*/});"
+		examples = {
+			"""
+			area(100, 100, 100, 200, 1, 200, fun(absolute, normal, local) {
+				// Do something...
+			});
+			"""
+		}
 	)
 	private Void area(Arguments arguments) {
 		int originX = arguments.nextPrimitive(NumberDef.class).intValue();
@@ -342,7 +286,7 @@ public class ShaderExtension implements ArucasExtension {
 					for (Object vec : generator.apply(new Vec3i(x, y, z))) {
 						args.add(interpreter.convertValue(vec));
 					}
-					interpreter.call(callback, args, Trace.getINTERNAL());
+					interpreter.call(callback, args, Trace.INTERNAL);
 				}
 			}
 			ScriptUtils.getBossBar(interpreter).setPercent(completed / (float) volume);
@@ -350,19 +294,4 @@ public class ShaderExtension implements ArucasExtension {
 		ScriptUtils.hideProgressBar(interpreter);
 		return null;
 	}
-
-	private void place(Interpreter interpreter, ServerWorld world, String block, int x, int y, int z) {
-		ServerCommandSource source = ScriptUtils.getScriptHolder(interpreter);
-		DynamicRegistryManager manager = source.getRegistryManager();
-		RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
-		try {
-			BlockState state = BlockArgumentParser.block(registryWrapper, block, true).blockState();
-			ShaderUtils.canBlocksFall = false;
-			world.setBlockState(new BlockPos(x, y, z), state, Block.NOTIFY_LISTENERS, 0);
-			ShaderUtils.canBlocksFall = true;
-		} catch (CommandSyntaxException e) {
-			throw new RuntimeError("Invalid block: " + block, e);
-		}
-	}
-
 }

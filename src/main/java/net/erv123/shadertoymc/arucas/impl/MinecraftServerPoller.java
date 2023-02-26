@@ -16,6 +16,7 @@ public enum MinecraftServerPoller implements ArucasPoller {
 
 	@Override
 	public void poll(@NotNull Interpreter interpreter) {
+		// This allows the server to continue ticking even while scripts are running
 		if (ShadertoyMC.SERVER.isOnThread() && this.lastPoll + TICK_TIME_NS < System.nanoTime()) {
 			((MinecraftServerTicker) ShadertoyMC.SERVER).forceTick(() -> false);
 			this.lastPoll = System.nanoTime();

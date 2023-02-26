@@ -1,0 +1,255 @@
+/* Native, implemented in Java
+ * Class that is used to generate perlin noise.
+ * Import with 'import PerlinNoise from util.Noise'
+ */
+class PerlinNoise {
+    /*
+     * Used to construct a PerlinNoise class object that is necessary to generate perlin noise.
+     */
+    PerlinNoise();
+
+    /*
+     * Used to construct a PerlinNoise class object that is necessary to generate perlin noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     */
+    PerlinNoise(seed: Number);
+
+    /*
+     * Used to construct a PerlinNoise class object that is necessary to generate perlin noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Number (frequency): Frequency of the first octave. Recommended value 0.01 - 0.1 when using raw absolute coordinates.
+     */
+    PerlinNoise(seed: Number, frequency: Number);
+
+    /*
+     * Used to construct a PerlinNoise class object that is necessary to generate perlin noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Number (frequency): Frequency of the first octave. Recommended value 0.01 - 0.1 when using raw absolute coordinates.
+     * Parameter - Number (octaveCount): The number of octaves control the amount of detail of the Perlin noise. An octave is one of the coherent-noise functions in a series of coherent-noise functions that are added together to form Perlin noise. Should be an integer value, preferably between 1 and 9 (going much higher isn't too useful and will impact performance).
+     */
+    PerlinNoise(seed: Number, frequency: Number, octaveCount: Number);
+
+    /*
+     * Used to construct a PerlinNoise class object that is necessary to generate perlin noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Number (frequency): Frequency of the first octave. Recommended value 0.01 - 0.1 when using raw absolute coordinates.
+     * Parameter - Number (octaveCount): The number of octaves control the amount of detail of the Perlin noise. An octave is one of the coherent-noise functions in a series of coherent-noise functions that are added together to form Perlin noise. Should be an integer value, preferably between 1 and 9 (going much higher isn't too useful and will impact performance).
+     * Parameter - Number (lacunarity): The lacunarity specifies the frequency multiplier between successive octaves. For best results, set the lacunarity to a number between 1.5 and 3.5.
+     */
+    PerlinNoise(seed: Number, frequency: Number, octaveCount: Number, lacunarity: Number);
+
+    /*
+     * Used to construct a PerlinNoise class object that is necessary to generate perlin noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Number (frequency): Frequency of the first octave. Recommended value 0.01 - 0.1 when using raw absolute coordinates.
+     * Parameter - Number (octaveCount): The number of octaves control the amount of detail of the Perlin noise. An octave is one of the coherent-noise functions in a series of coherent-noise functions that are added together to form Perlin noise. Should be an integer value, preferably between 1 and 9 (going much higher isn't too useful and will impact performance).
+     * Parameter - Number (lacunarity): The lacunarity specifies the frequency multiplier between successive octaves. For best results, set the lacunarity to a number between 1.5 and 3.5.
+     * Parameter - Number (persistence): The persistence value controls the roughness of the Perlin noise. Larger values produce rougher noise. The persistence value determines how quickly the amplitudes diminish for successive octaves. 0.5 works well, but recommended values 0 - 1.
+     */
+    PerlinNoise(seed: Number, frequency: Number, octaveCount: Number, lacunarity: Number, persistence: Number);
+
+    /*
+     * Used to construct a PerlinNoise class object that is necessary to generate perlin noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Number (frequency): Frequency of the first octave. Recommended value 0.01 - 0.1 when using raw absolute coordinates.
+     * Parameter - Number (octaveCount): The number of octaves control the amount of detail of the Perlin noise. An octave is one of the coherent-noise functions in a series of coherent-noise functions that are added together to form Perlin noise. Should be an integer value, preferably between 1 and 9 (going much higher isn't too useful and will impact performance).
+     * Parameter - Number (lacunarity): The lacunarity specifies the frequency multiplier between successive octaves. For best results, set the lacunarity to a number between 1.5 and 3.5.
+     * Parameter - Number (persistence): The persistence value controls the roughness of the Perlin noise. Larger values produce rougher noise. The persistence value determines how quickly the amplitudes diminish for successive octaves. 0.5 works well, but recommended values 0 - 1.
+     * Parameter - String (noiseQuality): Noise quality should be one of the following: 'fast', 'standard', 'best.'.
+     */
+    PerlinNoise(seed: Number, frequency: Number, octaveCount: Number, lacunarity: Number, persistence: Number, noiseQuality: String);
+
+    /*
+     * Used to query the frequency value for a PerlinNoise object.
+     * Returns - Number: Current frequency for the PerlinNoise object.
+     */
+    fun getFrequency(): Number;
+
+    /*
+     * Used to query the frequency value for a PerlinNoise object.
+     * Returns - Number: Current lacunarity for the PerlinNoise object.
+     */
+    fun getLacunarity(): Number;
+
+    /*
+     * Used to query the noise quality value for a PerlinNoise object.
+     * Returns - String: Current noise quality for the PerlinNoise object.
+     */
+    fun getNoiseQuality(): String;
+
+    /*
+     * Used to query the octave count value for a PerlinNoise object.
+     * Returns - Number: Current octave count for the PerlinNoise object.
+     */
+    fun getOctaveCount(): Number;
+
+    /*
+     * Used to query the persistence value for a PerlinNoise object.
+     * Returns - Number: Current persistence for the PerlinNoise object.
+     */
+    fun getPersistence(): Number;
+
+    /*
+     * Used to query the seed value for a PerlinNoise object.
+     * Returns - Number: Current seed for the PerlinNoise object.
+     */
+    fun getSeed(): Number;
+
+    /*
+     * This calculates and returns the PerlinNoise value at the specified coordinates.
+     * Parameter - Vector3 (vector): Vector3 object containing x, y, and z coordinates.
+     * Returns - Number: Value between -1 to 1, but it is not guaranteed to stay within that range.
+     */
+    fun getValue(vector: Vector3): Number;
+
+    /*
+     * This calculates and returns the PerlinNoise value at the specified coordinates.
+     * Parameter - Number (x): The x coordinate.
+     * Parameter - Number (y): The y coordinate.
+     * Parameter - Number (z): The z coordinate.
+     * Returns - Number: Value between -1 to 1, but it is not guaranteed to stay within that range.
+     */
+    fun getValue(x: Number, y: Number, z: Number): Number;
+
+    /*
+     * Used to change the frequency value for a PerlinNoise object.
+     * Parameter - Number (frequency): Frequency of the first octave. Recommended value 0.01 - 0.1 when using raw absolute coordinates.
+     */
+    fun setFrequency(frequency: Number): Null;
+
+    /*
+     * Used to change the lacunarity value for a PerlinNoise object.
+     * Parameter - Number (lacunarity): The lacunarity specifies the frequency multiplier between successive octaves. For best results, set the lacunarity to a number between 1.5 and 3.5.
+     */
+    fun setLacunarity(lacunarity: Number): Null;
+
+    /*
+     * Used to change the noise quality value for a PerlinNoise object.
+     * Parameter - String (noiseQuality): Noise quality should be one of the following: 'fast', 'standard', 'best'.
+     */
+    fun setNoiseQuality(noiseQuality: String): Null;
+
+    /*
+     * Used to change the octave count for a PerlinNoise object.
+     * Parameter - Number (octaveCount): The number of octaves control the amount of detail of the Perlin noise. An octave is one of the coherent-noise functions in a series of coherent-noise functions that are added together to form Perlin noise. Should be an integer value, preferably between 1 and 9 (going much higher isn't too useful and will impact performance).
+     */
+    fun setOctaveCount(octaveCount: Number): Null;
+
+    /*
+     * Used to change the persistence value for a PerlinNoise object.
+     * Parameter - Number (persistence): The persistence value controls the roughness of the Perlin noise. Larger values produce rougher noise. The persistence value determines how quickly the amplitudes diminish for successive octaves. 0.5 works well, but recommended values 0 - 1.
+     */
+    fun setPersistence(persistence: Number): Null;
+
+    /*
+     * Used to change the seed value for a PerlinNoise object.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     */
+    fun setSeed(seed: Number): Null;
+}
+
+/* Native, implemented in Java
+ * Class that is used to generate voronoi noise.
+ * Import with 'import VoronoiNoise from util.Noise'
+ */
+class VoronoiNoise {
+    /*
+     * Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise.
+     */
+    VoronoiNoise();
+
+    /*
+     * Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     */
+    VoronoiNoise(seed: Number);
+
+    /*
+     * Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Boolean (enableDistance): Used to control if the output includes the distance to the point.
+     */
+    VoronoiNoise(seed: Number, enableDistance: Boolean);
+
+    /*
+     * Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Boolean (enableDistance): Used to control if the output includes the distance to the point.
+     * Parameter - Number (frequency): A number that represents how close voronoi points will are located to each other. Recommended value 0.05 - 0.3 when using raw absolute coordinates.
+     */
+    VoronoiNoise(seed: Number, enableDistance: Boolean, frequency: Number);
+
+    /*
+     * Used to construct a VoronoiNoise class object that is necessary to generate voronoi noise.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     * Parameter - Boolean (enableDistance): Used to control if the output includes the distance to the point.
+     * Parameter - Number (frequency): A number that represents how close voronoi points will are located to each other. Recommended value 0.05-0.3 when using raw absolute coordinates.
+     * Parameter - Number (displacement): The displacement value controls the range of random values to assign to each cell. The range of random values is +/- the displacement value.
+     */
+    VoronoiNoise(seed: Number, enableDistance: Boolean, frequency: Number, displacement: Number);
+
+    /*
+     * Used to query the displacement value for a VoronoiNoise object.
+     * Returns - Number: Current displacement for the VoronoiNoise object.
+     */
+    fun getDisplacement(): Number;
+
+    /*
+     * Used to query the frequency value for a VoronoiNoise object.
+     * Returns - Number: Current frequency for the VoronoiNoise object.
+     */
+    fun getFrequency(): Number;
+
+    /*
+     * Used to query the seed value for a VoronoiNoise object.
+     * Returns - Number: Current seed for the VoronoiNoise object.
+     */
+    fun getSeed(): Number;
+
+    /*
+     * This calculates and returns the VoronoiNoise value at the specified coordinates.
+     * Parameter - Vector3 (vector): Vector3 object containing x, y, and z coordinates.
+     * Returns - Number: Value from -displacement to +displacement.
+     */
+    fun getValue(vector: Vector3): Number;
+
+    /*
+     * This calculates and returns the VoronoiNoise value at the specified coordinates.
+     * Parameter - Number (x): The x coordinate.
+     * Parameter - Number (y): The y coordinate.
+     * Parameter - Number (z): The z coordinate.
+     * Returns - Number: Value from -displacement to +displacement.
+     */
+    fun getValue(x: Number, y: Number, z: Number): Number;
+
+    /*
+     * Used to query if the distance is enabled for a VoronoiNoise object.
+     * Returns - Boolean: True if distance is enabled, false if it isn't.
+     */
+    fun isEnableDistance(): Boolean;
+
+    /*
+     * Used to change the displacement value for a VoronoiNoise object.
+     * Parameter - Number (displacement): The displacement value controls the range of random values to assign to each cell. The range of random values is +/- the displacement value.
+     */
+    fun setDisplacement(displacement: Number): Null;
+
+    /*
+     * Used to change the if including the distance in the value calculation is enabled.
+     * Parameter - Number (displacement): The displacement value controls the range of random values to assign to each cell. The range of random values is +/- the displacement value.
+     */
+    fun setEnableDistance(displacement: Number): Null;
+
+    /*
+     * Used to change the frequency value for a VoronoiNoise object.
+     * Parameter - Number (frequency): A number that represents how close voronoi points will are located to each other. Recommended value 0.05 - 0.3 when using raw absolute coordinates.
+     */
+    fun setFrequency(frequency: Number): Null;
+
+    /*
+     * Used to change the seed value for a VoronoiNoise object.
+     * Parameter - Number (seed): A number that is used as a seed for calculating the noise.
+     */
+    fun setSeed(seed: Number): Null;
+}
+
