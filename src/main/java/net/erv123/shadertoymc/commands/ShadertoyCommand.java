@@ -8,7 +8,6 @@ import net.erv123.shadertoymc.util.Area;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.erv123.shadertoymc.util.WorldUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
@@ -17,6 +16,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,6 +93,54 @@ public class ShadertoyCommand {
 										})
 									)
 								)
+							)
+						)
+					)
+				)
+				.then(argument("pos1", BlockPosArgumentType.blockPos())
+					.then(argument("pos2", BlockPosArgumentType.blockPos())
+						.executes(context -> {
+							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+							BlockPos pos1 = BlockPosArgumentType.getBlockPos(context, "pos1");
+							BlockPos pos2 = BlockPosArgumentType.getBlockPos(context, "pos2");
+							ScriptUtils.getOrCreateArea(player, pos1).setB(pos2);
+							player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos1.toShortString() + " and position 2 to " + pos2.toShortString()));
+							return 1;
+						})
+					)
+				)
+				.then(literal("origin")
+					.then(argument("position", BlockPosArgumentType.blockPos())
+						.executes(context -> {
+							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+							BlockPos origin = BlockPosArgumentType.getBlockPos(context, "position");
+							ScriptUtils.getOrCreateArea(player, origin).setOrigin(origin);
+							String success = "Successfully set area origin to: " + origin.toShortString();
+							player.sendMessage(Text.literal(success));
+							return 1;
+						})
+					)
+				)
+				.then(literal("size")
+					.then(argument("sizeX", IntegerArgumentType.integer(1))
+						.then(argument("sizeY", IntegerArgumentType.integer(1))
+							.then(argument("sizeZ", IntegerArgumentType.integer(1))
+								.executes(context -> {
+									ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+									int sizeX = IntegerArgumentType.getInteger(context, "sizeX");
+									int sizeY = IntegerArgumentType.getInteger(context, "sizeY");
+									int sizeZ = IntegerArgumentType.getInteger(context, "sizeZ");
+									Area area = ScriptUtils.getArea(player);
+									if (area == null) {
+										String fail = "Initialize the area with any other command before using this!";
+										player.sendMessage(Text.literal(fail));
+										return 1;
+									}
+									area.setSize(new Vec3i(sizeX, sizeY, sizeZ));
+									String success = "Successfully set area size to: " + sizeX + ", " + sizeY + ", " + sizeZ;
+									player.sendMessage(Text.literal(success));
+									return 1;
+								})
 							)
 						)
 					)
