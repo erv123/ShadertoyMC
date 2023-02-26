@@ -134,7 +134,7 @@ public class ShadertoyCommand {
 									if (area == null) {
 										String fail = "Initialize the area with any other command before using this!";
 										player.sendMessage(Text.literal(fail));
-										return 1;
+										return 0;
 									}
 									area.setSize(new Vec3i(sizeX, sizeY, sizeZ));
 									String success = "Successfully set area size to: " + sizeX + ", " + sizeY + ", " + sizeZ;
@@ -184,7 +184,6 @@ public class ShadertoyCommand {
 							context.getSource().sendFeedback(Text.literal("Failed to write to: " + shaderPath), true);
 							return 0;
 						}
-
 						context.getSource().sendMessage(Text.literal("New shader file §n" + shaderFile + "§r created")
 							.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, shaderPath.toString()))));
 						return 1;
