@@ -25,6 +25,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -37,6 +39,7 @@ import java.util.stream.Stream;
 public class ScriptUtils {
 	private static final DynamicCommandExceptionType FAILED_TO_READ_SCRIPT;
 	private static final Map<UUID, ScriptData> SCRIPT_DATA;
+	private static final Map<UUID, Area> AREA_DATA;
 	private static final GitHubArucasLibrary GIT_LIBRARY;
 	private static final ResourceArucasLibrary RESOURCE_LIBRARY;
 	private static final ArucasAPI ARUCAS_API;
@@ -47,6 +50,7 @@ public class ScriptUtils {
 	static {
 		FAILED_TO_READ_SCRIPT = new DynamicCommandExceptionType(o -> Text.literal("Failed to read script: " + o));
 		SCRIPT_DATA = new HashMap<>();
+		AREA_DATA = new HashMap<>();
 		GIT_LIBRARY = new GitHubArucasLibrary(
 			ShaderUtils.SHADERTOY_PATH.resolve("libs"),
 			"https://api.github.com/repos/erv123/ShadertoyMC_Libraries/contents/libs"
@@ -77,6 +81,22 @@ public class ScriptUtils {
 
 	public static CommandBossBar getBossBar(Interpreter interpreter) {
 		return getScriptData(interpreter).bossBar();
+	}
+
+	public static Area getArea(Interpreter interpreter) {
+		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
+		if (player == null) {
+			return null;
+		}
+		return getArea(player);
+	}
+
+	public static Area getArea(ServerPlayerEntity player) {
+		return AREA_DATA.get(player.getUuid());
+	}
+
+	public static Area getOrCreateArea(ServerPlayerEntity player, BlockPos initial) {
+		return AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
 	}
 
 	public static void showProgressBar(Interpreter interpreter) {
