@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ShaderUtils {
-	public static final Path SHADERTOY_PATH = FabricLoader.getInstance().getConfigDir().resolve("Shadertoy");
+	public static final Path SHADERTOY_PATH = FabricLoader.getInstance().getConfigDir().resolve("shadertoy");
 
 	public static boolean canBlocksFall = true;
 

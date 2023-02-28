@@ -103,7 +103,9 @@ public class ShadertoyCommand {
 							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 							BlockPos pos1 = BlockPosArgumentType.getBlockPos(context, "pos1");
 							BlockPos pos2 = BlockPosArgumentType.getBlockPos(context, "pos2");
-							ScriptUtils.getOrCreateArea(player, pos1).setB(pos2);
+							Area area = ScriptUtils.getOrCreateArea(player, pos1);
+							area.setA(pos1);
+							area.setB(pos2);
 							player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos1.toShortString() + " and position 2 to " + pos2.toShortString()));
 							return 1;
 						})

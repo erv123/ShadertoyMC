@@ -80,16 +80,18 @@ public class ShaderExtension implements ArucasExtension {
 		name = "query",
 		desc = {
 			"This queries a the data for a block at a given position in a given dimension.",
-			"The parameters for this function are as follows:",
-			"position - this can either be as 3 numbers (x, y, z) or as a single Vector3,",
-			"type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples,",
-			"dimension - this is an optional argument defining the dimension in which to place the block,",
+			"The parameters for this function are as follows:\n",
+			"position - this can either be as 3 numbers (x, y, z) or as a single Vector3\n",
+			"type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples\n",
+			"dimension - this is an optional argument defining the dimension in which to place the block",
 			"by default this is the dimension of the player that executed the script."
 		},
 		params = @ParameterDoc(type = ObjectDef.class, name = "args", desc = "The query arguments, see function description.", isVarargs = true),
 		examples = {
-			"query(0, 0, 0); // -> 'minecraft:oak_leaves[distance=7,persistent=true,waterlogged=false]'",
-			"query(10, 0, 10); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'"
+			"query(10, 0, 10,\"default\"); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'",
+			"query(10, 0, 10,\"block\"); // -> 'minecraft:chest'",
+			"query(10, 0, 10,\"state\"); // -> '[facing=west,type=single,waterlogged=false]'",
+			"query(10, 0, 10,\"nbt\"); // -> '{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'"
 		}
 	)
 	private Object query(Arguments arguments) {
@@ -119,7 +121,7 @@ public class ShaderExtension implements ArucasExtension {
 					if (world == null) {
 						throw new RuntimeError("Invalid world '" + next + "'");
 					}
- 				}
+				}
 			}
 		}
 
@@ -141,25 +143,25 @@ public class ShaderExtension implements ArucasExtension {
 				yield BlockUtils.stateAsMap(world.getBlockState(pos), arguments.getInterpreter());
 			}
 			case "nbt", "tags" -> {
-				BlockEntity entity =  world.getBlockEntity(pos);
+				BlockEntity entity = world.getBlockEntity(pos);
 				if (entity == null) {
 					yield new ArucasMap();
 				}
 				yield BlockUtils.nbtAsMap(entity, arguments.getInterpreter());
 			}
 			default -> throw new IllegalStateException();
- 		};
+		};
 	}
 
 	@FunctionDoc(
 		name = "place",
 		desc = {
 			"This function allows you to place a block in a given world.",
-			"The parameters for this function are as follows:",
-			"position - this can either be as 3 numbers (x, y, z) or as a single Vector3,",
-			"block - this is the same format you would use for a setblock command,",
-			"dimension - this is an optional argument defining the dimension in which to place the block,",
-			"by default this is the dimension of the player that executed the script."
+			"The parameters for this function are as follows:\n",
+			"position - this can either be as 3 numbers (x, y, z) or as a single Vector3\n",
+			"block - this is the same format you would use for a setblock command\n",
+			"dimension - this is an optional argument defining the dimension in which to place the block",
+			"by default this is the dimension of the player that executed the script.\n"
 		},
 		params = @ParameterDoc(type = ObjectDef.class, name = "args", desc = "The placement arguments, see the function description.", isVarargs = true),
 		examples = {
@@ -216,10 +218,10 @@ public class ShaderExtension implements ArucasExtension {
 			name = "consumer",
 			desc = {
 				"This is the lambda function that gets iterated over the specified area.",
-				"It takes 1-3 Vector3 parameters:",
-				"1. Absolute coordinates of the block in the world.",
-				"2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).",
-				"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ)."
+				"It takes 1-3 Vector3 parameters:\n",
+				"1. Absolute coordinates of the block in the world.\n",
+				"2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n",
+				"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n"
 			}
 		),
 		examples = {
@@ -259,10 +261,10 @@ public class ShaderExtension implements ArucasExtension {
 				name = "consumer",
 				desc = {
 					"This is the lambda function that gets iterated over the specified area.",
-					"It takes 1-3 Vector3 parameters:",
-					"1. Absolute coordinates of the block in the world.",
-					"2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).",
-					"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ)."
+					"It takes 1-3 Vector3 parameters:\n",
+					"1. Absolute coordinates of the block in the world.\n",
+					"2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n",
+					"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n"
 				}
 			)
 		},
