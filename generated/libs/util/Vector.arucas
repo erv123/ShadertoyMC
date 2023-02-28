@@ -201,16 +201,16 @@ class Vector3 {
     fun squaredDistanceTo(vector: Vector3): Number;
 
     /*
-     * Used to subtract a number from each of the vector coordinates.
-     * Parameter - Number (scalar): The value to subtract from vector x, y, and z.
-     */
-    fun sub(scalar: Number): Null;
-
-    /*
      * Used to subtract another Vector3.
      * Parameter - Vector3 (vector): A Vector3 object to subtract.
      */
     fun sub(vector: Vector3): Null;
+
+    /*
+     * Used to subtract a number from each of the vector coordinates.
+     * Parameter - Number (scalar): The value to subtract from vector x, y, and z.
+     */
+    fun sub(scalar: Number): Null;
 
     /*
      * Used to subtract 3 separate number values.

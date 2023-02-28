@@ -3033,6 +3033,22 @@ suppressDeprecated(true);
 ```
 ## ShaderExtension
 
+### `area(consumer)`
+- Description: Used to iterate over an area specified by the player.
+This can be done with `/shadertoy area pos1 (<x> <y> <z>)?` and `/shadertoy area pos2 (<x> <y> <z>)?`,
+or `/shadertoy area origin <x> <y> <z> size <sX> <sY> <sZ>`.
+- Parameter - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:
+ 1. Absolute coordinates of the block in the world.
+ 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).
+ 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+.
+- Example:
+```kotlin
+area(fun (aPos, nPos, lPos) {
+    // Do something...
+});
+```
+
 ### `area(originX, originY, originZ, sizeX, sizeY, sizeZ, consumer)`
 - Description: Used to iterate over an area specified by an origin and size.
 - Parameters:
@@ -3042,10 +3058,14 @@ suppressDeprecated(true);
   - Number (`sizeX`): The size in x axis.
   - Number (`sizeY`): The size in y axis.
   - Number (`sizeZ`): The size in z axis.
-  - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters: 1. Absolute coordinates of the block in the world. 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1). 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+  - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:
+ 1. Absolute coordinates of the block in the world.
+ 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).
+ 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+.
 - Example:
 ```kotlin
-area(100, 100, 100, 200, 1, 200, fun(absolute, normal, local) {
+area(100, 100, 100, 200, 1, 200, fun(aPos, nPos, lPos) {
     // Do something...
 });
 ```
@@ -3062,10 +3082,14 @@ world = dimension();
 ### `place(args...)`
 - Description: This function allows you to place a block in a given world.
 The parameters for this function are as follows:
-position - this can either be as 3 numbers (x, y, z) or as a single Vector3,
-block - this is the same format you would use for a setblock command,
-dimension - this is an optional argument defining the dimension in which to place the block,
+
+position - this can either be as 3 numbers (x, y, z) or as a single Vector3
+
+block - this is the same format you would use for a setblock command
+
+dimension - this is an optional argument defining the dimension in which to place the block
 by default this is the dimension of the player that executed the script.
+.
 - Parameter - Object (`args`): The placement arguments, see the function description.
 - Examples:
 ```kotlin
@@ -3081,17 +3105,26 @@ place(100, 64, 10, 'oak_sign[rotation = 4]{Text1: "Example"}', 'overworld');
 ### `query(args...)`
 - Description: This queries a the data for a block at a given position in a given dimension.
 The parameters for this function are as follows:
-position - this can either be as 3 numbers (x, y, z) or as a single Vector3,
-type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples,
-dimension - this is an optional argument defining the dimension in which to place the block,
+
+position - this can either be as 3 numbers (x, y, z) or as a single Vector3
+
+type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples
+
+dimension - this is an optional argument defining the dimension in which to place the block
 by default this is the dimension of the player that executed the script.
 - Parameter - Object (`args`): The query arguments, see function description.
 - Examples:
 ```kotlin
-query(0, 0, 0); // -> 'minecraft:oak_leaves[distance=7,persistent=true,waterlogged=false]'
+query(10, 0, 10,"default"); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}'
 ```
 ```kotlin
-query(10, 0, 10); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}'
+query(10, 0, 10,"block"); // -> 'minecraft:chest'
+```
+```kotlin
+query(10, 0, 10,"state"); // -> '[facing=west,type=single,waterlogged=false]'
+```
+```kotlin
+query(10, 0, 10,"nbt"); // -> '{Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}'
 ```
 
 
@@ -5948,20 +5981,20 @@ new Vector(1.5, 2.9, 3.01).ceil(); // (2, 3, 3)
 distance = vec.squaredDistanceTo(new Vector3(1,1,1));
 ```
 
-### `<Vector3>.sub(scalar)`
-- Description: Used to subtract a number from each of the vector coordinates.
-- Parameter - Number (`scalar`): The value to subtract from vector x, y, and z.
-- Example:
-```kotlin
-vec.sub(1);
-```
-
 ### `<Vector3>.sub(vector)`
 - Description: Used to subtract another Vector3.
 - Parameter - Vector3 (`vector`): A Vector3 object to subtract.
 - Example:
 ```kotlin
 vec.sub(new Vector3(1, 2, 3));
+```
+
+### `<Vector3>.sub(scalar)`
+- Description: Used to subtract a number from each of the vector coordinates.
+- Parameter - Number (`scalar`): The value to subtract from vector x, y, and z.
+- Example:
+```kotlin
+vec.sub(1);
 ```
 
 ### `<Vector3>.sub(x, y, z)`
