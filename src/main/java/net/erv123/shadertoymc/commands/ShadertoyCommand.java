@@ -1,6 +1,7 @@
 package net.erv123.shadertoymc.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import me.senseiwells.arucas.utils.Util;
@@ -151,12 +152,25 @@ public class ShadertoyCommand {
 					.executes(context -> {
 						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 						Area area = ScriptUtils.getArea(player);
+						if (area == null) {
+							throw new RuntimeException("Initialize area before clearing it!");
+						}
 						for (BlockPos pos : area) {
 							WorldUtils.setBlockWithNoUpdates(player.world, pos, Blocks.AIR.getDefaultState());
 						}
 						player.sendMessage(Text.literal("Successfully cleared area!"));
 						return 1;
 					})
+				)
+				.then(literal("doBlockUpdates")
+					.then(argument("update", BoolArgumentType.bool())
+						.executes(context -> {
+							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+							WorldUtils.doUpdates = BoolArgumentType.getBool(context, "update");
+							player.sendMessage(Text.literal("Block updates set to: " + WorldUtils.doUpdates));
+							return 1;
+						})
+					)
 				)
 			)
 			.then(literal("run")

@@ -3,23 +3,29 @@ import Vector3 from util.Vector;
 import BlockPalette from BlockPalette;
 
 // Set noise parameters
-perlin = new PerlinNoise(10, 1, 10, 2);
+perlin = new PerlinNoise(10);
+perlin.setFrequency(0.05);
 
 fun map(n: Number, aMax, aMin, bMin, bMax) {
     return bMin + (n - aMin) * (bMax - bMin) / (aMax - aMin);
 }
+
 // Area iteration where the area is defined by the user in game
 // The first vector will be the absolute coordinates in the world
 // The second vector will be the normalized coordinates that go from -1 -1 -1 to 1 1 1 no matter the area size
 // The third will be local area coordinates that are 0 0 0 at area origin
 area(fun(aPos, nPos, lPos) {
     // Do whatever for this position
+    value = perlin.getValue(aPos.getX(), 0.5, aPos.getZ());
+    value = map(value, -1.5, 1.5, 0, 1);
 
-    value = perlin.getValue(aPos / Vector3.fromScalar(20));
-    index = Math.clamp(map(Math.abs(value), 0, 1, 0, 15).floor(), 0, 15);
-
-    //index = Math.mod(Math.round(Math.abs(value) * 100), 15);
-
-    place(aPos, BlockPalette.GRAYSCALE[index]);
-    //place(aPos.getX(), aPos.getY(), aPos.getZ(), "air");
+    index = map(value, 0, 1, 15, 0).floor();
+    y = (nPos.getY() / 2) + 0.5;
+    lavaLevel = 0.5;
+    if (y < value)
+    place(aPos, BlockPalette.COOL_MAGMA[index]);
+    else if (y < lavaLevel && Math.mod(lPos.getY(), 3) == 1)
+    place(aPos, "red_stained_glass");
+    else
+    place(aPos, "air");
 });

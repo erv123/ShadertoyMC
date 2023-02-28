@@ -11,11 +11,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class WorldUtils {
+	public static boolean doUpdates = false;
 	public static void setBlockWithNoUpdates(World world, BlockPos pos, BlockState state) {
-		ShaderUtils.canBlocksFall = false;
+		ShaderUtils.canBlocksFall = WorldUtils.doUpdates;
 		world.setBlockState(pos, state, Block.NOTIFY_LISTENERS, 0);
 		ShaderUtils.canBlocksFall = true;
 	}
+
 
 	public static ServerWorld worldFromString(String string) {
 		Identifier id = Identifier.tryParse(string);
