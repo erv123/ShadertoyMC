@@ -462,6 +462,25 @@
         "name": "area",
         "is_arbitrary": false,
         "desc": [
+          "Used to iterate over an area specified by the player.",
+          "This can be done with `/shadertoy area pos1 (<x> <y> <z>)?` and `/shadertoy area pos2 (<x> <y> <z>)?`,",
+          "or `/shadertoy area origin <x> <y> <z> size <sX> <sY> <sZ>`."
+        ],
+        "params": [
+          {
+            "name": "consumer",
+            "type": "Function",
+            "desc": "This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:\n 1. Absolute coordinates of the block in the world.\n 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n."
+          }
+        ],
+        "examples": [
+          "area(fun (aPos, nPos, lPos) {\n    // Do something...\n});"
+        ]
+      },
+      {
+        "name": "area",
+        "is_arbitrary": false,
+        "desc": [
           "Used to iterate over an area specified by an origin and size."
         ],
         "params": [
@@ -498,11 +517,11 @@
           {
             "name": "consumer",
             "type": "Function",
-            "desc": "This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters: 1. Absolute coordinates of the block in the world. 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1). 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ)."
+            "desc": "This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:\n 1. Absolute coordinates of the block in the world.\n 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n."
           }
         ],
         "examples": [
-          "area(100, 100, 100, 200, 1, 200, fun(absolute, normal, local) {\n    // Do something...\n});"
+          "area(100, 100, 100, 200, 1, 200, fun(aPos, nPos, lPos) {\n    // Do something...\n});"
         ]
       },
       {
@@ -525,11 +544,11 @@
         "is_arbitrary": true,
         "desc": [
           "This function allows you to place a block in a given world.",
-          "The parameters for this function are as follows:",
-          "position - this can either be as 3 numbers (x, y, z) or as a single Vector3,",
-          "block - this is the same format you would use for a setblock command,",
-          "dimension - this is an optional argument defining the dimension in which to place the block,",
-          "by default this is the dimension of the player that executed the script."
+          "The parameters for this function are as follows:\n",
+          "position - this can either be as 3 numbers (x, y, z) or as a single Vector3\n",
+          "block - this is the same format you would use for a setblock command\n",
+          "dimension - this is an optional argument defining the dimension in which to place the block",
+          "by default this is the dimension of the player that executed the script.\n."
         ],
         "params": [
           {
@@ -549,10 +568,10 @@
         "is_arbitrary": true,
         "desc": [
           "This queries a the data for a block at a given position in a given dimension.",
-          "The parameters for this function are as follows:",
-          "position - this can either be as 3 numbers (x, y, z) or as a single Vector3,",
-          "type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples,",
-          "dimension - this is an optional argument defining the dimension in which to place the block,",
+          "The parameters for this function are as follows:\n",
+          "position - this can either be as 3 numbers (x, y, z) or as a single Vector3\n",
+          "type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples\n",
+          "dimension - this is an optional argument defining the dimension in which to place the block",
           "by default this is the dimension of the player that executed the script."
         ],
         "params": [
@@ -563,8 +582,10 @@
           }
         ],
         "examples": [
-          "query(0, 0, 0); // -> 'minecraft:oak_leaves[distance=7,persistent=true,waterlogged=false]'",
-          "query(10, 0, 10); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'"
+          "query(10, 0, 10,\"default\"); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'",
+          "query(10, 0, 10,\"block\"); // -> 'minecraft:chest'",
+          "query(10, 0, 10,\"state\"); // -> '[facing=west,type=single,waterlogged=false]'",
+          "query(10, 0, 10,\"nbt\"); // -> '{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'"
         ]
       }
     ]
@@ -6022,23 +6043,6 @@
           "name": "sub",
           "is_arbitrary": false,
           "desc": [
-            "Used to subtract a number from each of the vector coordinates."
-          ],
-          "params": [
-            {
-              "name": "scalar",
-              "type": "Number",
-              "desc": "The value to subtract from vector x, y, and z."
-            }
-          ],
-          "examples": [
-            "vec.sub(1);"
-          ]
-        },
-        {
-          "name": "sub",
-          "is_arbitrary": false,
-          "desc": [
             "Used to subtract another Vector3."
           ],
           "params": [
@@ -6050,6 +6054,23 @@
           ],
           "examples": [
             "vec.sub(new Vector3(1, 2, 3));"
+          ]
+        },
+        {
+          "name": "sub",
+          "is_arbitrary": false,
+          "desc": [
+            "Used to subtract a number from each of the vector coordinates."
+          ],
+          "params": [
+            {
+              "name": "scalar",
+              "type": "Number",
+              "desc": "The value to subtract from vector x, y, and z."
+            }
+          ],
+          "examples": [
+            "vec.sub(1);"
           ]
         },
         {

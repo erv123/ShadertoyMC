@@ -179,6 +179,18 @@ fun suppressDeprecated(bool: Boolean): Null;
 
 /* ShaderExtension */
 /*
+ * Used to iterate over an area specified by the player.
+ * This can be done with `/shadertoy area pos1 (<x> <y> <z>)?` and `/shadertoy area pos2 (<x> <y> <z>)?`,
+ * or `/shadertoy area origin <x> <y> <z> size <sX> <sY> <sZ>`.
+ * Parameter - Function (consumer): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:
+ 1. Absolute coordinates of the block in the world.
+ 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).
+ 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+.
+ */
+fun area(consumer: Function): Null;
+
+/*
  * Used to iterate over an area specified by an origin and size.
  * Parameter - Number (originX): The origin x coordinate.
  * Parameter - Number (originY): The origin y coordinate.
@@ -186,7 +198,11 @@ fun suppressDeprecated(bool: Boolean): Null;
  * Parameter - Number (sizeX): The size in x axis.
  * Parameter - Number (sizeY): The size in y axis.
  * Parameter - Number (sizeZ): The size in z axis.
- * Parameter - Function (consumer): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters: 1. Absolute coordinates of the block in the world. 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1). 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+ * Parameter - Function (consumer): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:
+ 1. Absolute coordinates of the block in the world.
+ 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).
+ 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+.
  */
 fun area(originX: Number, originY: Number, originZ: Number, sizeX: Number, sizeY: Number, sizeZ: Number, consumer: Function): Null;
 
@@ -200,10 +216,14 @@ fun dimension(): String;
 /*
  * This function allows you to place a block in a given world.
  * The parameters for this function are as follows:
- * position - this can either be as 3 numbers (x, y, z) or as a single Vector3,
- * block - this is the same format you would use for a setblock command,
- * dimension - this is an optional argument defining the dimension in which to place the block,
+
+ * position - this can either be as 3 numbers (x, y, z) or as a single Vector3
+
+ * block - this is the same format you would use for a setblock command
+
+ * dimension - this is an optional argument defining the dimension in which to place the block
  * by default this is the dimension of the player that executed the script.
+.
  * Parameter - Object (args): The placement arguments, see the function description.
  */
 fun place(args...: Object): Null;
@@ -211,9 +231,12 @@ fun place(args...: Object): Null;
 /*
  * This queries a the data for a block at a given position in a given dimension.
  * The parameters for this function are as follows:
- * position - this can either be as 3 numbers (x, y, z) or as a single Vector3,
- * type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples,
- * dimension - this is an optional argument defining the dimension in which to place the block,
+
+ * position - this can either be as 3 numbers (x, y, z) or as a single Vector3
+
+ * type - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples
+
+ * dimension - this is an optional argument defining the dimension in which to place the block
  * by default this is the dimension of the player that executed the script.
  * Parameter - Object (args): The query arguments, see function description.
  */

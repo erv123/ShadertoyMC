@@ -124,10 +124,15 @@
     "body": "suppressDeprecated($bool)",
     "description": "suppressDeprecated(bool)\nThis is used to enable or disable suppressing deprecation warnings.\n- Parameter - Boolean (`bool`): True to enable, false to disable warnings.\n"
   },
+  "Function area(consumer)": {
+    "prefix": "area($consumer)",
+    "body": "area($consumer)",
+    "description": "area(consumer)\nUsed to iterate over an area specified by the player.\nThis can be done with `/shadertoy area pos1 (<x> <y> <z>)?` and `/shadertoy area pos2 (<x> <y> <z>)?`,\nor `/shadertoy area origin <x> <y> <z> size <sX> <sY> <sZ>`.\n- Parameter - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:\n 1. Absolute coordinates of the block in the world.\n 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n.\n"
+  },
   "Function area(originX, originY, originZ, sizeX, sizeY, sizeZ, consumer)": {
     "prefix": "area($originX, $originY, $originZ, $sizeX, $sizeY, $sizeZ, $consumer)",
     "body": "area($originX, $originY, $originZ, $sizeX, $sizeY, $sizeZ, $consumer)",
-    "description": "area(originX, originY, originZ, sizeX, sizeY, sizeZ, consumer)\nUsed to iterate over an area specified by an origin and size.\n- Parameter - Number (`originX`): The origin x coordinate.\n- Parameter - Number (`originY`): The origin y coordinate.\n- Parameter - Number (`originZ`): The origin z coordinate.\n- Parameter - Number (`sizeX`): The size in x axis.\n- Parameter - Number (`sizeY`): The size in y axis.\n- Parameter - Number (`sizeZ`): The size in z axis.\n- Parameter - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters: 1. Absolute coordinates of the block in the world. 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1). 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n"
+    "description": "area(originX, originY, originZ, sizeX, sizeY, sizeZ, consumer)\nUsed to iterate over an area specified by an origin and size.\n- Parameter - Number (`originX`): The origin x coordinate.\n- Parameter - Number (`originY`): The origin y coordinate.\n- Parameter - Number (`originZ`): The origin z coordinate.\n- Parameter - Number (`sizeX`): The size in x axis.\n- Parameter - Number (`sizeY`): The size in y axis.\n- Parameter - Number (`sizeZ`): The size in z axis.\n- Parameter - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:\n 1. Absolute coordinates of the block in the world.\n 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n.\n"
   },
   "Function dimension()": {
     "prefix": "dimension()",
@@ -137,12 +142,12 @@
   "Function place(args)": {
     "prefix": "place($args)",
     "body": "place($args)",
-    "description": "place(args)\nThis function allows you to place a block in a given world.\nThe parameters for this function are as follows:\nposition - this can either be as 3 numbers (x, y, z) or as a single Vector3,\nblock - this is the same format you would use for a setblock command,\ndimension - this is an optional argument defining the dimension in which to place the block,\nby default this is the dimension of the player that executed the script.\n- Parameter - Object (`args...`): The placement arguments, see the function description.\n"
+    "description": "place(args)\nThis function allows you to place a block in a given world.\nThe parameters for this function are as follows:\n\nposition - this can either be as 3 numbers (x, y, z) or as a single Vector3\n\nblock - this is the same format you would use for a setblock command\n\ndimension - this is an optional argument defining the dimension in which to place the block\nby default this is the dimension of the player that executed the script.\n.\n- Parameter - Object (`args...`): The placement arguments, see the function description.\n"
   },
   "Function query(args)": {
     "prefix": "query($args)",
     "body": "query($args)",
-    "description": "query(args)\nThis queries a the data for a block at a given position in a given dimension.\nThe parameters for this function are as follows:\nposition - this can either be as 3 numbers (x, y, z) or as a single Vector3,\ntype - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples,\ndimension - this is an optional argument defining the dimension in which to place the block,\nby default this is the dimension of the player that executed the script.\n- Parameter - Object (`args...`): The query arguments, see function description.\n"
+    "description": "query(args)\nThis queries a the data for a block at a given position in a given dimension.\nThe parameters for this function are as follows:\n\nposition - this can either be as 3 numbers (x, y, z) or as a single Vector3\n\ntype - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples\n\ndimension - this is an optional argument defining the dimension in which to place the block\nby default this is the dimension of the player that executed the script.\n- Parameter - Object (`args...`): The query arguments, see function description.\n"
   },
   "Boolean Class": {
     "prefix": "Boolean",
@@ -1599,15 +1604,15 @@
     "body": ".squaredDistanceTo($vector)",
     "description": "<Vector3>.squaredDistanceTo(vector)\nReturns the squared euclidean distance between this vector and the given vector.\n- Parameter - Vector3 (`vector`): The other Vector3.\n"
   },
-  "Method <Vector3>.sub(scalar)": {
-    "prefix": ".sub($scalar)",
-    "body": ".sub($scalar)",
-    "description": "<Vector3>.sub(scalar)\nUsed to subtract a number from each of the vector coordinates.\n- Parameter - Number (`scalar`): The value to subtract from vector x, y, and z.\n"
-  },
   "Method <Vector3>.sub(vector)": {
     "prefix": ".sub($vector)",
     "body": ".sub($vector)",
     "description": "<Vector3>.sub(vector)\nUsed to subtract another Vector3.\n- Parameter - Vector3 (`vector`): A Vector3 object to subtract.\n"
+  },
+  "Method <Vector3>.sub(scalar)": {
+    "prefix": ".sub($scalar)",
+    "body": ".sub($scalar)",
+    "description": "<Vector3>.sub(scalar)\nUsed to subtract a number from each of the vector coordinates.\n- Parameter - Number (`scalar`): The value to subtract from vector x, y, and z.\n"
   },
   "Method <Vector3>.sub(x, y, z)": {
     "prefix": ".sub($x, $y, $z)",
