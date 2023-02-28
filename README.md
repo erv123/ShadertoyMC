@@ -26,8 +26,7 @@ following:  `/area pos1 <pos>` + `/area pos2 <pos>`, `/area origin <origin> size
 
 ### Step 3
 
-The file can be located in `.minecraft/config/shadertoy`. Recommended text editor: VSCode with Arucas extension
-recommended.
+The file can be located in `.minecraft/config/shadertoy`. Recommended text editor: VSCode with Arucas extension.
 
 Files can also be opened with `/shadertoy open <name>`.
 
