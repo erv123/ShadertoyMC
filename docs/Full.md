@@ -3113,18 +3113,23 @@ type - this is optional, this is the type of query, this can be one of the follo
 dimension - this is an optional argument defining the dimension in which to place the block
 by default this is the dimension of the player that executed the script.
 - Parameter - Object (`args`): The query arguments, see function description.
+- Returns - String: The return value depends on the type parameter:
+ "default"- returns a string containing all the info
+ "block"- returns a string describing the block
+ "state"- returns a map containing the state info
+ "nbt"- returns a map containing all the nbt data.
 - Examples:
 ```kotlin
-query(10, 0, 10,"default"); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}'
+query(10, 0, 10); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}'
 ```
 ```kotlin
 query(10, 0, 10,"block"); // -> 'minecraft:chest'
 ```
 ```kotlin
-query(10, 0, 10,"state"); // -> '[facing=west,type=single,waterlogged=false]'
+query(10, 0, 10,"state"); // -> {facing: west, type: single, waterlogged: false}
 ```
 ```kotlin
-query(10, 0, 10,"nbt"); // -> '{Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}'
+query(10, 0, 10,"nbt"); // -> {Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}
 ```
 
 

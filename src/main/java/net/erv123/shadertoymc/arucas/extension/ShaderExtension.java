@@ -138,15 +138,9 @@ public class ShaderExtension implements ArucasExtension {
 		}
 
 		return switch (type) {
-			case "default" -> {
-				yield BlockUtils.blockData(world, pos);
-			}
-			case "block", "id" -> {
-				yield BlockUtils.blockId(world.getBlockState(pos));
-			}
-			case "state", "properties" -> {
-				yield BlockUtils.stateAsMap(world.getBlockState(pos), arguments.getInterpreter());
-			}
+			case "default" -> BlockUtils.blockData(world, pos);
+			case "block", "id" -> BlockUtils.blockId(world.getBlockState(pos));
+			case "state", "properties" -> BlockUtils.stateAsMap(world.getBlockState(pos), arguments.getInterpreter());
 			case "nbt", "tags" -> {
 				BlockEntity entity = world.getBlockEntity(pos);
 				if (entity == null) {
