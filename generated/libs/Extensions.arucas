@@ -239,6 +239,11 @@ fun place(args...: Object): Null;
  * dimension - this is an optional argument defining the dimension in which to place the block
  * by default this is the dimension of the player that executed the script.
  * Parameter - Object (args): The query arguments, see function description.
+ * Returns - String: The return value depends on the type parameter:
+ "default"- returns a string containing all the info
+ "block"- returns a string describing the block
+ "state"- returns a map containing the state info
+ "nbt"- returns a map containing all the nbt data.
  */
-fun query(args...: Object): Null;
+fun query(args...: Object): String;
 
