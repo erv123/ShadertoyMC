@@ -326,5 +326,5 @@ query(10, 0, 10,"block"); // -> 'minecraft:chest'
 query(10, 0, 10,"state"); // -> {facing: west, type: single, waterlogged: false}
 ```
 ```kotlin
-query(10, 0, 10,"nbt"); // -> {Items:[{Count:64b,Slot:11b,id:"minecraft:spruce_fence_gate"},{Count:1b,Slot:14b,id:"minecraft:diamond_chestplate",tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl:1s}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}
+query(10, 0, 10,"nbt"); // -> {Items:[{Count:64, Slot:11, id:"minecraft:spruce_fence_gate"},{Count:1, Slot:14, id:"minecraft:diamond_chestplate", tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl: 1}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}
 ```
