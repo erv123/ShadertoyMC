@@ -86,12 +86,17 @@ public class ShaderExtension implements ArucasExtension {
 			"dimension - this is an optional argument defining the dimension in which to place the block",
 			"by default this is the dimension of the player that executed the script."
 		},
+		returns = @ReturnDoc(type = StringDef.class, desc = {"The return value depends on the type parameter:\n",
+			"\"default\"- returns a string containing all the info\n",
+			"\"block\"- returns a string describing the block\n",
+			"\"state\"- returns a map containing the state info\n",
+			"\"nbt\"- returns a map containing all the nbt data"}),
 		params = @ParameterDoc(type = ObjectDef.class, name = "args", desc = "The query arguments, see function description.", isVarargs = true),
 		examples = {
-			"query(10, 0, 10,\"default\"); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'",
+			"query(10, 0, 10); // -> 'minecraft:chest[facing=west,type=single,waterlogged=false]{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'",
 			"query(10, 0, 10,\"block\"); // -> 'minecraft:chest'",
-			"query(10, 0, 10,\"state\"); // -> '[facing=west,type=single,waterlogged=false]'",
-			"query(10, 0, 10,\"nbt\"); // -> '{Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}'"
+			"query(10, 0, 10,\"state\"); // -> {facing: west, type: single, waterlogged: false}",
+			"query(10, 0, 10,\"nbt\"); // -> {Items:[{Count:64b,Slot:11b,id:\"minecraft:spruce_fence_gate\"},{Count:1b,Slot:14b,id:\"minecraft:diamond_chestplate\",tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl:1s}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}"
 		}
 	)
 	private Object query(Arguments arguments) {
