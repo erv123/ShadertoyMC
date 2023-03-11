@@ -32,6 +32,9 @@ public class ShadertoyCommand {
 
 	}
 
+	/*
+	TODO: stop command
+	 */
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 		dispatcher.register(literal("shadertoy")
 			.requires(source -> source.hasPermissionLevel(2))

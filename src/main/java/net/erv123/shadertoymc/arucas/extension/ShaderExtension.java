@@ -18,6 +18,8 @@ import me.senseiwells.arucas.utils.Arguments;
 import me.senseiwells.arucas.utils.Trace;
 import me.senseiwells.arucas.utils.Util;
 import me.senseiwells.arucas.utils.impl.ArucasMap;
+import net.erv123.shadertoymc.ShadertoyMC;
+import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
 import net.erv123.shadertoymc.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -53,6 +55,7 @@ public class ShaderExtension implements ArucasExtension {
 			BuiltInFunction.arb("query", this::query),
 			BuiltInFunction.arb("place", this::place),
 			BuiltInFunction.of("area", 1, this::area),
+			BuiltInFunction.of("area", 3, this::customAreaVectors),
 			BuiltInFunction.of("area", 7, this::customArea)
 		);
 	}
@@ -294,10 +297,54 @@ public class ShaderExtension implements ArucasExtension {
 		return null;
 	}
 
+	@FunctionDoc(
+		name = "area",
+		desc = "Used to iterate over an area specified by an origin and size.",
+		params = {
+			@ParameterDoc(type = Vector3Def.class, name = "origin", desc = "The origin vector"),
+			@ParameterDoc(type = Vector3Def.class, name = "size", desc = "The size vector"),
+			@ParameterDoc(
+				type = FunctionDef.class,
+				name = "consumer",
+				desc = {
+					"This is the lambda function that gets iterated over the specified area.",
+					"It takes 1-3 Vector3 parameters:\n",
+					"1. Absolute coordinates of the block in the world.\n",
+					"2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n",
+					"3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n"
+				}
+			)
+		},
+		examples = {
+			"""
+							origin = new Vector3(0,0,0);
+							size = new Vector3(10,10,10);
+				area(origin, size, fun(aPos, nPos, lPos) {
+				    // Do something...
+				});
+				"""
+		}
+	)
+	private Void customAreaVectors(Arguments arguments) {
+		Vec3d originD = arguments.nextPrimitive(Vector3Def.class);
+		Vec3d sizeD = arguments.nextPrimitive(Vector3Def.class);
+		Vec3i origin = new Vec3i(Math.floor(originD.getX()), Math.floor(originD.getY()), Math.floor(originD.getZ()));
+		Vec3i size = new Vec3i(Math.floor(sizeD.getX()), Math.floor(sizeD.getY()), Math.floor(sizeD.getZ()));
+		if (size.getX() < 1 || size.getY() < 1 || size.getZ() < 1) {
+			throw new RuntimeError("Size cannot be less than 1");
+		}
+
+		ClassInstance callback = arguments.nextFunction();
+		Interpreter interpreter = arguments.getInterpreter();
+
+		this.internalArea(new BlockPos(origin), size, callback, interpreter);
+		return null;
+	}
+
 	private void internalArea(BlockPos origin, Vec3i size, ClassInstance callback, Interpreter interpreter) {
 		int originX = origin.getX(), originY = origin.getY(), originZ = origin.getZ();
 		int sizeX = size.getX(), sizeY = size.getY(), sizeZ = size.getZ();
-
+		ShadertoyMC.LOGGER.info(size);
 		int parameters = callback.asPrimitive(FunctionDef.class).getCount();
 		Function<Vec3i, List<Object>> generator = switch (parameters) {
 			case 1 -> List::of;
