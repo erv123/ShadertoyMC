@@ -192,6 +192,18 @@ fun area(consumer: Function): Null;
 
 /*
  * Used to iterate over an area specified by an origin and size.
+ * Parameter - Vector3 (origin): The origin vector.
+ * Parameter - Vector3 (size): The size vector.
+ * Parameter - Function (consumer): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:
+ 1. Absolute coordinates of the block in the world.
+ 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).
+ 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+.
+ */
+fun area(origin: Vector3, size: Vector3, consumer: Function): Null;
+
+/*
+ * Used to iterate over an area specified by an origin and size.
  * Parameter - Number (originX): The origin x coordinate.
  * Parameter - Number (originY): The origin y coordinate.
  * Parameter - Number (originZ): The origin z coordinate.

@@ -246,6 +246,25 @@ area(fun (aPos, nPos, lPos) {
 });
 ```
 
+### `area(origin, size, consumer)`
+- Description: Used to iterate over an area specified by an origin and size.
+- Parameters:
+  - Vector3 (`origin`): The origin vector.
+  - Vector3 (`size`): The size vector.
+  - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:
+ 1. Absolute coordinates of the block in the world.
+ 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).
+ 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).
+.
+- Example:
+```kotlin
+            origin = new Vector3(0,0,0);
+            size = new Vector3(10,10,10);
+area(origin, size, fun(aPos, nPos, lPos) {
+    // Do something...
+});
+```
+
 ### `area(originX, originY, originZ, sizeX, sizeY, sizeZ, consumer)`
 - Description: Used to iterate over an area specified by an origin and size.
 - Parameters:

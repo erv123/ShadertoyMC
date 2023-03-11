@@ -129,6 +129,11 @@
     "body": "area($consumer)",
     "description": "area(consumer)\nUsed to iterate over an area specified by the player.\nThis can be done with `/shadertoy area pos1 (<x> <y> <z>)?` and `/shadertoy area pos2 (<x> <y> <z>)?`,\nor `/shadertoy area origin <x> <y> <z> size <sX> <sY> <sZ>`.\n- Parameter - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:\n 1. Absolute coordinates of the block in the world.\n 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n.\n"
   },
+  "Function area(origin, size, consumer)": {
+    "prefix": "area($origin, $size, $consumer)",
+    "body": "area($origin, $size, $consumer)",
+    "description": "area(origin, size, consumer)\nUsed to iterate over an area specified by an origin and size.\n- Parameter - Vector3 (`origin`): The origin vector.\n- Parameter - Vector3 (`size`): The size vector.\n- Parameter - Function (`consumer`): This is the lambda function that gets iterated over the specified area. It takes 1-3 Vector3 parameters:\n 1. Absolute coordinates of the block in the world.\n 2. Normalized coordinates within the area (from -1, -1, -1 to 1, 1, 1).\n 3. Local area coordinates (0, 0, 0 at area origin and goes up to sizeX, sizeY, sizeZ).\n.\n"
+  },
   "Function area(originX, originY, originZ, sizeX, sizeY, sizeZ, consumer)": {
     "prefix": "area($originX, $originY, $originZ, $sizeX, $sizeY, $sizeZ, $consumer)",
     "body": "area($originX, $originY, $originZ, $sizeX, $sizeY, $sizeZ, $consumer)",
