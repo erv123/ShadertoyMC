@@ -240,5 +240,21 @@ class Vector3 {
      * Returns - Vector3: The new Vector3.
      */
     static fun fromScalar(scalar: Number): Vector3;
+
+    /*
+     * Returns a new Vector3 with each coordinate being the max value of the corresponding coordinates from the 2 input vectors.
+     * Parameter - Vector3 (vec1): The first vector.
+     * Parameter - Vector3 (vec2): The second vector.
+     * Returns - Vector3: The new Vector3.
+     */
+    static fun max(vec1: Vector3, vec2: Vector3): Vector3;
+
+    /*
+     * Returns a new Vector3 with each coordinate being the min value of the corresponding coordinates from the 2 input vectors.
+     * Parameter - Vector3 (vec1): The first vector.
+     * Parameter - Vector3 (vec2): The second vector.
+     * Returns - Vector3: The new Vector3.
+     */
+    static fun min(vec1: Vector3, vec2: Vector3): Vector3;
 }
 
