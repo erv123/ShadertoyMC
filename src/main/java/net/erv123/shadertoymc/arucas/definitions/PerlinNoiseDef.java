@@ -333,11 +333,11 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		),
 		examples = "noise.setFrequency(0.03);"
 	)
-	private Void setFrequency(Arguments arguments) {
+	private ClassInstance setFrequency(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		double frequency = arguments.nextPrimitive(NumberDef.class);
 		instance.asPrimitive(this).setFrequency(frequency);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -363,11 +363,11 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		),
 		examples = "noise.setLacunarity(2);"
 	)
-	private Void setLacunarity(Arguments arguments) {
+	private ClassInstance setLacunarity(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int lacunarity = arguments.nextPrimitive(NumberDef.class).intValue();
 		instance.asPrimitive(this).setOctaveCount(lacunarity);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -386,11 +386,11 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		params = @ParameterDoc(type = StringDef.class, name = "noiseQuality", desc = "Noise quality should be one of the following: 'fast', 'standard', 'best'."),
 		examples = "noise.setNoiseQuality(\"fast\");"
 	)
-	private Void setNoiseQuality(Arguments arguments) {
+	private ClassInstance setNoiseQuality(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		String quality = arguments.nextConstant();
 		instance.asPrimitive(this).setNoiseQuality(ScriptUtils.stringToNoiseQuality(quality));
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -417,11 +417,11 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		),
 		examples = "noise.setOctaveCount(4);"
 	)
-	private Void setOctaveCount(Arguments arguments) {
+	private ClassInstance setOctaveCount(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int octaves = arguments.nextPrimitive(NumberDef.class).intValue();
 		instance.asPrimitive(this).setOctaveCount(octaves);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -448,11 +448,11 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		),
 		examples = "noise.setPersistence(0.9);"
 	)
-	private Void setPersistence(Arguments arguments) {
+	private ClassInstance setPersistence(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		double persistence = arguments.nextPrimitive(NumberDef.class);
 		instance.asPrimitive(this).setPersistence(persistence);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -471,11 +471,11 @@ public class PerlinNoiseDef extends CreatableDefinition<Perlin> {
 		params = @ParameterDoc(type = NumberDef.class, name = "seed", desc = "A number that is used as a seed for calculating the noise."),
 		examples = "noise.setSeed(12345);"
 	)
-	private Void setSeed(Arguments arguments) {
+	private ClassInstance setSeed(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
 		instance.asPrimitive(this).setSeed(seed);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(

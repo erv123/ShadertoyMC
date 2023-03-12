@@ -183,11 +183,11 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		),
 		examples = "noise.setDisplacement(0.1);"
 	)
-	private Void setDisplacement(Arguments arguments) {
+	private ClassInstance setDisplacement(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		double displacement = arguments.nextPrimitive(NumberDef.class);
 		instance.asPrimitive(this).setDisplacement(displacement);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -213,11 +213,11 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		),
 		examples = "noise.setFrequency(0.3);"
 	)
-	private Void setFrequency(Arguments arguments) {
+	private ClassInstance setFrequency(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		double frequency = arguments.nextPrimitive(NumberDef.class);
 		instance.asPrimitive(this).setFrequency(frequency);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -236,11 +236,11 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		params = @ParameterDoc(type = NumberDef.class, name = "seed", desc = "A number that is used as a seed for calculating the noise."),
 		examples = "noise.setSeed(12345);"
 	)
-	private Void setSeed(Arguments arguments) {
+	private ClassInstance setSeed(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		int seed = arguments.nextPrimitive(NumberDef.class).intValue();
 		instance.asPrimitive(this).setSeed(seed);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
@@ -266,11 +266,11 @@ public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 		),
 		examples = "noise.setDisplacement(0.1);"
 	)
-	private Void setEnableDistance(Arguments arguments) {
+	private ClassInstance setEnableDistance(Arguments arguments) {
 		ClassInstance instance = arguments.next();
 		boolean enable = arguments.nextPrimitive(BooleanDef.class);
 		instance.asPrimitive(this).setEnableDistance(enable);
-		return null;
+		return instance;
 	}
 
 	@FunctionDoc(
