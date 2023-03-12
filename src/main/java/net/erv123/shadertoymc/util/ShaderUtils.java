@@ -1,6 +1,6 @@
 package net.erv123.shadertoymc.util;
 
-import me.senseiwells.arucas.utils.Util;
+import me.senseiwells.arucas.utils.FileUtils;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,7 +20,7 @@ public class ShaderUtils {
 	public static boolean canBlocksFall = true;
 
 	static {
-		Util.File.INSTANCE.ensureExists(SHADERTOY_PATH);
+		FileUtils.ensureExists(SHADERTOY_PATH);
 	}
 
 	private ShaderUtils() {

@@ -1,12 +1,12 @@
 package net.erv123.shadertoymc.arucas.impl;
 
+import me.senseiwells.arucas.Arucas;
 import me.senseiwells.arucas.api.ArucasErrorHandler;
-import me.senseiwells.arucas.core.Arucas;
-import me.senseiwells.arucas.core.Interpreter;
 import me.senseiwells.arucas.exceptions.ArucasError;
 import me.senseiwells.arucas.exceptions.FatalError;
 import me.senseiwells.arucas.exceptions.Propagator;
-import me.senseiwells.arucas.utils.Util;
+import me.senseiwells.arucas.interpreter.Interpreter;
+import me.senseiwells.arucas.utils.FileUtils;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
@@ -90,7 +90,7 @@ public enum ShaderErrorHandler implements ArucasErrorHandler {
 		);
 		String date = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(new Date());
 		Path crashPath = ShaderUtils.SHADERTOY_PATH.resolve("crashes").resolve("crash-" + date + ".txt");
-		Util.File.INSTANCE.ensureParentExists(crashPath);
+		FileUtils.ensureParentExists(crashPath);
 		try {
 			Files.writeString(crashPath, report);
 		} catch (IOException e) {

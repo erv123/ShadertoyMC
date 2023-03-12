@@ -8,7 +8,8 @@ import me.senseiwells.arucas.api.docs.visitor.ArucasDocParser;
 import me.senseiwells.arucas.api.docs.visitor.impl.JsonDocVisitor;
 import me.senseiwells.arucas.api.docs.visitor.impl.MarkdownDocVisitor;
 import me.senseiwells.arucas.api.docs.visitor.impl.VSCSnippetDocVisitor;
-import me.senseiwells.arucas.utils.Util;
+import me.senseiwells.arucas.utils.FileUtils;
+import me.senseiwells.arucas.utils.NetworkUtils;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -36,8 +37,7 @@ public class DocCompiler implements DedicatedServerModInitializer {
 			return;
 		}
 
-		Util.File file = Util.File.INSTANCE;
-		Path path = file.ensureExists(Path.of(options.valueOf(pathSpec)));
+		Path path = FileUtils.ensureExists(Path.of(options.valueOf(pathSpec)));
 
 		System.out.println(path);
 		try {
@@ -47,11 +47,11 @@ public class DocCompiler implements DedicatedServerModInitializer {
 		}
 
 		ArucasAPI api = ScriptUtils.generateApi();
-		Path libPath = file.ensureExists(path.resolve("libs"));
-		Path docPath = file.ensureExists(path.getParent().resolve("docs"));
-		Path jsonPath = file.ensureExists(path.resolve("json"));
-		Path mdPath = file.ensureExists(path.resolve("markdown"));
-		Path snippetPath = file.ensureExists(path.resolve("snippets"));
+		Path libPath = FileUtils.ensureExists(path.resolve("libs"));
+		Path docPath = FileUtils.ensureExists(path.getParent().resolve("docs"));
+		Path jsonPath = FileUtils.ensureExists(path.resolve("json"));
+		Path mdPath = FileUtils.ensureExists(path.resolve("markdown"));
+		Path snippetPath = FileUtils.ensureExists(path.resolve("snippets"));
 
 		JsonDocVisitor jsonVisitor = new JsonDocVisitor();
 		MarkdownDocVisitor markdownVisitor = new MarkdownDocVisitor();
@@ -71,7 +71,7 @@ public class DocCompiler implements DedicatedServerModInitializer {
 			Files.writeString(mdPath.resolve("Classes.md"), classes);
 
 
-			String full = Util.Network.INSTANCE.getStringFromUrl("https://raw.githubusercontent.com/senseiwells/Arucas/main/docs/FullLang.md");
+			String full = NetworkUtils.getStringFromUrl("https://raw.githubusercontent.com/senseiwells/Arucas/main/docs/FullLang.md");
 			full += "\n\n" + extensions;
 			full += "\n\n" + classes;
 			Files.writeString(docPath.resolve("Full.md"), full);

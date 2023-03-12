@@ -11,13 +11,13 @@ import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.builtin.ObjectDef;
 import me.senseiwells.arucas.builtin.StringDef;
 import me.senseiwells.arucas.classes.instance.ClassInstance;
-import me.senseiwells.arucas.core.Interpreter;
+import me.senseiwells.arucas.compiler.Trace;
 import me.senseiwells.arucas.exceptions.RuntimeError;
+import me.senseiwells.arucas.functions.builtin.Arguments;
 import me.senseiwells.arucas.functions.builtin.BuiltInFunction;
-import me.senseiwells.arucas.utils.Arguments;
-import me.senseiwells.arucas.utils.Trace;
-import me.senseiwells.arucas.utils.Util;
+import me.senseiwells.arucas.interpreter.Interpreter;
 import me.senseiwells.arucas.utils.impl.ArucasMap;
+import me.senseiwells.arucas.utils.misc.Language;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
 import net.erv123.shadertoymc.util.*;
@@ -44,7 +44,7 @@ import java.util.function.Function;
 @ExtensionDoc(
 	name = "ShaderExtension",
 	desc = "Extension with some functions for interacting with the Minecraft world.",
-	language = Util.Language.Java
+	language = Language.Java
 )
 public class ShaderExtension implements ArucasExtension {
 	@NotNull

@@ -1,7 +1,7 @@
 package net.erv123.shadertoymc.util;
 
 import me.senseiwells.arucas.builtin.NumberDef;
-import me.senseiwells.arucas.utils.Arguments;
+import me.senseiwells.arucas.functions.builtin.Arguments;
 import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;

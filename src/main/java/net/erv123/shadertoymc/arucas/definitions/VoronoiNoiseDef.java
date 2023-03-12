@@ -6,11 +6,11 @@ import me.senseiwells.arucas.builtin.BooleanDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.classes.CreatableDefinition;
 import me.senseiwells.arucas.classes.instance.ClassInstance;
-import me.senseiwells.arucas.core.Interpreter;
+import me.senseiwells.arucas.functions.builtin.Arguments;
 import me.senseiwells.arucas.functions.builtin.ConstructorFunction;
 import me.senseiwells.arucas.functions.builtin.MemberFunction;
-import me.senseiwells.arucas.utils.Arguments;
-import me.senseiwells.arucas.utils.Util;
+import me.senseiwells.arucas.interpreter.Interpreter;
+import me.senseiwells.arucas.utils.misc.Language;
 import net.jlibnoise.filter.Voronoi;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import java.util.List;
 @ClassDoc(
 	name = "VoronoiNoise",
 	desc = "Class that is used to generate voronoi noise.",
-	language = Util.Language.Java
+	language = Language.Java
 )
 public class VoronoiNoiseDef extends CreatableDefinition<Voronoi> {
 	public VoronoiNoiseDef(@NotNull Interpreter interpreter) {

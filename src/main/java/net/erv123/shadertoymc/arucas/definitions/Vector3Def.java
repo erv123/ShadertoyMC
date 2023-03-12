@@ -6,15 +6,15 @@ import me.senseiwells.arucas.builtin.ListDef;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.classes.CreatableDefinition;
 import me.senseiwells.arucas.classes.instance.ClassInstance;
-import me.senseiwells.arucas.core.Interpreter;
+import me.senseiwells.arucas.compiler.LocatableTrace;
 import me.senseiwells.arucas.exceptions.RuntimeError;
+import me.senseiwells.arucas.functions.builtin.Arguments;
 import me.senseiwells.arucas.functions.builtin.BuiltInFunction;
 import me.senseiwells.arucas.functions.builtin.ConstructorFunction;
 import me.senseiwells.arucas.functions.builtin.MemberFunction;
-import me.senseiwells.arucas.utils.Arguments;
-import me.senseiwells.arucas.utils.LocatableTrace;
-import me.senseiwells.arucas.utils.Util;
+import me.senseiwells.arucas.interpreter.Interpreter;
 import me.senseiwells.arucas.utils.impl.ArucasList;
+import me.senseiwells.arucas.utils.misc.Language;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import java.util.List;
 @ClassDoc(
 	name = "Vector3",
 	desc = "A 3 dimensional vector class, overrides +, -, *, /, ^, and [] operators, only bracket access.",
-	language = Util.Language.Java
+	language = Language.Java
 )
 public class Vector3Def extends CreatableDefinition<Vec3d> {
 	public Vector3Def(@NotNull Interpreter interpreter) {
@@ -690,6 +690,17 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
 		return this.create(new Vec3d(s, s, s));
 	}
 
+	@FunctionDoc(
+		isStatic = true,
+		name = "min",
+		desc = "Returns a new Vector3 with each coordinate being the min value of the corresponding coordinates from the 2 input vectors.",
+		params = {
+			@ParameterDoc(type = Vector3Def.class, name = "vec1", desc = "The first vector"),
+			@ParameterDoc(type = Vector3Def.class, name = "vec2", desc = "The second vector")
+		},
+		returns = @ReturnDoc(type = Vector3Def.class, desc = "The new Vector3."),
+		examples = "vec = Vector3.min(new Vector3(10, 10, 10), new Vector3(15,5,15));"
+	)
 	public Vec3d min(Arguments arguments) {
 		Vec3d vec1 = arguments.nextPrimitive(this);
 		Vec3d vec2 = arguments.nextPrimitive(this);
@@ -699,6 +710,17 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
 		return new Vec3d(x, y, z);
 	}
 
+	@FunctionDoc(
+		isStatic = true,
+		name = "max",
+		desc = "Returns a new Vector3 with each coordinate being the max value of the corresponding coordinates from the 2 input vectors.",
+		params = {
+			@ParameterDoc(type = Vector3Def.class, name = "vec1", desc = "The first vector"),
+			@ParameterDoc(type = Vector3Def.class, name = "vec2", desc = "The second vector")
+		},
+		returns = @ReturnDoc(type = Vector3Def.class, desc = "The new Vector3."),
+		examples = "vec = Vector3.max(new Vector3(10, 10, 10), new Vector3(15,5,15));"
+	)
 	public Vec3d max(Arguments arguments) {
 		Vec3d vec1 = arguments.nextPrimitive(this);
 		Vec3d vec2 = arguments.nextPrimitive(this);

@@ -1,8 +1,8 @@
 package net.erv123.shadertoymc.arucas.impl;
 
 import me.senseiwells.arucas.api.ArucasOutput;
-import me.senseiwells.arucas.core.Interpreter;
-import me.senseiwells.arucas.utils.LocatableTrace;
+import me.senseiwells.arucas.compiler.LocatableTrace;
+import me.senseiwells.arucas.interpreter.Interpreter;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.minecraft.text.Text;

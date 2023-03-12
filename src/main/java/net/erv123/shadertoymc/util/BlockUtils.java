@@ -1,7 +1,7 @@
 package net.erv123.shadertoymc.util;
 
 import me.senseiwells.arucas.builtin.StringDef;
-import me.senseiwells.arucas.core.Interpreter;
+import me.senseiwells.arucas.interpreter.Interpreter;
 import me.senseiwells.arucas.utils.impl.ArucasMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;

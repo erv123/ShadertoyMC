@@ -1,7 +1,7 @@
 package net.erv123.shadertoymc.arucas.impl;
 
 import me.senseiwells.arucas.api.ArucasPoller;
-import me.senseiwells.arucas.core.Interpreter;
+import me.senseiwells.arucas.interpreter.Interpreter;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.util.MinecraftServerTicker;
 import org.jetbrains.annotations.NotNull;
