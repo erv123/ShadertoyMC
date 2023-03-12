@@ -602,6 +602,7 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
 		return new Vec3d(d, e, f);
 	}
 
+
 	@FunctionDoc(
 		name = "getX",
 		desc = "Returns the x coordinate of the vector.",
@@ -638,7 +639,9 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
 		return List.of(
 			BuiltInFunction.of("fromPolar", 2, this::fromPolar),
 			BuiltInFunction.of("zero", this::zero),
-			BuiltInFunction.of("fromScalar", 1, this::fromScalar)
+			BuiltInFunction.of("fromScalar", 1, this::fromScalar),
+			BuiltInFunction.of("min", 2, this::min),
+			BuiltInFunction.of("max", 2, this::max)
 		);
 	}
 
@@ -685,5 +688,23 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
 	public ClassInstance fromScalar(Arguments arguments) {
 		double s = arguments.nextPrimitive(NumberDef.class);
 		return this.create(new Vec3d(s, s, s));
+	}
+
+	public Vec3d min(Arguments arguments) {
+		Vec3d vec1 = arguments.nextPrimitive(this);
+		Vec3d vec2 = arguments.nextPrimitive(this);
+		double x = Math.min(vec1.x, vec2.x);
+		double y = Math.min(vec1.y, vec2.y);
+		double z = Math.min(vec1.z, vec2.z);
+		return new Vec3d(x, y, z);
+	}
+
+	public Vec3d max(Arguments arguments) {
+		Vec3d vec1 = arguments.nextPrimitive(this);
+		Vec3d vec2 = arguments.nextPrimitive(this);
+		double x = Math.max(vec1.x, vec2.x);
+		double y = Math.max(vec1.y, vec2.y);
+		double z = Math.max(vec1.z, vec2.z);
+		return new Vec3d(x, y, z);
 	}
 }

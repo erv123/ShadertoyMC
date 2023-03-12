@@ -187,6 +187,12 @@ public class ShadertoyCommand {
 					})
 				)
 			)
+			.then(literal("stop")
+				.executes(context -> {
+					ScriptUtils.stopAllScripts();
+					return 1;
+				})
+			)
 			.then(literal("new")
 				.then(argument("shader_file", StringArgumentType.string())
 					.executes(context -> {
