@@ -45,7 +45,7 @@ public class ScriptUtils {
 
 	public static final List<String> SCRIPTS;
 	public static final String EXAMPLE_SCRIPT;
-	public static Interpreter activeInterpreter;
+	public static List<Interpreter> activeInterpreters = new ArrayList<>();
 
 	static {
 		FAILED_TO_READ_SCRIPT = new DynamicCommandExceptionType(o -> Text.literal("Failed to read script: " + o));
@@ -149,12 +149,14 @@ public class ScriptUtils {
 			bossBar.clearPlayers();
 			manager.remove(bossBar);
 		});
-		activeInterpreter = interpreter;
+		activeInterpreters.add(interpreter);
 		interpreter.executeAsync();
 	}
 
 	public static void stopAllScripts() {
-		activeInterpreter.stop();
+		for (Interpreter interpreter : activeInterpreters) {
+			interpreter.stop();
+		}
 	}
 
 	public static void reloadScripts() {
