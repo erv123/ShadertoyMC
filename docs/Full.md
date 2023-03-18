@@ -3098,6 +3098,59 @@ For example 'minecraft:the_nether'.
 world = dimension();
 ```
 
+### `getOrigin()`
+- Description: Returns the origin of the defined area.
+- Returns - Vector3: Origin vector.
+- Example:
+```kotlin
+origin = getOrigin();
+```
+
+### `getPos1()`
+- Description: Returns the pos1 of the defined area.
+- Returns - Vector3: Pos1 vector.
+- Example:
+```kotlin
+pos1 = getPos1();
+```
+
+### `getPos2()`
+- Description: Returns the pos2 of the defined area.
+- Returns - Vector3: Pos2 vector.
+- Example:
+```kotlin
+pos2 = getPos2();
+```
+
+### `getSize()`
+- Description: Returns the size of the defined area.
+- Returns - Vector3: Size vector.
+- Example:
+```kotlin
+size = getSize();
+```
+
+### `isWithinArea(vec)`
+- Description: Returns true if the input vector is within the defined area and false if it isn't.
+- Parameter - Vector3 (`vec`): The position vector.
+- Returns - Boolean: Boolean for if the input vector is within the area.
+- Example:
+```kotlin
+if(isWithinArea(pos)){place(pos, "stone"););
+```
+
+### `isWithinArea(x, y, z)`
+- Description: Returns true if the input vector is within the defined area and false if it isn't.
+- Parameters:
+  - Number (`x`): The x coordinate.
+  - Number (`y`): The y coordinate.
+  - Number (`z`): The z coordinate.
+- Returns - Boolean: Boolean for if the input vector is within the area.
+- Example:
+```kotlin
+if(isWithinArea(1, 2, 3)){place(1, 2, 3, "stone"););
+```
+
 ### `place(args...)`
 - Description: This function allows you to place a block in a given world.
 The parameters for this function are as follows:
@@ -3149,6 +3202,82 @@ query(10, 0, 10,"state"); // -> {facing: west, type: single, waterlogged: false}
 ```
 ```kotlin
 query(10, 0, 10,"nbt"); // -> {Items:[{Count:64, Slot:11, id:"minecraft:spruce_fence_gate"},{Count:1, Slot:14, id:"minecraft:diamond_chestplate", tag:{Damage:0,Enchantments:[{id:"minecraft:protection",lvl: 1}],RepairCost:1,display:{Name:'{"text":"Why Are You Reading This?"}'}}}]}
+```
+
+### `setOrigin(vec)`
+- Description: Modifies the origin of the defined area.
+- Parameter - Vector3 (`vec`): The position vector.
+- Example:
+```kotlin
+setOrigin(new Vector3(100,1,100));
+```
+
+### `setOrigin(x, y, z)`
+- Description: Modifies the origin of the defined area.
+- Parameters:
+  - Number (`x`): The x coordinate.
+  - Number (`y`): The y coordinate.
+  - Number (`z`): The z coordinate.
+- Example:
+```kotlin
+setOrigin(200,0,720);
+```
+
+### `setPos1(vec)`
+- Description: Modifies the pos1 of the defined area.
+- Parameter - Vector3 (`vec`): The position vector.
+- Example:
+```kotlin
+setPos1(new Vector3(100,1,100));
+```
+
+### `setPos1(x, y, z)`
+- Description: Modifies the pos1 of the defined area.
+- Parameters:
+  - Number (`x`): The x coordinate.
+  - Number (`y`): The y coordinate.
+  - Number (`z`): The z coordinate.
+- Example:
+```kotlin
+setPos1(300,1,820);
+```
+
+### `setPos2(vec)`
+- Description: Modifies the pos2 of the defined area.
+- Parameter - Vector3 (`vec`): The position vector.
+- Example:
+```kotlin
+setPos2(new Vector3(100,1,100));
+```
+
+### `setPos2(x, y, z)`
+- Description: Modifies the pos2 of the defined area.
+- Parameters:
+  - Number (`x`): The x coordinate.
+  - Number (`y`): The y coordinate.
+  - Number (`z`): The z coordinate.
+- Example:
+```kotlin
+setPos2(300,1,820);
+```
+
+### `setSize(vec)`
+- Description: Modifies the size of the defined area.
+- Parameter - Vector3 (`vec`): The position vector.
+- Example:
+```kotlin
+setSize(new Vector3(100,1,100));
+```
+
+### `setSize(x, y, z)`
+- Description: Modifies the size of the defined area.
+- Parameters:
+  - Number (`x`): The x coordinate.
+  - Number (`y`): The y coordinate.
+  - Number (`z`): The z coordinate.
+- Example:
+```kotlin
+setSize(100,1,100);
 ```
 
 

@@ -226,6 +226,46 @@ fun area(originX: Number, originY: Number, originZ: Number, sizeX: Number, sizeY
 fun dimension(): String;
 
 /*
+ * Returns the origin of the defined area.
+ * Returns - Vector3: Origin vector.
+ */
+fun getOrigin(): Vector3;
+
+/*
+ * Returns the pos1 of the defined area.
+ * Returns - Vector3: Pos1 vector.
+ */
+fun getPos1(): Vector3;
+
+/*
+ * Returns the pos2 of the defined area.
+ * Returns - Vector3: Pos2 vector.
+ */
+fun getPos2(): Vector3;
+
+/*
+ * Returns the size of the defined area.
+ * Returns - Vector3: Size vector.
+ */
+fun getSize(): Vector3;
+
+/*
+ * Returns true if the input vector is within the defined area and false if it isn't.
+ * Parameter - Vector3 (vec): The position vector.
+ * Returns - Boolean: Boolean for if the input vector is within the area.
+ */
+fun isWithinArea(vec: Vector3): Boolean;
+
+/*
+ * Returns true if the input vector is within the defined area and false if it isn't.
+ * Parameter - Number (x): The x coordinate.
+ * Parameter - Number (y): The y coordinate.
+ * Parameter - Number (z): The z coordinate.
+ * Returns - Boolean: Boolean for if the input vector is within the area.
+ */
+fun isWithinArea(x: Number, y: Number, z: Number): Boolean;
+
+/*
  * This function allows you to place a block in a given world.
  * The parameters for this function are as follows:
 
@@ -258,4 +298,60 @@ fun place(args...: Object): Null;
  "nbt"- returns a map containing all the nbt data.
  */
 fun query(args...: Object): String;
+
+/*
+ * Modifies the origin of the defined area.
+ * Parameter - Vector3 (vec): The position vector.
+ */
+fun setOrigin(vec: Vector3): Null;
+
+/*
+ * Modifies the origin of the defined area.
+ * Parameter - Number (x): The x coordinate.
+ * Parameter - Number (y): The y coordinate.
+ * Parameter - Number (z): The z coordinate.
+ */
+fun setOrigin(x: Number, y: Number, z: Number): Null;
+
+/*
+ * Modifies the pos1 of the defined area.
+ * Parameter - Vector3 (vec): The position vector.
+ */
+fun setPos1(vec: Vector3): Null;
+
+/*
+ * Modifies the pos1 of the defined area.
+ * Parameter - Number (x): The x coordinate.
+ * Parameter - Number (y): The y coordinate.
+ * Parameter - Number (z): The z coordinate.
+ */
+fun setPos1(x: Number, y: Number, z: Number): Null;
+
+/*
+ * Modifies the pos2 of the defined area.
+ * Parameter - Vector3 (vec): The position vector.
+ */
+fun setPos2(vec: Vector3): Null;
+
+/*
+ * Modifies the pos2 of the defined area.
+ * Parameter - Number (x): The x coordinate.
+ * Parameter - Number (y): The y coordinate.
+ * Parameter - Number (z): The z coordinate.
+ */
+fun setPos2(x: Number, y: Number, z: Number): Null;
+
+/*
+ * Modifies the size of the defined area.
+ * Parameter - Vector3 (vec): The position vector.
+ */
+fun setSize(vec: Vector3): Null;
+
+/*
+ * Modifies the size of the defined area.
+ * Parameter - Number (x): The x coordinate.
+ * Parameter - Number (y): The y coordinate.
+ * Parameter - Number (z): The z coordinate.
+ */
+fun setSize(x: Number, y: Number, z: Number): Null;
 

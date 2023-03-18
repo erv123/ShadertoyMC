@@ -144,6 +144,36 @@
     "body": "dimension()",
     "description": "dimension()\nReturns string for your current dimension.\nFor example 'minecraft:the_nether'.\n"
   },
+  "Function getOrigin()": {
+    "prefix": "getOrigin()",
+    "body": "getOrigin()",
+    "description": "getOrigin()\nReturns the origin of the defined area.\n"
+  },
+  "Function getPos1()": {
+    "prefix": "getPos1()",
+    "body": "getPos1()",
+    "description": "getPos1()\nReturns the pos1 of the defined area.\n"
+  },
+  "Function getPos2()": {
+    "prefix": "getPos2()",
+    "body": "getPos2()",
+    "description": "getPos2()\nReturns the pos2 of the defined area.\n"
+  },
+  "Function getSize()": {
+    "prefix": "getSize()",
+    "body": "getSize()",
+    "description": "getSize()\nReturns the size of the defined area.\n"
+  },
+  "Function isWithinArea(vec)": {
+    "prefix": "isWithinArea($vec)",
+    "body": "isWithinArea($vec)",
+    "description": "isWithinArea(vec)\nReturns true if the input vector is within the defined area and false if it isn't.\n- Parameter - Vector3 (`vec`): The position vector.\n"
+  },
+  "Function isWithinArea(x, y, z)": {
+    "prefix": "isWithinArea($x, $y, $z)",
+    "body": "isWithinArea($x, $y, $z)",
+    "description": "isWithinArea(x, y, z)\nReturns true if the input vector is within the defined area and false if it isn't.\n- Parameter - Number (`x`): The x coordinate.\n- Parameter - Number (`y`): The y coordinate.\n- Parameter - Number (`z`): The z coordinate.\n"
+  },
   "Function place(args)": {
     "prefix": "place($args)",
     "body": "place($args)",
@@ -153,6 +183,46 @@
     "prefix": "query($args)",
     "body": "query($args)",
     "description": "query(args)\nThis queries a the data for a block at a given position in a given dimension.\nThe parameters for this function are as follows:\n\nposition - this can either be as 3 numbers (x, y, z) or as a single Vector3\n\ntype - this is optional, this is the type of query, this can be one of the following: 'default', 'block', 'state', 'nbt', see examples\n\ndimension - this is an optional argument defining the dimension in which to place the block\nby default this is the dimension of the player that executed the script.\n- Parameter - Object (`args...`): The query arguments, see function description.\n"
+  },
+  "Function setOrigin(vec)": {
+    "prefix": "setOrigin($vec)",
+    "body": "setOrigin($vec)",
+    "description": "setOrigin(vec)\nModifies the origin of the defined area.\n- Parameter - Vector3 (`vec`): The position vector.\n"
+  },
+  "Function setOrigin(x, y, z)": {
+    "prefix": "setOrigin($x, $y, $z)",
+    "body": "setOrigin($x, $y, $z)",
+    "description": "setOrigin(x, y, z)\nModifies the origin of the defined area.\n- Parameter - Number (`x`): The x coordinate.\n- Parameter - Number (`y`): The y coordinate.\n- Parameter - Number (`z`): The z coordinate.\n"
+  },
+  "Function setPos1(vec)": {
+    "prefix": "setPos1($vec)",
+    "body": "setPos1($vec)",
+    "description": "setPos1(vec)\nModifies the pos1 of the defined area.\n- Parameter - Vector3 (`vec`): The position vector.\n"
+  },
+  "Function setPos1(x, y, z)": {
+    "prefix": "setPos1($x, $y, $z)",
+    "body": "setPos1($x, $y, $z)",
+    "description": "setPos1(x, y, z)\nModifies the pos1 of the defined area.\n- Parameter - Number (`x`): The x coordinate.\n- Parameter - Number (`y`): The y coordinate.\n- Parameter - Number (`z`): The z coordinate.\n"
+  },
+  "Function setPos2(vec)": {
+    "prefix": "setPos2($vec)",
+    "body": "setPos2($vec)",
+    "description": "setPos2(vec)\nModifies the pos2 of the defined area.\n- Parameter - Vector3 (`vec`): The position vector.\n"
+  },
+  "Function setPos2(x, y, z)": {
+    "prefix": "setPos2($x, $y, $z)",
+    "body": "setPos2($x, $y, $z)",
+    "description": "setPos2(x, y, z)\nModifies the pos2 of the defined area.\n- Parameter - Number (`x`): The x coordinate.\n- Parameter - Number (`y`): The y coordinate.\n- Parameter - Number (`z`): The z coordinate.\n"
+  },
+  "Function setSize(vec)": {
+    "prefix": "setSize($vec)",
+    "body": "setSize($vec)",
+    "description": "setSize(vec)\nModifies the size of the defined area.\n- Parameter - Vector3 (`vec`): The position vector.\n"
+  },
+  "Function setSize(x, y, z)": {
+    "prefix": "setSize($x, $y, $z)",
+    "body": "setSize($x, $y, $z)",
+    "description": "setSize(x, y, z)\nModifies the size of the defined area.\n- Parameter - Number (`x`): The x coordinate.\n- Parameter - Number (`y`): The y coordinate.\n- Parameter - Number (`z`): The z coordinate.\n"
   },
   "Boolean Class": {
     "prefix": "Boolean",

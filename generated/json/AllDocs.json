@@ -567,6 +567,114 @@
         ]
       },
       {
+        "name": "getOrigin",
+        "is_arbitrary": false,
+        "desc": [
+          "Returns the origin of the defined area."
+        ],
+        "returns": {
+          "type": "Vector3",
+          "desc": "Origin vector."
+        },
+        "examples": [
+          "origin = getOrigin();"
+        ]
+      },
+      {
+        "name": "getPos1",
+        "is_arbitrary": false,
+        "desc": [
+          "Returns the pos1 of the defined area."
+        ],
+        "returns": {
+          "type": "Vector3",
+          "desc": "Pos1 vector."
+        },
+        "examples": [
+          "pos1 = getPos1();"
+        ]
+      },
+      {
+        "name": "getPos2",
+        "is_arbitrary": false,
+        "desc": [
+          "Returns the pos2 of the defined area."
+        ],
+        "returns": {
+          "type": "Vector3",
+          "desc": "Pos2 vector."
+        },
+        "examples": [
+          "pos2 = getPos2();"
+        ]
+      },
+      {
+        "name": "getSize",
+        "is_arbitrary": false,
+        "desc": [
+          "Returns the size of the defined area."
+        ],
+        "returns": {
+          "type": "Vector3",
+          "desc": "Size vector."
+        },
+        "examples": [
+          "size = getSize();"
+        ]
+      },
+      {
+        "name": "isWithinArea",
+        "is_arbitrary": false,
+        "desc": [
+          "Returns true if the input vector is within the defined area and false if it isn't."
+        ],
+        "params": [
+          {
+            "name": "vec",
+            "type": "Vector3",
+            "desc": "The position vector."
+          }
+        ],
+        "returns": {
+          "type": "Boolean",
+          "desc": "Boolean for if the input vector is within the area."
+        },
+        "examples": [
+          "if(isWithinArea(pos)){place(pos, \"stone\"););"
+        ]
+      },
+      {
+        "name": "isWithinArea",
+        "is_arbitrary": false,
+        "desc": [
+          "Returns true if the input vector is within the defined area and false if it isn't."
+        ],
+        "params": [
+          {
+            "name": "x",
+            "type": "Number",
+            "desc": "The x coordinate."
+          },
+          {
+            "name": "y",
+            "type": "Number",
+            "desc": "The y coordinate."
+          },
+          {
+            "name": "z",
+            "type": "Number",
+            "desc": "The z coordinate."
+          }
+        ],
+        "returns": {
+          "type": "Boolean",
+          "desc": "Boolean for if the input vector is within the area."
+        },
+        "examples": [
+          "if(isWithinArea(1, 2, 3)){place(1, 2, 3, \"stone\"););"
+        ]
+      },
+      {
         "name": "place",
         "is_arbitrary": true,
         "desc": [
@@ -617,6 +725,182 @@
           "query(10, 0, 10,\"block\"); // -> 'minecraft:chest'",
           "query(10, 0, 10,\"state\"); // -> {facing: west, type: single, waterlogged: false}",
           "query(10, 0, 10,\"nbt\"); // -> {Items:[{Count:64, Slot:11, id:\"minecraft:spruce_fence_gate\"},{Count:1, Slot:14, id:\"minecraft:diamond_chestplate\", tag:{Damage:0,Enchantments:[{id:\"minecraft:protection\",lvl: 1}],RepairCost:1,display:{Name:'{\"text\":\"Why Are You Reading This?\"}'}}}]}"
+        ]
+      },
+      {
+        "name": "setOrigin",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the origin of the defined area."
+        ],
+        "params": [
+          {
+            "name": "vec",
+            "type": "Vector3",
+            "desc": "The position vector."
+          }
+        ],
+        "examples": [
+          "setOrigin(new Vector3(100,1,100));"
+        ]
+      },
+      {
+        "name": "setOrigin",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the origin of the defined area."
+        ],
+        "params": [
+          {
+            "name": "x",
+            "type": "Number",
+            "desc": "The x coordinate."
+          },
+          {
+            "name": "y",
+            "type": "Number",
+            "desc": "The y coordinate."
+          },
+          {
+            "name": "z",
+            "type": "Number",
+            "desc": "The z coordinate."
+          }
+        ],
+        "examples": [
+          "setOrigin(200,0,720);"
+        ]
+      },
+      {
+        "name": "setPos1",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the pos1 of the defined area."
+        ],
+        "params": [
+          {
+            "name": "vec",
+            "type": "Vector3",
+            "desc": "The position vector."
+          }
+        ],
+        "examples": [
+          "setPos1(new Vector3(100,1,100));"
+        ]
+      },
+      {
+        "name": "setPos1",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the pos1 of the defined area."
+        ],
+        "params": [
+          {
+            "name": "x",
+            "type": "Number",
+            "desc": "The x coordinate."
+          },
+          {
+            "name": "y",
+            "type": "Number",
+            "desc": "The y coordinate."
+          },
+          {
+            "name": "z",
+            "type": "Number",
+            "desc": "The z coordinate."
+          }
+        ],
+        "examples": [
+          "setPos1(300,1,820);"
+        ]
+      },
+      {
+        "name": "setPos2",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the pos2 of the defined area."
+        ],
+        "params": [
+          {
+            "name": "vec",
+            "type": "Vector3",
+            "desc": "The position vector."
+          }
+        ],
+        "examples": [
+          "setPos2(new Vector3(100,1,100));"
+        ]
+      },
+      {
+        "name": "setPos2",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the pos2 of the defined area."
+        ],
+        "params": [
+          {
+            "name": "x",
+            "type": "Number",
+            "desc": "The x coordinate."
+          },
+          {
+            "name": "y",
+            "type": "Number",
+            "desc": "The y coordinate."
+          },
+          {
+            "name": "z",
+            "type": "Number",
+            "desc": "The z coordinate."
+          }
+        ],
+        "examples": [
+          "setPos2(300,1,820);"
+        ]
+      },
+      {
+        "name": "setSize",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the size of the defined area."
+        ],
+        "params": [
+          {
+            "name": "vec",
+            "type": "Vector3",
+            "desc": "The position vector."
+          }
+        ],
+        "examples": [
+          "setSize(new Vector3(100,1,100));"
+        ]
+      },
+      {
+        "name": "setSize",
+        "is_arbitrary": false,
+        "desc": [
+          "Modifies the size of the defined area."
+        ],
+        "params": [
+          {
+            "name": "x",
+            "type": "Number",
+            "desc": "The x coordinate."
+          },
+          {
+            "name": "y",
+            "type": "Number",
+            "desc": "The y coordinate."
+          },
+          {
+            "name": "z",
+            "type": "Number",
+            "desc": "The z coordinate."
+          }
+        ],
+        "examples": [
+          "setSize(100,1,100);"
         ]
       }
     ]
