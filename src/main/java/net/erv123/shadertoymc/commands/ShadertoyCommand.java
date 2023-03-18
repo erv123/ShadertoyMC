@@ -32,13 +32,19 @@ public class ShadertoyCommand {
 
 	}
 
-	/*
-	TODO: stop command
-	 */
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 		dispatcher.register(literal("shadertoy")
 			.requires(source -> source.hasPermissionLevel(2))
 			.then(literal("area")
+				.executes(context -> {
+					ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+					Area area = ScriptUtils.getArea(player);
+					if (area == null) {
+						throw new RuntimeException("Area not initialized!");
+					}
+					player.sendMessage(Text.literal(area.toString()));
+					return 1;
+				})
 				.then(literal("pos1")
 					.then(argument("position", BlockPosArgumentType.blockPos())
 						.executes(context -> {
@@ -200,7 +206,6 @@ public class ShadertoyCommand {
 						if (!shaderFile.endsWith(".arucas")) {
 							shaderFile += ".arucas";
 						}
-
 						Path shaderPath = ShaderUtils.SHADERTOY_PATH.resolve(shaderFile);
 						try {
 							FileUtils.ensureParentExists(shaderPath);

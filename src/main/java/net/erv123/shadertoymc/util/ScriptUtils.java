@@ -99,6 +99,14 @@ public class ScriptUtils {
 		return AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
 	}
 
+	public static Area getOrCreateArea(Interpreter interpreter, BlockPos initial) {
+		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
+		if (player == null) {
+			return null;
+		}
+		return AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
+	}
+
 	public static void showProgressBar(Interpreter interpreter) {
 		ScriptData data = getScriptData(interpreter);
 		ServerPlayerEntity player = data.source().getPlayer();
