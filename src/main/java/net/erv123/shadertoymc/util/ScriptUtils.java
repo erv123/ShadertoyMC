@@ -156,6 +156,7 @@ public class ScriptUtils {
 			SCRIPT_DATA.remove(uuid);
 			bossBar.clearPlayers();
 			manager.remove(bossBar);
+			activeInterpreters.remove(interpreter);
 		});
 		activeInterpreters.add(interpreter);
 		interpreter.executeAsync();

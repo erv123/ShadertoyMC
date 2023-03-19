@@ -621,7 +621,13 @@ public class ShaderExtension implements ArucasExtension {
 		desc = "Returns true if the input vector is within the defined area and false if it isn't",
 		params = @ParameterDoc(type = Vector3Def.class, name = "vec", desc = "The position vector"),
 		returns = @ReturnDoc(type = BooleanDef.class, desc = "Boolean for if the input vector is within the area."),
-		examples = "if(isWithinArea(pos)){place(pos, \"stone\"););"
+		examples = {
+			"""
+					if (isWithinArea(pos)) {
+						place(pos, "stone");
+					}
+				"""
+		}
 	)
 	private Boolean isWithinAreaV(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
@@ -642,7 +648,13 @@ public class ShaderExtension implements ArucasExtension {
 			@ParameterDoc(type = NumberDef.class, name = "z", desc = "The z coordinate")
 		},
 		returns = @ReturnDoc(type = BooleanDef.class, desc = "Boolean for if the input vector is within the area."),
-		examples = "if(isWithinArea(1, 2, 3)){place(1, 2, 3, \"stone\"););"
+		examples = {
+			"""
+					if (isWithinArea(1, 2, 3)) {
+						place(1, 2, 3, "stone");
+					}
+				"""
+		}
 	)
 	private Boolean isWithinArea(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
