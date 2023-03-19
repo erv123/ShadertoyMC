@@ -103,7 +103,7 @@ fun print(value: Object): Null;
  * other wise it will print the contents without a new line.
  * Parameter - Object (value): The value to print.
  */
-fun print(value...: Object): Null;
+fun print(value...): Null;
 
 /*
  * This logs something to the debug output.
@@ -278,7 +278,7 @@ fun isWithinArea(x: Number, y: Number, z: Number): Boolean;
 .
  * Parameter - Object (args): The placement arguments, see the function description.
  */
-fun place(args...: Object): Null;
+fun place(args...): Null;
 
 /*
  * This queries a the data for a block at a given position in a given dimension.
@@ -297,7 +297,7 @@ fun place(args...: Object): Null;
  "state"- returns a map containing the state info
  "nbt"- returns a map containing all the nbt data.
  */
-fun query(args...: Object): String;
+fun query(args...): String;
 
 /*
  * Modifies the origin of the defined area.
