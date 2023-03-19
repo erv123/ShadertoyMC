@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.senseiwells.arucas.utils.FileUtils;
 import net.erv123.shadertoymc.util.Area;
 import net.erv123.shadertoymc.util.ScriptUtils;
@@ -40,7 +41,7 @@ public class ShadertoyCommand {
 					ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 					Area area = ScriptUtils.getArea(player);
 					if (area == null) {
-						throw new RuntimeException("Area not initialized!");
+						throw new CommandSyntaxException(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException(), () -> "Area not initialized");
 					}
 					player.sendMessage(Text.literal(area.toString()));
 					return 1;
