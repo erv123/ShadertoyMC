@@ -333,7 +333,9 @@ size = getSize();
 - Returns - Boolean: Boolean for if the input vector is within the area.
 - Example:
 ```kotlin
-if(isWithinArea(pos)){place(pos, "stone"););
+if (isWithinArea(pos)) {
+    place(pos, "stone");
+}
 ```
 
 ### `isWithinArea(x, y, z)`
@@ -345,7 +347,9 @@ if(isWithinArea(pos)){place(pos, "stone"););
 - Returns - Boolean: Boolean for if the input vector is within the area.
 - Example:
 ```kotlin
-if(isWithinArea(1, 2, 3)){place(1, 2, 3, "stone"););
+if (isWithinArea(1, 2, 3)) {
+    place(1, 2, 3, "stone");
+}
 ```
 
 ### `place(args...)`
