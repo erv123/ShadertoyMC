@@ -1,5 +1,6 @@
 plugins {
 	id 'fabric-loom' version '1.0-SNAPSHOT'
+	id "com.github.johnrengelman.shadow" version "7.1.2"
 	id 'maven-publish'
 }
 
@@ -7,7 +8,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.minecraft_version +  "-" + project.mod_version
 group = project.maven_group
 
 repositories {
@@ -21,6 +22,14 @@ repositories {
 	maven { url "https://repo.spongepowered.org/repository/maven-public/" }
 }
 
+configurations {
+	shade
+}
+
+shadowJar {
+	configurations = [project.configurations.shade]
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -29,7 +38,7 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	include implementation("com.github.senseiwells:Arucas:${project.arucas_version}")
+	shade implementation("com.github.senseiwells:Arucas:${project.arucas_version}")
 	include implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
 	include implementation("com.github.Sleaker:jlibnoise:v1.0")
 	implementation 'com.google.code.gson:gson:2.10.1'
@@ -60,10 +69,22 @@ java {
 	withSourcesJar()
 }
 
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+prepareRemapJar {
+	dependsOn "shadowJar"
+}
+
+remapJar {
+	remapperIsolation = true
+	inputFile.set shadowJar.archiveFile.get()
+	doLast {
+		// shadowJar.archiveFile.get().asFile.delete()
 	}
+}
+
+shadowJar {
+	from "LICENSE"
+
+	relocate("me.senseiwells", "shadow.senseiwells")
 }
 
 // configure the maven publication

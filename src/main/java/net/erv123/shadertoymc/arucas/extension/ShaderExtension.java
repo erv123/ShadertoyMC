@@ -26,6 +26,7 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -67,7 +68,9 @@ public class ShaderExtension implements ArucasExtension {
 			BuiltInFunction.of("getOrigin", this::getOrigin),
 			BuiltInFunction.of("getSize", this::getSize),
 			BuiltInFunction.of("isWithinArea", 1, this::isWithinAreaV),
-			BuiltInFunction.of("isWithinArea", 3, this::isWithinArea)
+			BuiltInFunction.of("isWithinArea", 3, this::isWithinArea),
+			BuiltInFunction.of("getPlayerPos", this::getPlayerPos),
+			BuiltInFunction.of("getPlayerLookingAtPos", 1, this::getPlayerLookingAtPos)
 		);
 	}
 
@@ -304,7 +307,7 @@ public class ShaderExtension implements ArucasExtension {
 		ClassInstance callback = arguments.nextFunction();
 		Interpreter interpreter = arguments.getInterpreter();
 
-		this.internalArea(new BlockPos(originX, originY, originZ), new Vec3i(sizeX, sizeY, sizeZ), callback, interpreter);
+		this.internalArea(ScriptUtils.createBlockPos(originX, originY, originZ), new Vec3i(sizeX, sizeY, sizeZ), callback, interpreter);
 		return null;
 	}
 
@@ -339,8 +342,8 @@ public class ShaderExtension implements ArucasExtension {
 	private Void customAreaVectors(Arguments arguments) {
 		Vec3d originD = arguments.nextPrimitive(Vector3Def.class);
 		Vec3d sizeD = arguments.nextPrimitive(Vector3Def.class);
-		Vec3i origin = new Vec3i(Math.floor(originD.getX()), Math.floor(originD.getY()), Math.floor(originD.getZ()));
-		Vec3i size = new Vec3i(Math.floor(sizeD.getX()), Math.floor(sizeD.getY()), Math.floor(sizeD.getZ()));
+		BlockPos origin = ScriptUtils.createBlockPos(originD);
+		Vec3i size = new Vec3i(MathHelper.floor(sizeD.getX()), MathHelper.floor(sizeD.getY()), MathHelper.floor(sizeD.getZ()));
 		if (size.getX() < 1 || size.getY() < 1 || size.getZ() < 1) {
 			throw new RuntimeError("Size cannot be less than 1");
 		}
@@ -348,7 +351,7 @@ public class ShaderExtension implements ArucasExtension {
 		ClassInstance callback = arguments.nextFunction();
 		Interpreter interpreter = arguments.getInterpreter();
 
-		this.internalArea(new BlockPos(origin), size, callback, interpreter);
+		this.internalArea(origin, size, callback, interpreter);
 		return null;
 	}
 
@@ -408,7 +411,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setPos1V(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(Vector3Def.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(Vector3Def.class));
 		Area area = ScriptUtils.getOrCreateArea(interpreter, pos);
 		if (area == null) {
 			return null;
@@ -425,7 +428,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setPos2V(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(Vector3Def.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(Vector3Def.class));
 		Area area = ScriptUtils.getOrCreateArea(interpreter, pos);
 		if (area == null) {
 			return null;
@@ -442,7 +445,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setOriginV(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(Vector3Def.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(Vector3Def.class));
 		Area area = ScriptUtils.getOrCreateArea(interpreter, pos);
 		if (area == null) {
 			return null;
@@ -459,7 +462,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setSizeV(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(Vector3Def.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(Vector3Def.class));
 		Area area = ScriptUtils.getArea(interpreter);
 		if (area == null) {
 			return null;
@@ -480,7 +483,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setPos1(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
 		Area area = ScriptUtils.getOrCreateArea(interpreter, pos);
 		if (area == null) {
 			return null;
@@ -501,7 +504,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setPos2(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
 		Area area = ScriptUtils.getOrCreateArea(interpreter, pos);
 		if (area == null) {
 			return null;
@@ -522,7 +525,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setOrigin(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
 		Area area = ScriptUtils.getOrCreateArea(interpreter, pos);
 		if (area == null) {
 			return null;
@@ -543,7 +546,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Void setSize(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		BlockPos pos = new BlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
+		BlockPos pos = ScriptUtils.createBlockPos(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
 		Area area = ScriptUtils.getArea(interpreter);
 		if (area == null) {
 			return null;
@@ -664,5 +667,22 @@ public class ShaderExtension implements ArucasExtension {
 		}
 		Vec3d pos = new Vec3d(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
 		return area.isWithinArea(pos);
+	}
+	private Vec3d getPlayerPos(Arguments arguments){
+		Interpreter interpreter = arguments.getInterpreter();
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter).getPlayer();
+		if (player == null) {
+			return null;
+		}
+		return player.getPos();
+	}
+	private Vec3d getPlayerLookingAtPos(Arguments arguments){
+		Interpreter interpreter = arguments.getInterpreter();
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter).getPlayer();
+		double maxDistance = arguments.nextPrimitive(NumberDef.class);
+		if (player == null) {
+			return null;
+		}
+		return player.raycast(maxDistance, 0.0F, true).getPos();
 	}
 }

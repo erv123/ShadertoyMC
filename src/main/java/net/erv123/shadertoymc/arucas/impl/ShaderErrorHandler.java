@@ -80,7 +80,7 @@ public enum ShaderErrorHandler implements ArucasErrorHandler {
 			%s
 			```
 			""".formatted(
-			MinecraftVersion.CURRENT.getName(),
+			MinecraftVersion.CURRENT,
 			ShadertoyMC.VERSION,
 			Arucas.VERSION,
 			interpreter.getName(),

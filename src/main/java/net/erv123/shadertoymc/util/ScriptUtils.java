@@ -26,6 +26,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -46,6 +47,7 @@ public class ScriptUtils {
 	public static final List<String> SCRIPTS;
 	public static final String EXAMPLE_SCRIPT;
 	public static List<Interpreter> activeInterpreters = new ArrayList<>();
+	private static boolean holdRemoval = false;
 
 	static {
 		FAILED_TO_READ_SCRIPT = new DynamicCommandExceptionType(o -> Text.literal("Failed to read script: " + o));
@@ -65,6 +67,13 @@ public class ScriptUtils {
 
 	private ScriptUtils() {
 
+	}
+
+	public static BlockPos createBlockPos(double x, double y, double z){
+		return new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
+	}
+	public static BlockPos createBlockPos(Vec3d vec){
+		return createBlockPos(vec.x, vec.y, vec.z);
 	}
 
 	public static void sendMessageToHolder(Interpreter interpreter, Text text) {
@@ -156,16 +165,21 @@ public class ScriptUtils {
 			SCRIPT_DATA.remove(uuid);
 			bossBar.clearPlayers();
 			manager.remove(bossBar);
-			activeInterpreters.remove(interpreter);
+			if(!holdRemoval) {
+				activeInterpreters.remove(interpreter);
+			}
 		});
 		activeInterpreters.add(interpreter);
 		interpreter.executeAsync();
 	}
 
 	public static void stopAllScripts() {
+		holdRemoval = true;
 		for (Interpreter interpreter : activeInterpreters) {
 			interpreter.stop();
 		}
+		holdRemoval = false;
+		activeInterpreters.clear();
 	}
 
 	public static void reloadScripts() {

@@ -3,6 +3,7 @@ package net.erv123.shadertoymc.util;
 import me.senseiwells.arucas.builtin.NumberDef;
 import me.senseiwells.arucas.functions.builtin.Arguments;
 import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -25,6 +26,6 @@ public class ArgumentUtils {
 			return new Vec3i(x, y, z);
 		}
 		Vec3d vec3d = arguments.nextPrimitive(Vector3Def.class);
-		return new Vec3i(vec3d.x, vec3d.y, vec3d.z);
+		return new Vec3i(MathHelper.floor(vec3d.x), MathHelper.floor(vec3d.y), MathHelper.floor(vec3d.z));
 	}
 }
