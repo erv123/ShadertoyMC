@@ -5,14 +5,19 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import io.netty.buffer.Unpooled;
 import me.senseiwells.arucas.utils.FileUtils;
+import net.erv123.shadertoymc.networking.ShaderPackets;
 import net.erv123.shadertoymc.util.Area;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.erv123.shadertoymc.util.WorldUtils;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
@@ -29,6 +34,10 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class ShadertoyCommand {
+	private static final DynamicCommandExceptionType FAILED_TO_READ_SCRIPT;
+	static {
+		FAILED_TO_READ_SCRIPT = new DynamicCommandExceptionType(o -> Text.literal("Failed to read script: " + o));
+	}
 	private ShadertoyCommand() {
 
 	}
@@ -188,8 +197,16 @@ public class ShadertoyCommand {
 					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder))
 					.executes(context -> {
 						String shaderFile = StringArgumentType.getString(context, "shader_file");
+						Path scriptPath = ShaderUtils.SHADERTOY_PATH.resolve(shaderFile);
+						String fileContent;
+						try {
+							fileContent = Files.readString(scriptPath);
+						} catch (IOException e) {
+							throw FAILED_TO_READ_SCRIPT.create(shaderFile);
+						}
 						context.getSource().sendMessage(Text.literal("Running shader: " + shaderFile));
-						ScriptUtils.executeScript(shaderFile, context.getSource());
+						ClientPlayNetworking.send(ShaderPackets.SHADER_PACKET_ID, new PacketByteBuf(Unpooled.buffer()).writeString(fileContent));
+						//ScriptUtils.executeScript(fileContent, context.getSource());
 						return 1;
 					})
 				)

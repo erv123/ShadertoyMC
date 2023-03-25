@@ -1,7 +1,5 @@
 package net.erv123.shadertoymc.util;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import me.senseiwells.arucas.api.ArucasAPI;
 import me.senseiwells.arucas.api.impl.GitHubArucasLibrary;
 import me.senseiwells.arucas.api.impl.MultiArucasLibrary;
@@ -20,7 +18,7 @@ import net.erv123.shadertoymc.arucas.impl.ShaderOutput;
 import net.jlibnoise.NoiseQuality;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.entity.boss.CommandBossBar;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -37,7 +35,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class ScriptUtils {
-	private static final DynamicCommandExceptionType FAILED_TO_READ_SCRIPT;
+
 	private static final Map<UUID, ScriptData> SCRIPT_DATA;
 	private static final Map<UUID, Area> AREA_DATA;
 	private static final GitHubArucasLibrary GIT_LIBRARY;
@@ -50,7 +48,6 @@ public class ScriptUtils {
 	private static boolean holdRemoval = false;
 
 	static {
-		FAILED_TO_READ_SCRIPT = new DynamicCommandExceptionType(o -> Text.literal("Failed to read script: " + o));
 		SCRIPT_DATA = new HashMap<>();
 		AREA_DATA = new HashMap<>();
 		GIT_LIBRARY = new GitHubArucasLibrary(
@@ -84,16 +81,18 @@ public class ScriptUtils {
 		return Util.getOperatingSystem();
 	}
 
-	public static ServerCommandSource getScriptHolder(Interpreter interpreter) {
-		return getScriptData(interpreter).source();
+	public static ServerPlayerEntity getScriptHolder(Interpreter interpreter) {
+		return getScriptData(interpreter).player();
 	}
-
+	public static MinecraftServer getScriptServer(Interpreter interpreter) {
+		return getScriptData(interpreter).server();
+	}
 	public static CommandBossBar getBossBar(Interpreter interpreter) {
 		return getScriptData(interpreter).bossBar();
 	}
 
 	public static Area getArea(Interpreter interpreter) {
-		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
+		ServerPlayerEntity player = getScriptHolder(interpreter);
 		if (player == null) {
 			return null;
 		}
@@ -109,7 +108,7 @@ public class ScriptUtils {
 	}
 
 	public static Area getOrCreateArea(Interpreter interpreter, BlockPos initial) {
-		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
+		ServerPlayerEntity player = getScriptHolder(interpreter);
 		if (player == null) {
 			return null;
 		}
@@ -118,7 +117,7 @@ public class ScriptUtils {
 
 	public static void showProgressBar(Interpreter interpreter) {
 		ScriptData data = getScriptData(interpreter);
-		ServerPlayerEntity player = data.source().getPlayer();
+		ServerPlayerEntity player = data.player();
 		if (player != null) {
 			data.bossBar().addPlayer(player);
 		}
@@ -141,14 +140,8 @@ public class ScriptUtils {
 		};
 	}
 
-	public static void executeScript(String scriptName, ServerCommandSource source) throws CommandSyntaxException {
-		Path scriptPath = ShaderUtils.SHADERTOY_PATH.resolve(scriptName);
-		String fileContent;
-		try {
-			fileContent = Files.readString(scriptPath);
-		} catch (IOException e) {
-			throw FAILED_TO_READ_SCRIPT.create(scriptName);
-		}
+	public static void executeScript(String fileContent, String scriptName, ServerPlayerEntity player, MinecraftServer server) {
+
 		Interpreter interpreter = Interpreter.of(fileContent, scriptName, ARUCAS_API);
 
 		Identifier identifier = new Identifier("shadertoy", scriptName.substring(0, scriptName.lastIndexOf('.')).toLowerCase(Locale.ROOT));
@@ -158,7 +151,7 @@ public class ScriptUtils {
 		CommandBossBar bossBar = manager.add(identifier, text);
 
 		UUID uuid = interpreter.getProperties().getId();
-		SCRIPT_DATA.put(interpreter.getProperties().getId(), new ScriptData(source, bossBar));
+		SCRIPT_DATA.put(interpreter.getProperties().getId(), new ScriptData(player, server, bossBar));
 
 		interpreter.addStopEvent(() -> {
 			sendMessageToHolder(interpreter, Text.literal("Done!"));

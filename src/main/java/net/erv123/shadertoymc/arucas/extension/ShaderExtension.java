@@ -25,7 +25,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -118,7 +118,7 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Object query(Arguments arguments) {
 		BlockPos pos = new BlockPos(ArgumentUtils.getVec3i(arguments));
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(arguments.getInterpreter());
 
 		String type = null;
 		ServerWorld world = null;
@@ -151,7 +151,7 @@ public class ShaderExtension implements ArucasExtension {
 			type = "default";
 		}
 		if (world == null) {
-			world = source.getWorld();
+			world = player.getWorld();
 		}
 
 		return switch (type) {
@@ -187,10 +187,11 @@ public class ShaderExtension implements ArucasExtension {
 		}
 	)
 	private Void place(Arguments arguments) {
-		ServerCommandSource source = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		MinecraftServer server = ScriptUtils.getScriptServer(arguments.getInterpreter());
 		BlockPos pos = new BlockPos(ArgumentUtils.getVec3i(arguments));
 		String block = arguments.nextPrimitive(StringDef.class);
-		ServerWorld world = source.getWorld();
+		ServerWorld world = player.getWorld();
 
 		if (arguments.hasNext()) {
 			String worldString = arguments.nextPrimitive(StringDef.class);
@@ -203,7 +204,7 @@ public class ShaderExtension implements ArucasExtension {
 			throw new RuntimeError("Too many arguments");
 		}
 
-		DynamicRegistryManager manager = source.getRegistryManager();
+		DynamicRegistryManager manager = server.getRegistryManager();
 		RegistryWrapper<Block> registryWrapper = manager.getWrapperOrThrow(RegistryKeys.BLOCK);
 		try {
 			BlockArgumentParser.BlockResult result = BlockArgumentParser.block(registryWrapper, block, true);
@@ -670,7 +671,7 @@ public class ShaderExtension implements ArucasExtension {
 	}
 	private Vec3d getPlayerPos(Arguments arguments){
 		Interpreter interpreter = arguments.getInterpreter();
-		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter).getPlayer();
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter);
 		if (player == null) {
 			return null;
 		}
@@ -678,7 +679,7 @@ public class ShaderExtension implements ArucasExtension {
 	}
 	private Vec3d getPlayerLookingAtPos(Arguments arguments){
 		Interpreter interpreter = arguments.getInterpreter();
-		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter).getPlayer();
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter);
 		double maxDistance = arguments.nextPrimitive(NumberDef.class);
 		if (player == null) {
 			return null;
