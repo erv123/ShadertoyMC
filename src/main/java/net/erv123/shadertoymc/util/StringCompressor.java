@@ -1,9 +1,11 @@
 package net.erv123.shadertoymc.util;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
+import java.util.zip.InflaterOutputStream;
 
 public enum StringCompressor {
 	;
@@ -20,13 +22,10 @@ public enum StringCompressor {
 	}
 
 	public static String decompress(byte[] bytes) {
-		InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			byte[] buffer = new byte[8192];
-			int len;
-			while((len = in.read(buffer))>0)
-				baos.write(buffer, 0, len);
+		try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			OutputStream out = new InflaterOutputStream(baos);
+			out.write(bytes);
+			out.close();
 			return baos.toString(StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			throw new AssertionError(e);

@@ -14,11 +14,13 @@
   "icon": "assets/modid/icon.png",
   "environment": "*",
   "entrypoints": {
+    "main": [
+      "net.erv123.shadertoymc.ShadertoyMC"
+    ],
     "client": [
       "net.erv123.shadertoymc.ShadertoyMCClient"
     ],
     "server": [
-      "net.erv123.shadertoymc.ShadertoyMC",
       "net.erv123.shadertoymc.util.DocCompiler"
     ]
   },

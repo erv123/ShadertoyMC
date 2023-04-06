@@ -34,13 +34,12 @@ public class ClientCommands {
 	}
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-		dispatcher.register(literal("shaderclient")
+		dispatcher.register(literal("shaderfile")
 			.then(literal("run")
 				.then(argument("shader_file", StringArgumentType.string())
 					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder))
 					.executes(context -> {
 						String shaderFile = StringArgumentType.getString(context, "shader_file");
-						int length = shaderFile.length();
 						Path scriptPath = ShaderUtils.SHADERTOY_PATH.resolve(shaderFile);
 						String fileContent;
 						try {
@@ -51,7 +50,6 @@ public class ClientCommands {
 						int packetVersion = 1;
 						PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 						buf.writeInt(packetVersion);
-						buf.writeInt(length);
 						buf.writeString(shaderFile);
 						byte[] compressedString = StringCompressor.compress(fileContent);
 						buf.writeByteArray(compressedString);

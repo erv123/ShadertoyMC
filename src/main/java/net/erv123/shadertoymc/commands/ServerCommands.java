@@ -25,7 +25,7 @@ public class ServerCommands {
 
 	}
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(literal("shaderserver")
+		dispatcher.register(literal("shadertoy")
 			.requires(source -> source.hasPermissionLevel(2))
 			.then(literal("stop")
 				.executes(context -> {

@@ -14,12 +14,10 @@ public class ShaderRunC2SPacket {
 							   PacketByteBuf buf, PacketSender responseSender){
 		player.sendMessage(Text.literal("Packet received"));
 		int version = buf.readInt();
-		int nameLength = buf.readInt();
-		String name = buf.readString(nameLength);
+		String name = buf.readString();
 		String shaderFile = StringCompressor.decompress(buf.readByteArray());
-		player.sendMessage(Text.literal("Version: "+version));
-		player.sendMessage(Text.literal("Length: "+nameLength));
-		player.sendMessage(Text.literal("Name: "+name));
+		//player.sendMessage(Text.literal("Version: "+version));
+		//player.sendMessage(Text.literal("Name: "+name));
 		//player.sendMessage(Text.literal("Script: "+shaderFile));
 		ScriptUtils.executeScript(shaderFile,name,player, server);
 	}

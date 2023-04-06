@@ -11,7 +11,7 @@ public class ServerAdminCommands {
 
 	}
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(literal("shaderadmin")
+		dispatcher.register(literal("shadertoy")
 			.requires(source -> source.hasPermissionLevel(3))
 			.then(literal("stopAll"))
 				.executes(context -> {
