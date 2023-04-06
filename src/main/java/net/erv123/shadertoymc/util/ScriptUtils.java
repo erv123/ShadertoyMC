@@ -16,7 +16,6 @@ import net.erv123.shadertoymc.arucas.impl.MinecraftServerPoller;
 import net.erv123.shadertoymc.arucas.impl.ShaderErrorHandler;
 import net.erv123.shadertoymc.arucas.impl.ShaderOutput;
 import net.jlibnoise.NoiseQuality;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.server.MinecraftServer;
@@ -100,13 +99,11 @@ public class ScriptUtils {
 		return getArea(player);
 	}
 
-	public static Area getArea(ClientPlayerEntity player) {
-		return AREA_DATA.get(player.getUuid());
-	}
+
 	public static Area getArea(ServerPlayerEntity player) {
 		return AREA_DATA.get(player.getUuid());
 	}
-	public static Area getOrCreateArea(ClientPlayerEntity player, BlockPos initial) {
+	public static Area getOrCreateArea(ServerPlayerEntity player, BlockPos initial) {
 		return AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
 	}
 
@@ -169,6 +166,30 @@ public class ScriptUtils {
 		interpreter.executeAsync();
 	}
 
+	public static void stopScriptByPlayerAndName(ServerPlayerEntity player, String name){
+		holdRemoval = true;
+		List<Interpreter> stoppedInterpreters = new ArrayList<>();
+		for (Interpreter interpreter : activeInterpreters) {
+			if(getScriptHolder(interpreter).getUuid() == player.getUuid() && interpreter.getName().equals(name)) {
+				interpreter.stop();
+				stoppedInterpreters.add(interpreter);
+			}
+		}
+		holdRemoval = false;
+		activeInterpreters.removeAll(stoppedInterpreters);
+	}
+	public static void stopAllScriptsByPlayer(ServerPlayerEntity player){
+		holdRemoval = true;
+		List<Interpreter> stoppedInterpreters = new ArrayList<>();
+		for (Interpreter interpreter : activeInterpreters) {
+			if(getScriptHolder(interpreter).getUuid() == player.getUuid()) {
+				interpreter.stop();
+				stoppedInterpreters.add(interpreter);
+			}
+		}
+		holdRemoval = false;
+		activeInterpreters.removeAll(stoppedInterpreters);
+	}
 	public static void stopAllScripts() {
 		holdRemoval = true;
 		for (Interpreter interpreter : activeInterpreters) {

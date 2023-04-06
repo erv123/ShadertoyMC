@@ -1,6 +1,7 @@
 package net.erv123.shadertoymc.networking.packets;
 
 import net.erv123.shadertoymc.util.ScriptUtils;
+import net.erv123.shadertoymc.util.StringCompressor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -15,7 +16,7 @@ public class ShaderRunC2SPacket {
 		int version = buf.readInt();
 		int nameLength = buf.readInt();
 		String name = buf.readString(nameLength);
-		String shaderFile = buf.readString();
+		String shaderFile = StringCompressor.decompress(buf.readByteArray());
 		player.sendMessage(Text.literal("Version: "+version));
 		player.sendMessage(Text.literal("Length: "+nameLength));
 		player.sendMessage(Text.literal("Name: "+name));
