@@ -196,6 +196,7 @@ public class ClientCommands {
 					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder))
 					.executes(context -> {
 						String shaderFile = StringArgumentType.getString(context, "shader_file");
+						int length = shaderFile.length();
 						Path scriptPath = ShaderUtils.SHADERTOY_PATH.resolve(shaderFile);
 						String fileContent;
 						try {
@@ -203,9 +204,14 @@ public class ClientCommands {
 						} catch (IOException e) {
 							throw FAILED_TO_READ_SCRIPT.create(shaderFile);
 						}
-						context.getSource().getPlayer().sendMessage(Text.literal("Running shader: " + shaderFile));
-						ClientPlayNetworking.send(RegisterPackets.SHADER_PACKET_ID, new PacketByteBuf(Unpooled.buffer()).writeString(fileContent));
-						//ScriptUtils.executeScript(fileContent, context.getSource());
+						int packetVersion = 1;
+						PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+						buf.writeInt(packetVersion);
+						buf.writeInt(length);
+						buf.writeString(shaderFile);
+						buf.writeString(fileContent);
+						ClientPlayNetworking.send(RegisterPackets.SHADER_RUN_PACKET_ID, buf);
+						context.getSource().getPlayer().sendMessage(Text.literal("Sending data to server"));
 						return 1;
 					})
 				)

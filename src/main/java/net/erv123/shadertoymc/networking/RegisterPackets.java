@@ -5,8 +5,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.util.Identifier;
 
 public class RegisterPackets {
-	public static final Identifier SHADER_PACKET_ID = new Identifier("Shadertoy","shader_packet");
+	public static final Identifier SHADER_RUN_PACKET_ID = new Identifier("shadertoy","run_packet");
 	public static void registerC2SPackets(){
-		ServerPlayNetworking.registerGlobalReceiver(SHADER_PACKET_ID, ShaderRunC2SPacket::receive);
+		ServerPlayNetworking.registerGlobalReceiver(SHADER_RUN_PACKET_ID, ShaderRunC2SPacket::receive);
 	}
 }
