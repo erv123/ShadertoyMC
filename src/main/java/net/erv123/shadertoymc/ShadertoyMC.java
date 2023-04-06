@@ -1,6 +1,6 @@
 package net.erv123.shadertoymc;
 
-import net.erv123.shadertoymc.networking.ShaderPackets;
+import net.erv123.shadertoymc.networking.RegisterPackets;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +13,7 @@ public class ShadertoyMC implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ShaderPackets.registerC2SPackets();
+        RegisterPackets.registerC2SPackets();
     }
 }
 

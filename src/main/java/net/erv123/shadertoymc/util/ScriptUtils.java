@@ -16,6 +16,7 @@ import net.erv123.shadertoymc.arucas.impl.MinecraftServerPoller;
 import net.erv123.shadertoymc.arucas.impl.ShaderErrorHandler;
 import net.erv123.shadertoymc.arucas.impl.ShaderOutput;
 import net.jlibnoise.NoiseQuality;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.server.MinecraftServer;
@@ -99,11 +100,13 @@ public class ScriptUtils {
 		return getArea(player);
 	}
 
+	public static Area getArea(ClientPlayerEntity player) {
+		return AREA_DATA.get(player.getUuid());
+	}
 	public static Area getArea(ServerPlayerEntity player) {
 		return AREA_DATA.get(player.getUuid());
 	}
-
-	public static Area getOrCreateArea(ServerPlayerEntity player, BlockPos initial) {
+	public static Area getOrCreateArea(ClientPlayerEntity player, BlockPos initial) {
 		return AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
 	}
 

@@ -8,18 +8,18 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import io.netty.buffer.Unpooled;
 import me.senseiwells.arucas.utils.FileUtils;
-import net.erv123.shadertoymc.networking.ShaderPackets;
+import net.erv123.shadertoymc.networking.RegisterPackets;
 import net.erv123.shadertoymc.util.Area;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.erv123.shadertoymc.util.WorldUtils;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -30,24 +30,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import static dev.xpple.clientarguments.arguments.CBlockPosArgumentType.*;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.*;
 
-public class ShadertoyCommand {
+public class ClientCommands {
 	private static final DynamicCommandExceptionType FAILED_TO_READ_SCRIPT;
 	static {
 		FAILED_TO_READ_SCRIPT = new DynamicCommandExceptionType(o -> Text.literal("Failed to read script: " + o));
 	}
-	private ShadertoyCommand() {
+	private ClientCommands() {
 
 	}
 
-	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("shadertoy")
-			.requires(source -> source.hasPermissionLevel(2))
 			.then(literal("area")
 				.executes(context -> {
-					ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+					ClientPlayerEntity player = context.getSource().getPlayer();
 					Area area = ScriptUtils.getArea(player);
 					if (area == null) {
 						throw new CommandSyntaxException(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException(), () -> "Area not initialized");
@@ -56,17 +55,17 @@ public class ShadertoyCommand {
 					return 1;
 				})
 				.then(literal("pos1")
-					.then(argument("position", BlockPosArgumentType.blockPos())
+					.then(argument("position", blockPos())
 						.executes(context -> {
-							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
+							ClientPlayerEntity player = context.getSource().getPlayer();
+							BlockPos pos = getCBlockPos(context, "position");
 							ScriptUtils.getOrCreateArea(player, pos).setA(pos);
 							player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos.toShortString()));
 							return 1;
 						})
 					)
 					.executes(context -> {
-						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+						ClientPlayerEntity player = context.getSource().getPlayer();
 						BlockPos pos = player.getBlockPos();
 						ScriptUtils.getOrCreateArea(player, pos).setA(pos);
 						player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos.toShortString()));
@@ -74,17 +73,17 @@ public class ShadertoyCommand {
 					})
 				)
 				.then(literal("pos2")
-					.then(argument("position", BlockPosArgumentType.blockPos())
+					.then(argument("position", blockPos())
 						.executes(context -> {
-							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
+							ClientPlayerEntity player = context.getSource().getPlayer();
+							BlockPos pos = getCBlockPos(context, "position");
 							ScriptUtils.getOrCreateArea(player, pos).setB(pos);
 							player.sendMessage(Text.literal("Successfully set area position 2 to: " + pos.toShortString()));
 							return 1;
 						})
 					)
 					.executes(context -> {
-						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+						ClientPlayerEntity player = context.getSource().getPlayer();
 						BlockPos pos = player.getBlockPos();
 						ScriptUtils.getOrCreateArea(player, pos).setB(pos);
 						player.sendMessage(Text.literal("Successfully set area position 2 to: " + pos.toShortString()));
@@ -92,14 +91,14 @@ public class ShadertoyCommand {
 					})
 				)
 				.then(literal("origin")
-					.then(argument("position", BlockPosArgumentType.blockPos())
+					.then(argument("position", blockPos())
 						.then(literal("size")
 							.then(argument("sizeX", IntegerArgumentType.integer(1))
 								.then(argument("sizeY", IntegerArgumentType.integer(1))
 									.then(argument("sizeZ", IntegerArgumentType.integer(1))
 										.executes(context -> {
-											ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-											BlockPos origin = BlockPosArgumentType.getBlockPos(context, "position");
+											ClientPlayerEntity player = context.getSource().getPlayer();
+											BlockPos origin = getCBlockPos(context, "position");
 											int sizeX = IntegerArgumentType.getInteger(context, "sizeX");
 											int sizeY = IntegerArgumentType.getInteger(context, "sizeY");
 											int sizeZ = IntegerArgumentType.getInteger(context, "sizeZ");
@@ -117,12 +116,12 @@ public class ShadertoyCommand {
 						)
 					)
 				)
-				.then(argument("pos1", BlockPosArgumentType.blockPos())
-					.then(argument("pos2", BlockPosArgumentType.blockPos())
+				.then(argument("pos1", blockPos())
+					.then(argument("pos2", blockPos())
 						.executes(context -> {
-							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-							BlockPos pos1 = BlockPosArgumentType.getBlockPos(context, "pos1");
-							BlockPos pos2 = BlockPosArgumentType.getBlockPos(context, "pos2");
+							ClientPlayerEntity player = context.getSource().getPlayer();
+							BlockPos pos1 = getCBlockPos(context, "pos1");
+							BlockPos pos2 = getCBlockPos(context, "pos2");
 							Area area = ScriptUtils.getOrCreateArea(player, pos1);
 							area.setA(pos1);
 							area.setB(pos2);
@@ -132,10 +131,10 @@ public class ShadertoyCommand {
 					)
 				)
 				.then(literal("origin")
-					.then(argument("position", BlockPosArgumentType.blockPos())
+					.then(argument("position", blockPos())
 						.executes(context -> {
-							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-							BlockPos origin = BlockPosArgumentType.getBlockPos(context, "position");
+							ClientPlayerEntity player = context.getSource().getPlayer();
+							BlockPos origin = getCBlockPos(context, "position");
 							ScriptUtils.getOrCreateArea(player, origin).setOrigin(origin);
 							String success = "Successfully set area origin to: " + origin.toShortString();
 							player.sendMessage(Text.literal(success));
@@ -148,7 +147,7 @@ public class ShadertoyCommand {
 						.then(argument("sizeY", IntegerArgumentType.integer(1))
 							.then(argument("sizeZ", IntegerArgumentType.integer(1))
 								.executes(context -> {
-									ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+									ClientPlayerEntity player = context.getSource().getPlayer();
 									int sizeX = IntegerArgumentType.getInteger(context, "sizeX");
 									int sizeY = IntegerArgumentType.getInteger(context, "sizeY");
 									int sizeZ = IntegerArgumentType.getInteger(context, "sizeZ");
@@ -169,7 +168,7 @@ public class ShadertoyCommand {
 				)
 				.then(literal("clear")
 					.executes(context -> {
-						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+						ClientPlayerEntity player = context.getSource().getPlayer();
 						Area area = ScriptUtils.getArea(player);
 						if (area == null) {
 							throw new RuntimeException("Initialize area before clearing it!");
@@ -184,7 +183,7 @@ public class ShadertoyCommand {
 				.then(literal("doBlockUpdates")
 					.then(argument("update", BoolArgumentType.bool())
 						.executes(context -> {
-							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+							ClientPlayerEntity player = context.getSource().getPlayer();
 							WorldUtils.doUpdates = BoolArgumentType.getBool(context, "update");
 							player.sendMessage(Text.literal("Block updates set to: " + WorldUtils.doUpdates));
 							return 1;
@@ -204,8 +203,8 @@ public class ShadertoyCommand {
 						} catch (IOException e) {
 							throw FAILED_TO_READ_SCRIPT.create(shaderFile);
 						}
-						context.getSource().sendMessage(Text.literal("Running shader: " + shaderFile));
-						ClientPlayNetworking.send(ShaderPackets.SHADER_PACKET_ID, new PacketByteBuf(Unpooled.buffer()).writeString(fileContent));
+						context.getSource().getPlayer().sendMessage(Text.literal("Running shader: " + shaderFile));
+						ClientPlayNetworking.send(RegisterPackets.SHADER_PACKET_ID, new PacketByteBuf(Unpooled.buffer()).writeString(fileContent));
 						//ScriptUtils.executeScript(fileContent, context.getSource());
 						return 1;
 					})
@@ -229,10 +228,10 @@ public class ShadertoyCommand {
 							FileUtils.ensureParentExists(shaderPath);
 							Files.writeString(shaderPath, ScriptUtils.EXAMPLE_SCRIPT);
 						} catch (IOException exception) {
-							context.getSource().sendFeedback(Text.literal("Failed to write to: " + shaderPath), true);
+							context.getSource().sendFeedback(Text.literal("Failed to write to: " + shaderPath));
 							return 0;
 						}
-						context.getSource().sendMessage(Text.literal("New shader file §n" + shaderFile + "§r created")
+						context.getSource().getPlayer().sendMessage(Text.literal("New shader file §n" + shaderFile + "§r created")
 							.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, shaderPath.toString()))));
 						return 1;
 					})
