@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 
 public class WorldUtils {
 	public static boolean doUpdates = false;
+
 	public static void setBlockWithNoUpdates(World world, BlockPos pos, BlockState state) {
 		ShaderUtils.canBlocksFall = WorldUtils.doUpdates;
 		world.setBlockState(pos, state, Block.NOTIFY_LISTENERS, 0);

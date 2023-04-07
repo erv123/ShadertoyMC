@@ -118,8 +118,10 @@ public class ShaderExtension implements ArucasExtension {
 	)
 	private Object query(Arguments arguments) {
 		BlockPos pos = new BlockPos(ArgumentUtils.getVec3i(arguments));
-		ServerPlayerEntity player = ScriptUtils.getScriptHolder(arguments.getInterpreter());
-
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(arguments.getInterpreter()).getPlayer();
+		if (player == null) {
+			throw new RuntimeError("Something with the player went wrong");
+		}
 		String type = null;
 		ServerWorld world = null;
 		while (arguments.hasNext()) {
@@ -187,7 +189,10 @@ public class ShaderExtension implements ArucasExtension {
 		}
 	)
 	private Void place(Arguments arguments) {
-		ServerPlayerEntity player = ScriptUtils.getScriptHolder(arguments.getInterpreter());
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(arguments.getInterpreter()).getPlayer();
+		if (player == null) {
+			throw new RuntimeError("Something with the player went wrong");
+		}
 		MinecraftServer server = ScriptUtils.getScriptServer(arguments.getInterpreter());
 		BlockPos pos = new BlockPos(ArgumentUtils.getVec3i(arguments));
 		String block = arguments.nextPrimitive(StringDef.class);
@@ -243,10 +248,10 @@ public class ShaderExtension implements ArucasExtension {
 		),
 		examples = {
 			"""
-			area(fun (aPos, nPos, lPos) {
-			    // Do something...
-			});
-			"""
+				area(fun (aPos, nPos, lPos) {
+				    // Do something...
+				});
+				"""
 		}
 	)
 	private Void area(Arguments arguments) {
@@ -287,10 +292,10 @@ public class ShaderExtension implements ArucasExtension {
 		},
 		examples = {
 			"""
-			area(100, 100, 100, 200, 1, 200, fun(aPos, nPos, lPos) {
-			    // Do something...
-			});
-			"""
+				area(100, 100, 100, 200, 1, 200, fun(aPos, nPos, lPos) {
+				    // Do something...
+				});
+				"""
 		}
 	)
 	private Void customArea(Arguments arguments) {
@@ -669,21 +674,17 @@ public class ShaderExtension implements ArucasExtension {
 		Vec3d pos = new Vec3d(arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class), arguments.nextPrimitive(NumberDef.class));
 		return area.isWithinArea(pos);
 	}
-	private Vec3d getPlayerPos(Arguments arguments){
+
+	private Vec3d getPlayerPos(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter);
-		if (player == null) {
-			return null;
-		}
-		return player.getPos();
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter).getPlayer();
+		return player == null ? null : player.getPos();
 	}
-	private Vec3d getPlayerLookingAtPos(Arguments arguments){
+
+	private Vec3d getPlayerLookingAtPos(Arguments arguments) {
 		Interpreter interpreter = arguments.getInterpreter();
-		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter);
+		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter).getPlayer();
 		double maxDistance = arguments.nextPrimitive(NumberDef.class);
-		if (player == null) {
-			return null;
-		}
-		return player.raycast(maxDistance, 0.0F, true).getPos();
+		return player == null ? null : player.raycast(maxDistance, 0.0F, true).getPos();
 	}
 }

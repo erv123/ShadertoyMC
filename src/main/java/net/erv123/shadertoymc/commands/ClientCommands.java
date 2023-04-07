@@ -15,6 +15,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class ClientCommands {
 	}
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-		dispatcher.register(literal("shaderfile")
+		dispatcher.register(literal("shadertoy")
 			.then(literal("run")
 				.then(argument("shader_file", StringArgumentType.string())
 					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder))
@@ -47,9 +48,8 @@ public class ClientCommands {
 						} catch (IOException e) {
 							throw FAILED_TO_READ_SCRIPT.create(shaderFile);
 						}
-						int packetVersion = 1;
 						PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-						buf.writeInt(packetVersion);
+						buf.writeInt(ShaderNetworkHandler.VERSION);
 						buf.writeString(shaderFile);
 						byte[] compressedString = StringCompressor.compress(fileContent);
 						buf.writeByteArray(compressedString);
@@ -86,10 +86,39 @@ public class ClientCommands {
 					.executes(context -> {
 						String shaderFile = StringArgumentType.getString(context, "shader_file");
 						File shader = new File(ShaderUtils.SHADERTOY_PATH.resolve(shaderFile).toUri());
-						ScriptUtils.getOperatingSystem().open(shader);
+						Util.getOperatingSystem().open(shader);
 						return 1;
 					})
 				)
+			)
+			.then(literal("stop")
+				.executes(context -> {
+					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+					buf.writeInt(ShaderNetworkHandler.VERSION);
+					buf.writeInt(1);
+					ClientPlayNetworking.send(ShaderNetworkHandler.SHADER_STOP_PACKET_CHANNEL, buf);
+					return 1;
+				})
+				.then(argument("name", StringArgumentType.string())
+					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder))
+					.executes(context -> {
+						String name = StringArgumentType.getString(context, "name");
+						PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+						buf.writeInt(ShaderNetworkHandler.VERSION);
+						buf.writeInt(0);
+						buf.writeString(name);
+						ClientPlayNetworking.send(ShaderNetworkHandler.SHADER_STOP_PACKET_CHANNEL, buf);
+						return 1;
+					}))
+			)
+			.then(literal("stopAll")
+				.executes(context -> {
+					PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+					buf.writeInt(ShaderNetworkHandler.VERSION);
+					buf.writeInt(2);
+					ClientPlayNetworking.send(ShaderNetworkHandler.SHADER_STOP_PACKET_CHANNEL, buf);
+					return 1;
+				})
 			)
 		);
 	}

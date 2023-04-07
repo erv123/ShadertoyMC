@@ -19,6 +19,7 @@ import net.jlibnoise.NoiseQuality;
 import net.minecraft.entity.boss.BossBarManager;
 import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -77,26 +78,19 @@ public class ScriptUtils {
 		getScriptHolder(interpreter).sendMessage(text);
 	}
 
-	public static Util.OperatingSystem getOperatingSystem() {
-		return Util.getOperatingSystem();
-	}
-
-	public static ServerPlayerEntity getScriptHolder(Interpreter interpreter) {
-		return getScriptData(interpreter).player();
+	public static ServerCommandSource getScriptHolder(Interpreter interpreter) {
+		return getScriptData(interpreter).source();
 	}
 	public static MinecraftServer getScriptServer(Interpreter interpreter) {
-		return getScriptData(interpreter).server();
+		return getScriptData(interpreter).source().getServer();
 	}
 	public static CommandBossBar getBossBar(Interpreter interpreter) {
 		return getScriptData(interpreter).bossBar();
 	}
 
 	public static Area getArea(Interpreter interpreter) {
-		ServerPlayerEntity player = getScriptHolder(interpreter);
-		if (player == null) {
-			return null;
-		}
-		return getArea(player);
+		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
+		return player == null ? null : getArea(player);
 	}
 
 
@@ -108,16 +102,13 @@ public class ScriptUtils {
 	}
 
 	public static Area getOrCreateArea(Interpreter interpreter, BlockPos initial) {
-		ServerPlayerEntity player = getScriptHolder(interpreter);
-		if (player == null) {
-			return null;
-		}
-		return AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
+		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
+		return player == null ? null : AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
 	}
 
 	public static void showProgressBar(Interpreter interpreter) {
 		ScriptData data = getScriptData(interpreter);
-		ServerPlayerEntity player = data.player();
+		ServerPlayerEntity player = data.source().getPlayer();
 		if (player != null) {
 			data.bossBar().addPlayer(player);
 		}
@@ -140,8 +131,7 @@ public class ScriptUtils {
 		};
 	}
 
-	public static void executeScript(String fileContent, String scriptName, ServerPlayerEntity player, MinecraftServer server) {
-
+	public static void executeScript(String fileContent, String scriptName, ServerCommandSource source) {
 		Interpreter interpreter = Interpreter.of(fileContent, scriptName, ARUCAS_API);
 
 		Identifier identifier = new Identifier("shadertoy", scriptName.substring(0, scriptName.lastIndexOf('.')).toLowerCase(Locale.ROOT));
@@ -151,11 +141,10 @@ public class ScriptUtils {
 		CommandBossBar bossBar = manager.add(identifier, text);
 
 		UUID uuid = interpreter.getProperties().getId();
-		SCRIPT_DATA.put(interpreter.getProperties().getId(), new ScriptData(player, server, bossBar));
+		SCRIPT_DATA.put(interpreter.getProperties().getId(), new ScriptData(source, bossBar));
 
 		interpreter.addStopEvent(() -> {
-			sendMessageToHolder(interpreter, Text.literal("Done!"));
-			SCRIPT_DATA.remove(uuid);
+			sendMessageToHolder(interpreter, Text.literal("Shader " + interpreter.getName() + " stopped!"));
 			bossBar.clearPlayers();
 			manager.remove(bossBar);
 			if(!holdRemoval) {
@@ -166,13 +155,12 @@ public class ScriptUtils {
 		interpreter.executeAsync();
 	}
 
-	public static void stopScriptByPlayerAndName(ServerPlayerEntity player, String name){
-		holdRemoval = true;
-		List<Interpreter> stoppedInterpreters = new ArrayList<>();
-		for (Interpreter interpreter : activeInterpreters) {
-			if(getScriptHolder(interpreter).getUuid() == player.getUuid() && interpreter.getName().equals(name)) {
-				interpreter.stop();
-				stoppedInterpreters.add(interpreter);
+	public static void stopScript(ServerPlayerEntity player, String scriptName) {
+		List<Interpreter> stopping = new LinkedList<>();
+		for (Interpreter interpreter : ACTIVE) {
+			ServerPlayerEntity holder = getScriptHolder(interpreter).getPlayer();
+			if (holder != null && interpreter.getName().equals(scriptName) && holder.getUuid().equals(player.getUuid())) {
+				stopping.add(interpreter);
 			}
 		}
 		holdRemoval = false;

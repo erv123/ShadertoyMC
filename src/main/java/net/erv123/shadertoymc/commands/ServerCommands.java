@@ -3,13 +3,13 @@ package net.erv123.shadertoymc.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.erv123.shadertoymc.util.Area;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.WorldUtils;
 import net.minecraft.block.Blocks;
-import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,49 +21,49 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class ServerCommands {
+
+	private static final SimpleCommandExceptionType NO_AREA_INITIALIZED;
+
+	static {
+		NO_AREA_INITIALIZED = new SimpleCommandExceptionType(Text.literal("No area initialised"));
+	}
+
 	private ServerCommands() {
 
 	}
+
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(literal("shadertoy")
+		dispatcher.register(literal("shaderarea")
 			.requires(source -> source.hasPermissionLevel(2))
-			.then(literal("stop")
-				.executes(context -> {
-					ScriptUtils.stopAllScriptsByPlayer(context.getSource().getPlayer());
-					return 1;
-				})
-				.then(argument("name", StringArgumentType.string())
-					.suggests((context, builder) -> CommandSource.suggestMatching(ScriptUtils.SCRIPTS, builder)))
-					.executes(context -> {
-						ScriptUtils.stopScriptByPlayerAndName(context.getSource().getPlayer(),StringArgumentType.getString(context,"name"));
-						return 1;
-					})
-			)
+
 			.then(literal("area")
 				.executes(context -> {
 					ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 					Area area = ScriptUtils.getArea(player);
 					if (area == null) {
-						throw new CommandSyntaxException(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException(), () -> "Area not initialized");
+						throw NO_AREA_INITIALIZED.create();
 					}
 					player.sendMessage(Text.literal(area.toString()));
 					return 1;
 				})
+				.then(argument("position1", BlockPosArgumentType.blockPos())
+					.then(argument("position2", BlockPosArgumentType.blockPos())
+						.executes(ServerCommands::createArea)
+					)
+				)
 				.then(literal("pos1")
 					.then(argument("position", BlockPosArgumentType.blockPos())
 						.executes(context -> {
 							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
-							ScriptUtils.getOrCreateArea(player, pos).setA(pos);
-							player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos.toShortString()));
+							setPos(player, pos, true);
 							return 1;
 						})
 					)
 					.executes(context -> {
 						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 						BlockPos pos = player.getBlockPos();
-						ScriptUtils.getOrCreateArea(player, pos).setA(pos);
-						player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos.toShortString()));
+						setPos(player, pos, true);
 						return 1;
 					})
 				)
@@ -72,16 +72,14 @@ public class ServerCommands {
 						.executes(context -> {
 							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 							BlockPos pos = BlockPosArgumentType.getBlockPos(context, "position");
-							ScriptUtils.getOrCreateArea(player, pos).setB(pos);
-							player.sendMessage(Text.literal("Successfully set area position 2 to: " + pos.toShortString()));
+							setPos(player, pos, false);
 							return 1;
 						})
 					)
 					.executes(context -> {
 						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 						BlockPos pos = player.getBlockPos();
-						ScriptUtils.getOrCreateArea(player, pos).setB(pos);
-						player.sendMessage(Text.literal("Successfully set area position 2 to: " + pos.toShortString()));
+						setPos(player, pos, false);
 						return 1;
 					})
 				)
@@ -109,20 +107,6 @@ public class ServerCommands {
 								)
 							)
 						)
-					)
-				)
-				.then(argument("pos1", BlockPosArgumentType.blockPos())
-					.then(argument("pos2", BlockPosArgumentType.blockPos())
-						.executes(context -> {
-							ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-							BlockPos pos1 = BlockPosArgumentType.getBlockPos(context, "pos1");
-							BlockPos pos2 = BlockPosArgumentType.getBlockPos(context, "pos2");
-							Area area = ScriptUtils.getOrCreateArea(player, pos1);
-							area.setA(pos1);
-							area.setB(pos2);
-							player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos1.toShortString() + " and position 2 to " + pos2.toShortString()));
-							return 1;
-						})
 					)
 				)
 				.then(literal("origin")
@@ -162,18 +146,7 @@ public class ServerCommands {
 					)
 				)
 				.then(literal("clear")
-					.executes(context -> {
-						ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-						Area area = ScriptUtils.getArea(player);
-						if (area == null) {
-							throw new RuntimeException("Initialize area before clearing it!");
-						}
-						for (BlockPos pos : area) {
-							WorldUtils.setBlockWithNoUpdates(player.world, pos, Blocks.AIR.getDefaultState());
-						}
-						player.sendMessage(Text.literal("Successfully cleared area!"));
-						return 1;
-					})
+					.executes(ServerCommands::clearArea)
 				)
 				.then(literal("doBlockUpdates")
 					.then(argument("update", BoolArgumentType.bool())
@@ -187,5 +160,39 @@ public class ServerCommands {
 				)
 			)
 		);
+	}
+
+	private static int createArea(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+		BlockPos pos1 = BlockPosArgumentType.getBlockPos(context, "pos1");
+		BlockPos pos2 = BlockPosArgumentType.getBlockPos(context, "pos2");
+		Area area = ScriptUtils.getOrCreateArea(player, pos1);
+		area.setA(pos1);
+		area.setB(pos2);
+		player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos1.toShortString() + " and position 2 to " + pos2.toShortString()));
+		return 1;
+	}
+
+	private static void setPos(ServerPlayerEntity player, BlockPos pos, boolean isA) {
+		if (isA) {
+			ScriptUtils.getOrCreateArea(player, pos).setA(pos);
+			player.sendMessage(Text.literal("Successfully set area position 1 to: " + pos.toShortString()));
+		} else {
+			ScriptUtils.getOrCreateArea(player, pos).setB(pos);
+			player.sendMessage(Text.literal("Successfully set area position 2 to: " + pos.toShortString()));
+		}
+	}
+
+	public static int clearArea(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+		Area area = ScriptUtils.getArea(player);
+		if (area == null) {
+			throw new RuntimeException("Initialize area before clearing it!");
+		}
+		for (BlockPos pos : area) {
+			WorldUtils.setBlockWithNoUpdates(player.world, pos, Blocks.AIR.getDefaultState());
+		}
+		player.sendMessage(Text.literal("Successfully cleared area!"));
+		return 1;
 	}
 }

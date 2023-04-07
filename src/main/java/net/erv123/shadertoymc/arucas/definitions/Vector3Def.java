@@ -158,7 +158,7 @@ public class Vector3Def extends CreatableDefinition<Vec3d> {
 		if (list.size() != 3) {
 			throw new RuntimeError("Expected a list with 3 coordinates");
 		}
-		
+
 		double[] coords = new double[3];
 		for (int i = 0; i < 3; i++) {
 			Double value = list.get(i).getPrimitive(NumberDef.class);
