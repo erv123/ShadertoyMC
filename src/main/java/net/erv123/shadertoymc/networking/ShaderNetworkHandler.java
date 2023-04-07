@@ -45,22 +45,20 @@ public class ShaderNetworkHandler {
 		if (version == VERSION) {
 			int type = buf.readInt();
 			switch (type) {
-				case 0: {
+				case 0 -> {
 					String name = buf.readString();
 					ScriptUtils.stopScript(player, name);
 					player.sendMessage(Text.literal("Stopped script: " + name));
 				}
-				case 1: {
+				case 1 -> {
 					ScriptUtils.stopScripts(player);
-					player.sendMessage(Text.literal("Stopped all my scripts"));
+					player.sendMessage(Text.literal("Stopped all your scripts"));
 				}
-				case 2: {
+				case 2 -> {
 					ScriptUtils.stopAllScripts();
 					player.sendMessage(Text.literal("Stopped all scripts for everyone"));
 				}
-				default: {
-					player.sendMessage(Text.literal("Wrong stop packet type, submit bug report!"));
-				}
+				default -> player.sendMessage(Text.literal("Wrong stop packet type, submit bug report!"));
 			}
 		} else {
 			player.sendMessage(Text.literal("Incompatible packet version, please update mod!"));

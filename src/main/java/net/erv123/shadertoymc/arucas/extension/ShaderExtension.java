@@ -14,6 +14,7 @@ import me.senseiwells.arucas.functions.builtin.Arguments;
 import me.senseiwells.arucas.functions.builtin.BuiltInFunction;
 import me.senseiwells.arucas.interpreter.Interpreter;
 import me.senseiwells.arucas.utils.impl.ArucasMap;
+import me.senseiwells.arucas.utils.impl.ArucasThread;
 import me.senseiwells.arucas.utils.misc.Language;
 import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
@@ -70,7 +71,8 @@ public class ShaderExtension implements ArucasExtension {
 			BuiltInFunction.of("isWithinArea", 1, this::isWithinAreaV),
 			BuiltInFunction.of("isWithinArea", 3, this::isWithinArea),
 			BuiltInFunction.of("getPlayerPos", this::getPlayerPos),
-			BuiltInFunction.of("getPlayerLookingAtPos", 1, this::getPlayerLookingAtPos)
+			BuiltInFunction.of("getPlayerLookingAtPos", 1, this::getPlayerLookingAtPos),
+			BuiltInFunction.of("hold", this::hold)
 		);
 	}
 
@@ -686,5 +688,19 @@ public class ShaderExtension implements ArucasExtension {
 		ServerPlayerEntity player = ScriptUtils.getScriptHolder(interpreter).getPlayer();
 		double maxDistance = arguments.nextPrimitive(NumberDef.class);
 		return player == null ? null : player.raycast(maxDistance, 0.0F, true).getPos();
+	}
+	@FunctionDoc(
+		name = "hold",
+		desc = "This freezes the current thread and halts execution, same functionality as 'Thread.freeze()'",
+		examples = "hold();"
+	)
+	private Void hold(Arguments arguments) {
+		Thread thread = Thread.currentThread();
+		if (thread instanceof ArucasThread arucasThread) {
+			arucasThread.freeze();
+			return null;
+		}
+		else
+			throw new RuntimeError("Thread is not safe to freeze");
 	}
 }

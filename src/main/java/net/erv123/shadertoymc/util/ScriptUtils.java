@@ -10,6 +10,7 @@ import net.erv123.shadertoymc.ShadertoyMC;
 import net.erv123.shadertoymc.arucas.definitions.PerlinNoiseDef;
 import net.erv123.shadertoymc.arucas.definitions.Vector3Def;
 import net.erv123.shadertoymc.arucas.definitions.VoronoiNoiseDef;
+import net.erv123.shadertoymc.arucas.extension.BrushExtension;
 import net.erv123.shadertoymc.arucas.extension.ShaderExtension;
 import net.erv123.shadertoymc.arucas.impl.MinecraftExecutor;
 import net.erv123.shadertoymc.arucas.impl.MinecraftServerPoller;
@@ -156,6 +157,7 @@ public class ScriptUtils {
 			manager.remove(bossBar);
 			SCRIPT_DATA.remove(uuid);
 			ACTIVE.remove(interpreter);
+			BrushExtension.BRUSHES.remove(interpreter);
 		});
 		ACTIVE.add(interpreter);
 		interpreter.executeAsync();
@@ -220,6 +222,7 @@ public class ScriptUtils {
 			.addPoller(MinecraftServerPoller.INSTANCE)
 			.setOutput(ShaderOutput.INSTANCE)
 			.addBuiltInExtension(new ShaderExtension())
+			.addBuiltInExtension(new BrushExtension())
 			.addClassDefinitions("util.Noise", PerlinNoiseDef::new, VoronoiNoiseDef::new)
 			.addClassDefinitions("util.Vector", Vector3Def::new)
 			.addConversion(Vec3d.class, (vec, i) -> i.create(Vector3Def.class, vec))

@@ -56,7 +56,6 @@ public class ClientCommands {
 						byte[] compressedString = StringCompressor.compress(fileContent);
 						buf.writeByteArray(compressedString);
 						ClientPlayNetworking.send(ShaderNetworkHandler.SHADER_RUN_PACKET_CHANNEL, buf);
-						context.getSource().getPlayer().sendMessage(Text.literal("Sending data to server"));
 						return 1;
 					})
 				)
