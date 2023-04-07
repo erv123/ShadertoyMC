@@ -23,11 +23,12 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,7 +37,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class ScriptUtils {
-
 	private static final Map<UUID, ScriptData> SCRIPT_DATA;
 	private static final Map<UUID, Area> AREA_DATA;
 	private static final GitHubArucasLibrary GIT_LIBRARY;
@@ -45,8 +45,7 @@ public class ScriptUtils {
 
 	public static final List<String> SCRIPTS;
 	public static final String EXAMPLE_SCRIPT;
-	public static List<Interpreter> activeInterpreters = new ArrayList<>();
-	private static boolean holdRemoval = false;
+	public static final List<Interpreter> ACTIVE;
 
 	static {
 		SCRIPT_DATA = new HashMap<>();
@@ -59,6 +58,7 @@ public class ScriptUtils {
 		ARUCAS_API = generateApi();
 		EXAMPLE_SCRIPT = Objects.requireNonNull(ShaderUtils.readResourceAsString("assets/ExampleShader.arucas"));
 		SCRIPTS = new ArrayList<>();
+		ACTIVE = new ArrayList<>();
 
 		reloadScripts();
 	}
@@ -67,10 +67,11 @@ public class ScriptUtils {
 
 	}
 
-	public static BlockPos createBlockPos(double x, double y, double z){
+	public static BlockPos createBlockPos(double x, double y, double z) {
 		return new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
 	}
-	public static BlockPos createBlockPos(Vec3d vec){
+
+	public static BlockPos createBlockPos(Vec3d vec) {
 		return createBlockPos(vec.x, vec.y, vec.z);
 	}
 
@@ -81,26 +82,31 @@ public class ScriptUtils {
 	public static ServerCommandSource getScriptHolder(Interpreter interpreter) {
 		return getScriptData(interpreter).source();
 	}
+
 	public static MinecraftServer getScriptServer(Interpreter interpreter) {
 		return getScriptData(interpreter).source().getServer();
 	}
+
 	public static CommandBossBar getBossBar(Interpreter interpreter) {
 		return getScriptData(interpreter).bossBar();
 	}
 
+	@Nullable
 	public static Area getArea(Interpreter interpreter) {
 		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
 		return player == null ? null : getArea(player);
 	}
 
-
+	@Nullable
 	public static Area getArea(ServerPlayerEntity player) {
 		return AREA_DATA.get(player.getUuid());
 	}
+
 	public static Area getOrCreateArea(ServerPlayerEntity player, BlockPos initial) {
 		return AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
 	}
 
+	@Nullable
 	public static Area getOrCreateArea(Interpreter interpreter, BlockPos initial) {
 		ServerPlayerEntity player = getScriptHolder(interpreter).getPlayer();
 		return player == null ? null : AREA_DATA.computeIfAbsent(player.getUuid(), id -> new Area(initial));
@@ -118,6 +124,7 @@ public class ScriptUtils {
 		getBossBar(interpreter).clearPlayers();
 	}
 
+	@NotNull
 	public static ScriptData getScriptData(Interpreter interpreter) {
 		return SCRIPT_DATA.get(interpreter.getProperties().getId());
 	}
@@ -147,11 +154,10 @@ public class ScriptUtils {
 			sendMessageToHolder(interpreter, Text.literal("Shader " + interpreter.getName() + " stopped!"));
 			bossBar.clearPlayers();
 			manager.remove(bossBar);
-			if(!holdRemoval) {
-				activeInterpreters.remove(interpreter);
-			}
+			SCRIPT_DATA.remove(uuid);
+			ACTIVE.remove(interpreter);
 		});
-		activeInterpreters.add(interpreter);
+		ACTIVE.add(interpreter);
 		interpreter.executeAsync();
 	}
 
@@ -163,28 +169,29 @@ public class ScriptUtils {
 				stopping.add(interpreter);
 			}
 		}
-		holdRemoval = false;
-		activeInterpreters.removeAll(stoppedInterpreters);
-	}
-	public static void stopAllScriptsByPlayer(ServerPlayerEntity player){
-		holdRemoval = true;
-		List<Interpreter> stoppedInterpreters = new ArrayList<>();
-		for (Interpreter interpreter : activeInterpreters) {
-			if(getScriptHolder(interpreter).getUuid() == player.getUuid()) {
-				interpreter.stop();
-				stoppedInterpreters.add(interpreter);
-			}
-		}
-		holdRemoval = false;
-		activeInterpreters.removeAll(stoppedInterpreters);
-	}
-	public static void stopAllScripts() {
-		holdRemoval = true;
-		for (Interpreter interpreter : activeInterpreters) {
+		for (Interpreter interpreter : stopping) {
 			interpreter.stop();
 		}
-		holdRemoval = false;
-		activeInterpreters.clear();
+	}
+
+	public static void stopScripts(ServerPlayerEntity player) {
+		List<Interpreter> stopping = new LinkedList<>();
+		for (Interpreter interpreter : ACTIVE) {
+			ServerPlayerEntity holder = getScriptHolder(interpreter).getPlayer();
+			if (holder != null && holder.getUuid().equals(player.getUuid())) {
+				stopping.add(interpreter);
+			}
+		}
+		for (Interpreter interpreter : stopping) {
+			interpreter.stop();
+		}
+	}
+
+	public static void stopAllScripts() {
+		List<Interpreter> stopping = new LinkedList<>(ACTIVE);
+		for (Interpreter interpreter : stopping) {
+			interpreter.stop();
+		}
 	}
 
 	public static void reloadScripts() {

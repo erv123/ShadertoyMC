@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import io.netty.buffer.Unpooled;
 import me.senseiwells.arucas.utils.FileUtils;
-import net.erv123.shadertoymc.networking.RegisterPackets;
+import net.erv123.shadertoymc.networking.ShaderNetworkHandler;
 import net.erv123.shadertoymc.util.ScriptUtils;
 import net.erv123.shadertoymc.util.ShaderUtils;
 import net.erv123.shadertoymc.util.StringCompressor;
@@ -27,9 +27,11 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 public class ClientCommands {
 	private static final DynamicCommandExceptionType FAILED_TO_READ_SCRIPT;
+
 	static {
 		FAILED_TO_READ_SCRIPT = new DynamicCommandExceptionType(o -> Text.literal("Failed to read script: " + o));
 	}
+
 	private ClientCommands() {
 
 	}
@@ -53,7 +55,7 @@ public class ClientCommands {
 						buf.writeString(shaderFile);
 						byte[] compressedString = StringCompressor.compress(fileContent);
 						buf.writeByteArray(compressedString);
-						ClientPlayNetworking.send(RegisterPackets.SHADER_RUN_PACKET_ID, buf);
+						ClientPlayNetworking.send(ShaderNetworkHandler.SHADER_RUN_PACKET_CHANNEL, buf);
 						context.getSource().getPlayer().sendMessage(Text.literal("Sending data to server"));
 						return 1;
 					})

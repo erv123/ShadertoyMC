@@ -1,7 +1,7 @@
 package net.erv123.shadertoymc;
 
 import net.erv123.shadertoymc.commands.ServerCommands;
-import net.erv123.shadertoymc.networking.RegisterPackets;
+import net.erv123.shadertoymc.networking.ShaderNetworkHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.server.MinecraftServer;
