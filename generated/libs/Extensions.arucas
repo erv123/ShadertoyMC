@@ -4,6 +4,7 @@
  * These do not need to be imported.
  */
 
+/* BrushExtension */
 /* BuiltInExtension */
 /*
  * This is used to enable or disable debug mode.
@@ -248,6 +249,11 @@ fun getPos2(): Vector3;
  * Returns - Vector3: Size vector.
  */
 fun getSize(): Vector3;
+
+/*
+ * This freezes the current thread and halts execution, same functionality as 'Thread.freeze()'.
+ */
+fun hold(): Null;
 
 /*
  * Returns true if the input vector is within the defined area and false if it isn't.

@@ -2899,20 +2899,20 @@ new Vector(1.5, 2.9, 3.01).ceil(); // (2, 3, 3)
 distance = vec.squaredDistanceTo(new Vector3(1,1,1));
 ```
 
-### `<Vector3>.sub(vector)`
-- Description: Used to subtract another Vector3.
-- Parameter - Vector3 (`vector`): A Vector3 object to subtract.
-- Example:
-```kotlin
-vec.sub(new Vector3(1, 2, 3));
-```
-
 ### `<Vector3>.sub(scalar)`
 - Description: Used to subtract a number from each of the vector coordinates.
 - Parameter - Number (`scalar`): The value to subtract from vector x, y, and z.
 - Example:
 ```kotlin
 vec.sub(1);
+```
+
+### `<Vector3>.sub(vector)`
+- Description: Used to subtract another Vector3.
+- Parameter - Vector3 (`vector`): A Vector3 object to subtract.
+- Example:
+```kotlin
+vec.sub(new Vector3(1, 2, 3));
 ```
 
 ### `<Vector3>.sub(x, y, z)`

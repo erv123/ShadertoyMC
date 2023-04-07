@@ -1,3 +1,5 @@
+## BrushExtension
+
 ## BuiltInExtension
 
 ### `debug(bool)`
@@ -325,6 +327,13 @@ pos2 = getPos2();
 - Example:
 ```kotlin
 size = getSize();
+```
+
+### `hold()`
+- Description: This freezes the current thread and halts execution, same functionality as 'Thread.freeze()'.
+- Example:
+```kotlin
+hold();
 ```
 
 ### `isWithinArea(vec)`

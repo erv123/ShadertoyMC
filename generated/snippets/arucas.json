@@ -164,6 +164,11 @@
     "body": "getSize()",
     "description": "getSize()\nReturns the size of the defined area.\n"
   },
+  "Function hold()": {
+    "prefix": "hold()",
+    "body": "hold()",
+    "description": "hold()\nThis freezes the current thread and halts execution, same functionality as 'Thread.freeze()'.\n"
+  },
   "Function isWithinArea(vec)": {
     "prefix": "isWithinArea($vec)",
     "body": "isWithinArea($vec)",
@@ -1704,15 +1709,15 @@
     "body": ".squaredDistanceTo($vector)",
     "description": "<Vector3>.squaredDistanceTo(vector)\nReturns the squared euclidean distance between this vector and the given vector.\n- Parameter - Vector3 (`vector`): The other Vector3.\n"
   },
-  "Method <Vector3>.sub(vector)": {
-    "prefix": ".sub($vector)",
-    "body": ".sub($vector)",
-    "description": "<Vector3>.sub(vector)\nUsed to subtract another Vector3.\n- Parameter - Vector3 (`vector`): A Vector3 object to subtract.\n"
-  },
   "Method <Vector3>.sub(scalar)": {
     "prefix": ".sub($scalar)",
     "body": ".sub($scalar)",
     "description": "<Vector3>.sub(scalar)\nUsed to subtract a number from each of the vector coordinates.\n- Parameter - Number (`scalar`): The value to subtract from vector x, y, and z.\n"
+  },
+  "Method <Vector3>.sub(vector)": {
+    "prefix": ".sub($vector)",
+    "body": ".sub($vector)",
+    "description": "<Vector3>.sub(vector)\nUsed to subtract another Vector3.\n- Parameter - Vector3 (`vector`): A Vector3 object to subtract.\n"
   },
   "Method <Vector3>.sub(x, y, z)": {
     "prefix": ".sub($x, $y, $z)",

@@ -1,6 +1,7 @@
 {
   "version": "2.3.0",
   "extensions": {
+    "BrushExtension": [],
     "BuiltInExtension": [
       {
         "name": "debug",
@@ -620,6 +621,16 @@
         },
         "examples": [
           "size = getSize();"
+        ]
+      },
+      {
+        "name": "hold",
+        "is_arbitrary": false,
+        "desc": [
+          "This freezes the current thread and halts execution, same functionality as 'Thread.freeze()'."
+        ],
+        "examples": [
+          "hold();"
         ]
       },
       {
@@ -6461,23 +6472,6 @@
           "name": "sub",
           "is_arbitrary": false,
           "desc": [
-            "Used to subtract another Vector3."
-          ],
-          "params": [
-            {
-              "name": "vector",
-              "type": "Vector3",
-              "desc": "A Vector3 object to subtract."
-            }
-          ],
-          "examples": [
-            "vec.sub(new Vector3(1, 2, 3));"
-          ]
-        },
-        {
-          "name": "sub",
-          "is_arbitrary": false,
-          "desc": [
             "Used to subtract a number from each of the vector coordinates."
           ],
           "params": [
@@ -6489,6 +6483,23 @@
           ],
           "examples": [
             "vec.sub(1);"
+          ]
+        },
+        {
+          "name": "sub",
+          "is_arbitrary": false,
+          "desc": [
+            "Used to subtract another Vector3."
+          ],
+          "params": [
+            {
+              "name": "vector",
+              "type": "Vector3",
+              "desc": "A Vector3 object to subtract."
+            }
+          ],
+          "examples": [
+            "vec.sub(new Vector3(1, 2, 3));"
           ]
         },
         {
